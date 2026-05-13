@@ -1,0 +1,12 @@
+# Optional: LIME, SHAP, Captum for modeling/explain.py and run_explain.
+# SHAP pulls numba → llvmlite. On macOS (especially Intel), pip may try to
+# compile llvmlite and fail without LLVM. If that happens, install binaries first:
+#   conda install -c conda-forge llvmlite numba -y
+# then:
+#   python -m pip install -r requirements-modeling-explain.txt
+#
+# Install core deps first: pip install -r requirements-modeling.txt
+
+lime>=0.2.0.1,<0.3
+shap>=0.44,<1.0
+captum>=0.7,<1.0

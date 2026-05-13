@@ -1,0 +1,11 @@
+languages:
+  - igbo
+  - yoruba
+# NLI/XNLI-finetuned multilingual checkpoints. Base MLM models such as
+# xlm-roberta-base or bert-base-multilingual-cased are NOT valid here because
+# they lack the entailment classification head required by the
+# zero-shot-classification pipeline.
+zero_shot_models:
+  - MoritzLaurer/mDeBERTa-v3-base-mnli-xnli
+  - joeddav/xlm-roberta-large-xnli
+hypothesis_template: "This tweet is {}."

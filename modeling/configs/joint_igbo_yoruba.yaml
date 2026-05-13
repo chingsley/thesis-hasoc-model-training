@@ -1,0 +1,19 @@
+run_name: afro_xlmr_joint
+model_name: Davlan/afro-xlmr-base
+language: joint_igbo_yoruba
+seed: 42
+max_length: 256
+num_train_epochs: 5
+learning_rate: 2.0e-5
+train_batch_size: 16
+eval_batch_size: 32
+weight_decay: 0.01
+warmup_ratio: 0.1
+weighted_loss: true
+weighted_sampler: true
+focal_loss_gamma:
+augmentation:
+  back_translation: false
+  eda: true
+hyperparameter_search:
+  enabled: false

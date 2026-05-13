@@ -1,0 +1,718 @@
+id,tweet,label,length
+test_igbo_00001,idiot you are very very stupid ezi ohia onukwu illiterate big for nothing fool chineke kpo gi na simon ekperima onye oshi oku ##url,Abuse,131
+test_igbo_00002,@username ikpu nne gi is landlocked with 20iches dick. ozu nwuru anwu,Abuse,69
+test_igbo_00003,@username nne gi bu akwuna,Abuse,26
+test_igbo_00004,"@username ezi, nkita ara, ewu. go get a life",Abuse,44
+test_igbo_00005,@username onye ime ezi! ọ si na ọ abacha. 😂 😂 😂,Abuse,47
+test_igbo_00006,"@username thunder gbawa sia gi isi u want defend nnamdi kalu ozu nwuru anwu cowards. ezi ofia racha sia  ortu nne gi there anuofia.   ipob u want war no we are peaceful,why u carry gun?no we no carry gun 4war we are unknown gun men against fulani. who una dey deceive.   ama nna gi chie kwa ##url",Abuse,296
+test_igbo_00007,@username akwụna i je na ṅụọ nwaanyị. je sample ba hotel,Abuse,56
+test_igbo_00008,"""@username : @username c'mon mechionu onye iberibe"" onye ki n'ekwu maka? onye ala lool",Abuse,86
+test_igbo_00009,"@username which isiagu,  look at it very well. onwu isi nkita di nhie nnah???",Normal,77
+test_igbo_00010,"whom the gods would destroy, they first make mad. 😂 😂  nwa nza rijuo afọ ya sị chi ya bịa were ya. 😂 ##url",Normal,106
+test_igbo_00011,"@username ịdị oji, buru nnukwu isi, this biko.",Abuse,46
+test_igbo_00012,@username udele nwere obi okwute ma obulu etu a ka o di.,Abuse,56
+test_igbo_00013,@username i love that ọnụ ọjọọ and pushing back to the lane part,Abuse,64
+test_igbo_00014,@username ewu na amaghị mmụọ chịrị ya ọzọ.  continue,Abuse,52
+test_igbo_00015,ono nkiti enwe efe asili gbaka ute.. ##url,Abuse,42
+test_igbo_00016,"@username udo dịrị gị, nwaanyị ọma.",Normal,35
+test_igbo_00017,wenger bu ezigbote onye iberibe. owu ara n'apu ya☹ @username : mgbe anyi ga a dasasi ka ndi mmadu; okacha ndi nwere ezigbo ntukwasiobi,Abuse,134
+test_igbo_00018,yen yen yen yen mechie eze ule gi ##url ##url,Abuse,45
+test_igbo_00019,"@username nne gi, nna gị, umunna, ụmụnne gị bụkwa zuzu ancha nile. ewu , ekwensu.",Abuse,81
+test_igbo_00020,"@username nne, iwe gi adila oku, gbaghara’m n’ihi n’obu aka-olu ekwensu. bet e no go bad if we tag along tomorrow",Normal,113
+test_igbo_00021,@username akụkọ ụwa.... onye arụrụala,Abuse,37
+test_igbo_00022,@username isi ewu ****🙂we love food,Normal,35
+test_igbo_00023,@username onye iberibe afo sa gi dia,Abuse,36
+test_igbo_00024,"@username ndi akpiri ego, ókú ha anyúóla piiii",Abuse,46
+test_igbo_00025,@username ike oru adiro fa nah. ndi ume ngwu! 🤣😂,Abuse,48
+test_igbo_00026,"@username i no ofụma nwannem, i bugho dimkpa benin na asa pant nwanyi america.",Abuse,78
+test_igbo_00027,@username agadi nwanyị onyeocha chọrọ iragbu the poor guy! onye arụrụala!😂😂😂😂,Abuse,77
+test_igbo_00028,"@username gi na ụmụakwụkwọ gị... , ị sị na o sekatara ọkụkọ si na ọ dịzị ka ọ bụzị nkịta ka o sere? biko kedụ ụbọchị m ga-abịa abịa n'ụloakwukwo unu kama ka m mee nkụzi naanị otu awa, otu awa na klaasị abụọ unu ga-ahọrọ.",Normal,220
+test_igbo_00029,@username ara gbachiekwa gi onu dia...onye iberibe..god will put u all to shame! ndi ara,Abuse,88
+test_igbo_00030,come back to nigeria and continue ur 20k tank filling onye mgbu ##url,Abuse,69
+test_igbo_00031,@username ozu nna gi!!!,Abuse,23
+test_igbo_00032,@username isi ewu 😒,Normal,19
+test_igbo_00033,nna nye na eme na naijiria ùgbúà bu na ndi ugwu ji ụbụrụ ndi ofe mmanụ ha agba bọọlu na midfield oo.,Hate,100
+test_igbo_00034,onye ume ngwụ apita ọkụkọ mkpụrụ akwụ ##url,Abuse,43
+test_igbo_00035,@username kitikpa gbagbuo gi dia. anuofia,Abuse,41
+test_igbo_00036,@username chukwu nyere nwata nnukwu isi ga-enye ya onu kara aka ọ ga-eji buo ya bụ ịsị. amen?,Normal,93
+test_igbo_00037,kam kpatakwa desmond elliot aka. onye iberibe!!,Abuse,47
+test_igbo_00038,"nwa nza buwe, o dika o ga aka nne ya!",Normal,37
+test_igbo_00039,oke mkpi jesu 😂😂😂 ##url,Abuse,23
+test_igbo_00040,"lmao!! onye apali @username : onye nzuzu! ""@username : onye ibe ri be @username : ndi ara!""",Abuse,91
+test_igbo_00041,"@username ok stop crying.... ebezina inugo? mechizie nu eze ule gi naaa....ah... ebezina, ezigbo nwa, ozugo zie....nee agwa(beans) ka i bia machaa....ikwiligba. especially when ur name is nneka and and you are behaving like nnanwa.",Abuse,231
+test_igbo_00042,@username face the truth asịrị nwaanyị,Abuse,38
+test_igbo_00043,@username onye afọ njọ. una fit lose una own.,Abuse,45
+test_igbo_00044,@username the guy bu ezigbote onye mgbu.    tagging dubai police that what happened!,Abuse,84
+test_igbo_00045,"ọ bụrụ na nwa gị amaghị asụ igbo, ọ gaghị akuziri nwa nke ya asụsụ igbo. nwa nke ya agaghị akuziri nwa nke ya were dịrị gawa..otu a ka asụsụ na omenala igbo ga-esi si n'ezinụlọ gị pụọ kpam kpam n'ihi gị. e kwekwana ka ọkụ ndị nna gị gụnyere gị nwụọ.",Normal,249
+test_igbo_00046,"@username you are a trained akwụna kwuna, anụ ọhịa",Abuse,50
+test_igbo_00047,"ekwensu not today,biko! ##url",Abuse,29
+test_igbo_00048,@username onye nzuzu  anu mpama,Abuse,31
+test_igbo_00049,@username nwa nza rijua afọ oche lu chi yá áká mgba 😁😁😁😁👍,Normal,57
+test_igbo_00050,"@username umu nwanyi igbo na acho nwoke igbo. biko, soso ndi igbo ha na acho biko. ha  choghi ndi ofe mmanu 😂😂😂",Hate,111
+test_igbo_00051,@username nne gi anwula o,Normal,25
+test_igbo_00052,@username ewu congo. fool,Abuse,25
+test_igbo_00053,"nkita ara chala otu onye ara,  nkita ara chala otu onye ara.",Abuse,60
+test_igbo_00054,@username you are the commander of ipob olodos twitter community. afo anu. protector of the universe. ezigbote onye mgbu,Abuse,120
+test_igbo_00055,@username nna gi mumu nne gi mumu ozu ule,Abuse,41
+test_igbo_00056,"before 2015, i thought alor nwere mmadụ in the person of dr. chris nwa akpuda ngige, amam na nwoke bu ezigbo onye mgbu..  he used road construction to deceive many electorates in anambra including my mother, chukwu kpọ that nwa akakpo ọkụ.. ##url",Abuse,246
+test_igbo_00057,"nna...onye ori bu onye ori! ""@username : @username anambra, anambra north senatorial""",Abuse,85
+test_igbo_00058,@username etigbote anya ikwikwi 😂😂😂😂,Abuse,36
+test_igbo_00059,"@username ""nwa nza rijuo afo, oso chi kere ya puta mgba""",Normal,56
+test_igbo_00060,@username anu ohia  ozuu nwuru anwù  otelle ò ihe mere iji wùrù it i bòribò atùrù ofeke,Abuse,87
+test_igbo_00061,@username you! you're the leader of this bad trio currently duo. ajọ nwa si owerri baa nne ya afọ,Abuse,97
+test_igbo_00062,"@username di anyi, ijero mgbada?",Normal,32
+test_igbo_00063,maka ndi akpiri udele lmao rt @username : don't let them use puffpuff to kidnap u...,Abuse,84
+test_igbo_00064,"@username nwa nza rijuo afo, ya si chi ya bia ka ha gba mgba. nwa you are just not deep into this. obi beat aa in pdp primaries 🤣🤣🤣🤣",Normal,132
+test_igbo_00065,@username they are ndi akpiri ego,Abuse,33
+test_igbo_00066,"9ice one boss rt @username : iremember dis song..obi kererenke obi,onye ara obi,onye oshi..obi! onye iberibe obi!",Abuse,113
+test_igbo_00067,@username obviously your brain isn't functional  which part of lagos is your village by the way  onye iberibe nwere ụbụrụ atụrụ,Abuse,127
+test_igbo_00068,"let me even talk about what i detest in this life, maybe a red flag 🚩 🚩 🚩 🚩 a big man in my area then, was fond of helping people, and at a time, rumours started flying na ọ bụ onye ọgwụ ego, ọ jikwa anara ndị mmadụ akara aka ha. he heard it and stopped helping. then, ##url",Abuse,274
+test_igbo_00069,@username nna gi na nne gi udc,Normal,30
+test_igbo_00070,"afịa zụba! onye aghụghọ nwụọ, onye aghụghọ e nyie ya! 😂 ##url",Normal,61
+test_igbo_00071,"ndi ala iberibe @username : ndi ofe mmanu agbarugo twitter""",Hate,59
+test_igbo_00072,"@username nna gi bu ofeke, ofeke njali!",Abuse,39
+test_igbo_00073,@username ọnụ ọjọọ. why this man resemble obiano?,Abuse,49
+test_igbo_00074,"@username let me write in ibo nwa nwanyi gbara akwụna, onye omekome ji oji apụnara mmadụ ihe nzuzu biafra, nna gị enweghị ọrụ na mum mum a street fucker, bolehole chụpụrụ ọtụ enweghi oke na mmechi ọ na - enwe ara bụ nwanyị nwere nsogbu, ị bụkwa mkpụrụ obi enweghi mmụọ",Abuse,268
+test_igbo_00075,"bịa nwoke, ị ro ebea pụọ kita, kitikpa agbachi gị anya, the guy was shocked, the lady too. i continued, so everyday you are going to umunze, coming from sokoto, getting robbed on the way.. jee chọọ ife i ya alụ. omalica nwoke dị ka gị, i si na ọ iyoo ayiyo ka lu gịnma",Abuse,268
+test_igbo_00076,"@username ada ekwensu, onye iberibe, anu mpama, frustrated animal. you will never die well. pig",Abuse,95
+test_igbo_00077,i by onye iberibe ##url,Abuse,23
+test_igbo_00078,"rie nsi ri juo onu gi, mmadu ole ka nna gi na nne gi kpuru? god will keep exposing hypocrites like you ##url ##url",Abuse,114
+test_igbo_00079,🤷‍♂️🤷‍♂️🙆‍♀️🙆‍♀️ adam ịbịa kwa. onye aghụghọ 😂😂😂😂😂😂😂 ##url,Abuse,58
+test_igbo_00080,onye iberibe unu wu rt @username : ivbie igbo vbe la dian o rt @username : ndi ara ka ha bu rt (cont) ##url,Abuse,107
+test_igbo_00081,"#igboproverbfriday @username nkata ga-ekpudo onye aghụghọ.   ọchụ nwa ọkụkọ nwe ada.   ọkụkọ bere n'ngige, ọkụkọ na egwu ngige na egwu.",Normal,135
+test_igbo_00082,@username that almajiri intellectual. ozu nwulu anwụ.,Abuse,53
+test_igbo_00083,@username kitikpa gbagbuo gi dia,Abuse,32
+test_igbo_00084,watch vero ile mgbada 2 - 2015 latest nigerian nollywood igbo movie ##url,Normal,73
+test_igbo_00085,!!! “@username : agwo tupia gi amu. rt @username : nkita ara racha gi ike rt @username aturu. rt @username : onye nzuzu rt,Abuse,122
+test_igbo_00086,@username kitikpa na amosu chuba gi. anu ohia.,Abuse,46
+test_igbo_00087,"okotorigba!! nya, nkịta ara bụ onye igbo? ekwensu e romancia mamiwater. kedu onye ma obodo nwa? ka'm jee gosi ndị umuada ife ọ na ezuzu na app a. ##url",Abuse,151
+test_igbo_00088,"@username daalụ nne gi bụ onye wepụtara oge gị wee na-akụziri ụmụ ụwa asụsụ ala anyị. ndewo. onye nwe anyị gbaa gị ume. ise, ise, ise.",Normal,134
+test_igbo_00089,"ndị igbo sị na onye iberibe anaghị ama mgbe ekere nkụ ụkwa. ọ ma bụrụ eziokwu. kedụ ka anyị bụ ndị igbo tụrụ ya ilu si na-elezi anya ka anaele, ndị ọzọ a na-ekerecha nkụ ụkwa?",Normal,175
+test_igbo_00090,@username rie nsi there onye oshi #stolenmandate,Abuse,48
+test_igbo_00091,@username wtf is onye nzuzu? 😂,Abuse,30
+test_igbo_00092,@username who is your brother? onye nzuzu,Abuse,41
+test_igbo_00093,judi judi isi ewu obu ego ole ?  chicken na ugba agwọlu agwọ fa ncha ọbu ego ole ? 😒😒😒,Normal,86
+test_igbo_00094,"*rolling* * falls into gutter* ""@username : !!!!! rt @username : goodluck ebele jonathan, kitikpa gbagbuo gi!""",Abuse,110
+test_igbo_00095,@username eligbuo onye nganga akpo ya onye mgbu!,Abuse,48
+test_igbo_00096,"onye nzuzu @username : malu ♥ ""@username : smh... chicken! @username : smh stop subin me ""@username : mr wiikey.... :)",Abuse,118
+test_igbo_00097,"ha si na ha ma ihe,ha si na amam ihe ha zuru okè dịka nke eze onye aghụghọ sọlọmọn na buybul ndị ọcha,ha tọgbọrọ chi nke ha bụ ọfọ na ọgụ,ikenga,nakwa ndị nile n'akpa oké ike dịka amadioha ha soro jesus mana ndị mohamad n'atọ ha mma n'akpịrị jisos abịaghị ##url",Normal,261
+test_igbo_00098,"@username ijuta isi nkita, gini ka igeji agba ya mee..",Normal,54
+test_igbo_00099,@username onye ori nke nnuku,Abuse,28
+test_igbo_00100,@username ikpu  nne gi there ewu,Abuse,32
+test_igbo_00101,@username i thought u closed yo twitter acccount? wetin happen? onye agwu... :),Abuse,79
+test_igbo_00102,@username ndi usa ego nma 🗡️ iru n'abo,Abuse,38
+test_igbo_00103,@username onye ara. onye iberibe. si nga puo. isi ewu. nne gi bu akwuna. nzuzu. nnukwu isi nkita ara. anu ofia. anu ofia ka gi nma. onye ime-ezi. rie nsi.,Abuse,154
+test_igbo_00104,@username nwanyi onye mgbu zukwanuike maka ndu gi na umu gi  ezigbo onye mgbu,Abuse,77
+test_igbo_00105,@username ndi ofe mmanu na ala nne fa 😂,Hate,39
+test_igbo_00106,"@username ""ajọ nwa, na su engligbo when they ask me, i say i do it for my people  ha fu mụ, ha si mụ phyno why e ji a rap zili na igbo? m si ha nwelu nwayọọ, e ma na jesus na su igbo?!""  a poet",Normal,193
+test_igbo_00107,"ezinaulo ya bu ndi ara, hapu onye nzuzu ahu 😒😹 ##url",Abuse,52
+test_igbo_00108,ibu ezigbite onye iberibe aswear.  ọkà mma n'iro ##url,Abuse,54
+test_igbo_00109,@username 😂😂😂nwa nza needed,Abuse,27
+test_igbo_00110,"@username nezianu papa ọnụ ọjọọ... na u get that sub, you better start re-threading that your big mouth.",Abuse,104
+test_igbo_00111,"@username #brilafmosha.nwata kwuwee onu,o si na ogwagbue ogenye. amaka nwa nza eto, opughi ika nne ya. nnukwu nzuzu ka obu ikpari okenye.",Abuse,137
+test_igbo_00112,@username nonny si ebe a pụọ. 😂😂😂😂 ajọ nwa. nekwa ihe ị na eche. ifele gị n'emezi m biko. tufiakwa gị. 🙆😩✊🏾😂😂🤣🤣🤣🤣🤣,Abuse,114
+test_igbo_00113,@username o ara na yi gi! anumaanu! isi okuko..isi nkita..isi ewu :p,Abuse,68
+test_igbo_00114,"ordinary 5 missed calls, anambra guy will text you ""ọnwelọ, udo, imego m ya naa, ikọgo my way, enjoy your new mgbada""",Normal,117
+test_igbo_00115,"@username with due respect sir, kitikpa gbagbuo gị",Abuse,50
+test_igbo_00116,"instead of shawarma na bush meat we go chop.. anu nchi, anu mgbada...",Normal,69
+test_igbo_00117,@username onye ara go sleep. onye iberibe mmụọ. ozu nwụrụ anwu,Abuse,62
+test_igbo_00118,@username onwu light to path nne gi na nna gi kiiiii you there! otele!,Abuse,70
+test_igbo_00119,"@username o rape ru nne gị? onye ara n' enweghị akọ n'uche dị ka gị,  i ga agbara fulani odibo ruo olemgbe. tufiakwa gị!",Abuse,120
+test_igbo_00120,@username otu nne gi dia!kitinpa gbagbu gi dia!,Abuse,47
+test_igbo_00121,"@username the way you started this your letter, i thought you had sense but, ọ nweghị ike ị dịrị gị na nma this man, ka mụ ụka ihe ga a dịrị gị na nma, ọnwụ gbufuo gị...  onye iberibe chineke kpọrọ òkù..",Abuse,203
+test_igbo_00122,@username ndewo nwaanyi oma,Normal,27
+test_igbo_00123,"@username ọkpataozuoruọha, obodo nigeria dịka ị maara nke ọma bụ oké nkume! ụfọdụ ndị mmadụ ekwuola ka i si zitere ha ego enyemaka, daalụ rinne. ọ ga-abụkwa ihe obi aṅụrị ma ụdị onyinye ahụ ruo mu aka dịka o ruru ndị ọzọ maka na ọ bụ mmadụ ka e ji eje. ya gazie",Normal,261
+test_igbo_00124,"@username 😂😂😂. mpa gị, nwere ọnụ ọjọọ. kai.....",Abuse,47
+test_igbo_00125,"happy birthday boss @username , olisa kpuchibe gị ka ọkụkọ si ekpuchi ụmụ ya.",Normal,77
+test_igbo_00126,“onye nzuzu “ “anuofia” “ekwensu” “onye ala” “ofeke” ##url,Abuse,58
+test_igbo_00127,n'ọkụ n'ọkụ ka eji eri ihe onye agwụ #iluigbo,Normal,45
+test_igbo_00128,"@username i juta isi nkita, iji agba ya eme gini?",Normal,49
+test_igbo_00129,@username as if english bụ asụsụ ndị nna na nne gị mpama,Abuse,56
+test_igbo_00130,heyyyy! 😨 car wash onye ori!!! ##url,Abuse,36
+test_igbo_00131,@username ofe ukazi with enough condiments....carry go nwannem rapu that nkita ara,Abuse,82
+test_igbo_00132,@username ọkụrụ the man k'onye ori ọkụkọ 😹😹😹😹,Abuse,45
+test_igbo_00133,"onye mgbu waaa!""@username : #hater @username : nooooo.. no gree o. na serial rapist oo""@username : nw ff @username do ff back dear""",Abuse,131
+test_igbo_00134,@username ina ege anụ mpam ahụ ntị? ajọ nwa si owele.....,Abuse,57
+test_igbo_00135,@username mkpi je juo umu nna gi,Abuse,32
+test_igbo_00136,@username dr joe onye aghụghọ 😁,Abuse,31
+test_igbo_00137,"@username onye nzuzu , kitikpa gbu kwa gi ebe ahu . i no blame you , i blame the village movies you act . get away",Abuse,114
+test_igbo_00138,"@username aturu anuohia nwuru anwu...kitikpa gbagbuo kwe gi, ma mma gi, ma nna gi...i ga anwu onwu ike. ezi ohia. iga ghi aba uru na uwa gi. itachaa ahuhu iguo mile.",Abuse,165
+test_igbo_00139,@username ha dị anyaukwu mana ha mara mma nke ukwuu na nnukwu isi,Abuse,65
+test_igbo_00140,"attentionaanụ ntị, m na-ezipụ unu dị ka atụrụ n’etiti anụ ọhịa wolf; ya mere b beanụ dika agwọ, buru kwa ndi n innocentmeghi ihe ọjọ dika nduru;",Normal,144
+test_igbo_00141,@username ezi ofia ka i bu. ofeke. ajo nwa so owele ba nne ya afo. agafu,Abuse,72
+test_igbo_00142,"@username anụ ọhịa whether old or new, did it happened or not atụrụ gambia",Abuse,74
+test_igbo_00143,@username lmaoo smh. onye ime ezi,Abuse,33
+test_igbo_00144,i wan see the onye mgbu face 😂😂😂😂  isi adịrọ ya mma. ##url ##url,Abuse,64
+test_igbo_00145,"@username umu ogwugwu oge, unu juta isi nkita, unu ewere agba ya mee gini?🙄",Abuse,75
+test_igbo_00146,"""ewu congo""....lmao rt @username : ewu congo ! rt @username : sharrap!!!! rt @username : be ma dollar !",Abuse,103
+test_igbo_00147,chineke needi ipu chaputa ekwensu ike ọ jị na this country. kedụ udi óbị okwute mmadụ ga enwe were jide nri na warehouse since may.,Normal,131
+test_igbo_00148,@username 😂 😂 😂  jehova na azụ m dịka atụrụ.... you know the rest.,Normal,66
+test_igbo_00149,"rt @username : onye ime ezi :d rt @username : #np- osondi owendi- mc loph ft flavor...egwuuuuuuuuuuuuuu*rapu m biko,onye obodo oyibo*",Abuse,133
+test_igbo_00150,"ekwe m na chineke bụ nna, nke pụrụ ime ihe nile. ekwe m na jizọs christ, nanị otu ọkpara ya, onye atụrụ ime site n'ike nmuo nsọ. nwagbo n'amaghị nwoke bụ meri mụrụ ya. ọ tara ahụhụ n'ụbọchị pontius pilate, akpọ gịde ya n'obe , ọ nwụọ, elieya.... ##url",Normal,251
+test_igbo_00151,ozo!!  onye mgbu worldwide.,Abuse,27
+test_igbo_00152,@username biko depụtara m okwu igbo abụọ na enweghị ntụgharị na bekee kam nye otú anụ ọhịa sim na asụsụ igbo nile nwere ihe ọbụ na bekee,Abuse,136
+test_igbo_00153,@username if you don’t have anybody close to you to tell you...asim; 1. otoro gbapuo gi afo 2. nkita riforo gi nsi 3. udene rachaa gi onu  4. kitikpa gbagbuo gi na your entire gullible generation. idiot! ##url,Abuse,209
+test_igbo_00154,kitikpa gbagbuo gi na humanity dia ##url,Abuse,40
+test_igbo_00155,"@username lol 😂 onye mgbu, ozugozie!",Abuse,36
+test_igbo_00156,@username lmao. onye agwu,Abuse,25
+test_igbo_00157,@username onye mgbu want carry igbo men chase clout. ndị e gbuwara isi,Abuse,70
+test_igbo_00158,@username ole barawo onye ori ##url,Abuse,35
+test_igbo_00159,"@username mehnnn amarokwa m na nkįta ara obi ya dį dirty na tųwįta bų onye igbo.... maka chi, ekwensu romancikwara mamiwater full time ooo",Abuse,138
+test_igbo_00160,ụmụ igbo kwesịrị ịmụ ka esi eme fem🤫 na ụfọdụ okwu na-agbasatahọlụ ha. danye danye lego dịnụ anya nke ọma maka na ya bụ agwọ nọkwa n'akịriịka.  udo.,Normal,148
+test_igbo_00161,@username lol. onye arụrụala,Abuse,28
+test_igbo_00162,"ha no ebe a. ka mu kpo ndi ozu @username : kedu ha? rt amchizzy: ndi usa. jiri nu nwayo ka abacha ju madu afo o! somtobe @username """,Abuse,132
+test_igbo_00163,@username efulefu! but you're referencing eccl 9:11. onye mgbu!,Abuse,63
+test_igbo_00164,"@username huh your fada. ezi ofia, obogwu ugbo, anumanu, nkita ara, ekwensu kpo gi okwu dia.",Abuse,92
+test_igbo_00165,smh isi ewu 😒,Normal,13
+test_igbo_00166,@username nezianu dimkpa benin obelle nwa na akpa ora n’ isi.... ifelle mee gi... tueh,Abuse,86
+test_igbo_00167,good news from russia.  chuddy nwannem your testimony shall remain permanent makana onye agwu goziri na ogozigo ya.,Normal,115
+test_igbo_00168,"@username isi agbọ ncha, nna ịdị ka nwoke si adị. afụ dimkpa, afụ nnukwu isi ya",Abuse,79
+test_igbo_00169,@username gọziem...😁😁😁.  ekwesị isi m na boxers bu n1500? mana ndi akpịrị abụọ a emewo ya etu ahụ. okwa zi ndidi kam no na ya,Abuse,125
+test_igbo_00170,"@username i'll give you a language (igbo) anụ ọhịa, ndị nzuzu, ndị iberibe, anụmanụ",Abuse,83
+test_igbo_00171,ekwensu !!! nne gi e ba ....,Abuse,28
+test_igbo_00172,"@username mkpurummiri master is talking ooh, oya ndị mkpurummiri servant's, make una come carry una master, is like he don smoke the baddest of mkpurummiri. simon ekpa! enwe ka ịbụ, atụrụ ndị ugwu tụbara nne gi ime. l",Abuse,217
+test_igbo_00173,@username ọnụ ọjọọ  i don't know gị na chuu who is worse 🤣🤣,Abuse,59
+test_igbo_00174,"@username ezi, ofe mmanu, anu mpama. na thunder go waste you",Abuse,60
+test_igbo_00175,onye ò masiri buru iko nnem. ihe nma bu la isi nkita ju ma aka.,Normal,63
+test_igbo_00176,ezigbote onye iberibe for dt matter oo ##url,Abuse,44
+test_igbo_00177,â€˜nwaanyi ikeâ€™ will revolutionise igbo series production ##url,Normal,65
+test_igbo_00178,@username kee onye bụ onye ọgwụ?,Normal,32
+test_igbo_00179,"kama mu na onye nzuzu ga ayi, kama ka mu na onye ala yiwa.",Abuse,58
+test_igbo_00180,onye oshi 😂😂 ##url,Abuse,18
+test_igbo_00181,@username 😂 😂 😂 😂 ọnụ ọjọọ dị man enweghị atụ,Abuse,45
+test_igbo_00182,@username look at 'nwa nza' that calls biafra a small terrorist group in africa. may amadioha piakpogi anya ikwi-ikwi i'bu n'isi.  a painted baboon that answers a white man. onye araa. ##url,Abuse,190
+test_igbo_00183,"@username ọchịcha di njikere igba egwu, ma ọkụkọ hụrụ ya ka nwakpo ezi.  the cockroach was ready to dance but as for the fowl, who regarded its movement as a violation of territorial integrity.  [everybody wants to make it in life, due to one reason or the other only a few make it.]",Normal,283
+test_igbo_00184,"@username ala gbagbuo nne gi.  look at what cheap political gains is doing to you, ozu nwụrụ anwụ.",Abuse,98
+test_igbo_00185,antonio dimkpa benin,Normal,20
+test_igbo_00186,"@username certainly, my governor. i await your ascension to lead anambra soon. @username is a one term governor na aha jisos christ bu onye nwaanyi. amen",Normal,153
+test_igbo_00187,isi adiro gi mma. rie nsi oku. ##url,Abuse,36
+test_igbo_00188,"@username onye ala, onye iberibe  ewu!!!!",Abuse,41
+test_igbo_00189,idris debt leading from the front unlike our own 'osisi kpọrọ nkụ'. ##url,Normal,73
+test_igbo_00190,@username onye iberibe. anu mpama. ezi ohia. chukwu kpooo gi oku,Abuse,64
+test_igbo_00191,"""@username : ""ibu onye ala or ibu onye ara or onye nzuzu""...no be only u sabi speak ibo..... #u know urself!!!!!""c ibo speakin yoruba bwoi",Abuse,138
+test_igbo_00192,ndi nile ne bu my mata na isi nkita lifor gi nsi,Abuse,48
+test_igbo_00193,isi ewu money ritual incoming..,Normal,31
+test_igbo_00194,@username 🤣🤣🤣🤣🤣  onye mgbu. ntoooor.😆,Abuse,37
+test_igbo_00195,@username kedu onumara gi na ehime mbano. onye but nna gi,Normal,57
+test_igbo_00196,@username lol company group of ndi nzuzu... managed by onye iberibe😳😳😳,Abuse,70
+test_igbo_00197,"anu""@username : ekpo ""@username : pa zuzu""_cino: unam ikot ""@username : nke nna gi""cino: bura ""z: ofeke"" ebot ""zz: nna gi ana afubu uzo -_-"":",Abuse,141
+test_igbo_00198,@username hian onye juu gi ife niine a?,Normal,39
+test_igbo_00199,"@username o nyu go nsi na uno uka ya....mana onye-nwe anyi meere ya ebere. ya nekwe ajuju juwa, till ojuta isi nkita!",Normal,117
+test_igbo_00200,@username ezi.. onye juu gi now?,Abuse,32
+test_igbo_00201,@username agba punter! 👑💪🏾 greenluck onye ọgwụ 😹,Normal,48
+test_igbo_00202,ị sụ asụsụ àlà a mụrụ gị egosighi na ị bụ ọkụkọ igbo. e kekwala ka onye ọ bụla tinye ifere na ahụ gị maka na ị na-asụ asụsụ nna gị. sụọ igbo!! sụpu igbo!!! ##url,Normal,161
+test_igbo_00203,@username keep recruiting terrorists into biafrans land and they'll all be sent to chiukwu okike abiama puru ime ihenile for judgements. ndi akpiri ogologo ego otu umunwayi sharing fighter group you're,Abuse,201
+test_igbo_00204,"ndi 0je uka akwa iko, bia nurunu mmiri nke ndu, maka unu bu ndi akpiri na akp0 nku..",Normal,84
+test_igbo_00205,@username onye mgbu na prediction,Abuse,33
+test_igbo_00206,@username onye asili onye juu gi?,Abuse,33
+test_igbo_00207,@username lee onye nzuzu oh,Abuse,27
+test_igbo_00208,@username mechipu gi eze ule gi there..,Abuse,39
+test_igbo_00209,kitikpa lacha gị na nna gị anya ##url,Abuse,37
+test_igbo_00210,"@username i wish u were here oooh,u and @username enuf nkwu ocha and mgbada and anu nchi...i can't shout",Normal,104
+test_igbo_00211,chukwu nna. n'apu ekwensu ike.,Normal,30
+test_igbo_00212,@username kitikpa gbagbuo gi ebe obuna ino!,Abuse,43
+test_igbo_00213,n'oku n'oku ka-eji eri ihe onye agwu. @username,Normal,47
+test_igbo_00214,"@username lekwe umuoma chineke meriri ndi usa, bewe akwa 🤪 ##url",Abuse,64
+test_igbo_00215,@username wee mee gini 😒  ka eyi ya nwaanyi wuo mu acid? biko kwa 🙄,Normal,67
+test_igbo_00216,@username oburo soo under 27 ma under 10 agadi na agwo ofe. nwe ndidi ka this christmas gafere gi mgbe agu ka iga aghota ihe mkwuru ofuma..,Abuse,139
+test_igbo_00217,hahaha ndia bu kwa ndi akpiri ego. rt @username : @username yep hand the money to her ryt nw,Abuse,92
+test_igbo_00218,"lmao,come on tym o,space don almost finish..apu ndi ofe mmanu ""@username : keep space for me o... ndi yoruba a bucha ndi nzuzu.. lol",Hate,132
+test_igbo_00219,@username ara bu ihe n'agba  nne gi na nna gi....ewure,Abuse,54
+test_igbo_00220,oh dear rt @username : bush man. onye ime ezi. ime obodo na emesi ya ike. ##url,Abuse,79
+test_igbo_00221,"@username anụmanụ, iche nọ i na akogheri, nkịta rifọrọ gị nsị, onye mgbu!",Abuse,73
+test_igbo_00222,from isi agu to isi nkita 😂😂 ##url,Normal,34
+test_igbo_00223,@username 😂😂 lol nkita ara dika m,Abuse,33
+test_igbo_00224,@username because biafra is gone for good. ewu awusa dika gi,Abuse,60
+test_igbo_00225,ekwensu e'romancia mammy water. 😂😂😂 tf!! @username,Normal,50
+test_igbo_00226,@username ndi di ka unu na atu egwu dika ndi enweghi okwukwe. ndi ugwu choro ka unu na eche otu a. unu a na atu mmadu ibe unu egwu. ya ka ndi ofe mmanu jiri na enweta ihe nile mana ndigbo agbara aka. ndigbo siri na a na ha eji ngbagbu yara ogwu!!! cowards!!!,Hate,258
+test_igbo_00227,bakayoko eze ule,Abuse,16
+test_igbo_00228,@username nna gi  na nne 'gi,Normal,28
+test_igbo_00229,"you are my healer  my keeper my restorer  my life giver you are the living god oh eze, no one like you  ọ bụ onye n'ekwu ma chi m kwuchaa, ọ bụ onye na atụrụ chi m ụga.  i nweghị mgbanwe chukwu ebighebi  i nweghi oyiri omama amasi amasi",Normal,236
+test_igbo_00230,"@username nne gị, ozu nwụrụ anwụ.",Abuse,33
+test_igbo_00231,@username n'oku n'oku ka a na-ara onye ekpenta,Normal,46
+test_igbo_00232,akpa used comdom rt @username : ewu awusa rt @username : mkpi rt @username : mbe rt @username : ► why re u even following me???,Abuse,127
+test_igbo_00233,"@username nwa nza na ere  na isi na ere na odu osi na ona apu mmanu.. nya jisie ike. our ancestors had his likes in mind when they made this proverb you tweeted earlier. ""agu guba ofeke oburu nzu kpaa na anya"".",Normal,210
+test_igbo_00234,@username anu nchi 🤣🤣🤣 aka bush meat.  what of mgbada?,Normal,54
+test_igbo_00235,@username bobo nnukwu isi,Abuse,25
+test_igbo_00236,"@username this one too pain you oya begin cry make sure u cry well oooo itiboribo, eze ule, onye nzuzu, onye ekperima, eze ekpenta",Abuse,130
+test_igbo_00237,@username okoro ewu awusa  hell rufai  orji ozor,Abuse,48
+test_igbo_00238,"@username and u too, ezi and slave of simon ekperima, anu ohia",Abuse,62
+test_igbo_00239,"@username nkịta ọhịa dị ka gị, atụrụ ọhịa, ewu gambia, efulefu like u. i bu idiot. na ur candidate rubbish our democracy because he want to rule people wey no want him. good will run from u and ur generations nkịta ara like u.",Abuse,226
+test_igbo_00240,@username iffahear.. gịnị? these longerthroats(ndị usa). 😜,Abuse,58
+test_igbo_00241,@username eh ndị ofe mmanụ will be happy ndị ara,Abuse,48
+test_igbo_00242,@username isi okpo... onye nzuzu. isi ewu... ne imi gi ks ite bean. ne eze gi ks fork ndi ori!,Abuse,94
+test_igbo_00243,"@username thunder fire you and your generation...!! ewu awusa.. anu mpama.. enwe ocha..!! onukwu odeko, onu ka usu..!! ekwensu sa..!!",Abuse,133
+test_igbo_00244,":p @username : lol""@username : mkpi @username : @username isi ewu""""""",Abuse,68
+test_igbo_00245,"this @username , ọ bụ nnọọ anụ ọhịa, ozu nwụrụ anwụ na esi isi.. ezi bida... akiri tagbuo gị ebe ahụ... ##url",Abuse,109
+test_igbo_00246,"o tata ka ima? rt""@username : ndi ofe mmanu bu ndi nzuzu.""",Hate,58
+test_igbo_00247,@username lmao ! onyeka onye mgbu !,Abuse,35
+test_igbo_00248,@username 🤣🤣🤣🤣🤣🤣 ewu kanunta na ndi ara ##url,Abuse,45
+test_igbo_00249,see okoko 😂 onye mgbu!🤣 ##url,Abuse,29
+test_igbo_00250,@username ọnụ ọjọọ... 😂😂😂😂😂😂😂ọ kwa ị fụrụ gị eeh,Abuse,48
+test_igbo_00251,"@username udele na eri ozu umu ya. o buru izuru oghere n ke abou n'oshi di ka isi mee na m bu, ebe iriri ozu umu gi na nke m bu, i ga nu eri ma nne gi ma nna gi, umu gi na nwunye gi na nke abuo. tufiakwa",Abuse,203
+test_igbo_00252,ndi akpiri rigbuo onwe ha na nni. ##url,Abuse,39
+test_igbo_00253,"@username soludo don de beg us after 25 pages of rubbish about obi.   e eyes done clear, he don see tsunami obi.  obi no be anybody mate.  #anuohia  #onye iberibe   #obiphobia ##url",Abuse,181
+test_igbo_00254,@username i prefer onye nzuzu 😂😂,Abuse,32
+test_igbo_00255,"@username i bu ezigbote onye iberibe, anuofia.  acho kwa na ihe i ga eji ndu gi mee, chowa onye na achogho gi.  you never troll her finish?  sha carry your stinking nose commit for her business.  anu mpama",Abuse,205
+test_igbo_00256,@username onye ara! ara gbagbuo nne gi na nna gi. anuofia,Abuse,57
+test_igbo_00257,"lolzzzz, sandra onu ojoo. ka ewu awusa nwetakwa gi ##url",Abuse,56
+test_igbo_00258,@username minus onye nụrụ ajọ nwanyi,Normal,36
+test_igbo_00259,"onye amuru tufuo na ohia! rt @username : onye ejiri wey chuo aja!! ""@username : @username mgbu taa ike gi! onye iberibe!""",Abuse,121
+test_igbo_00260,"@username aka nshi ha abago ha onu ooooooh dos ndi akpiri ogologo , tufiakwa ‼️",Abuse,79
+test_igbo_00261,"@username i said it ......🤣🤣🤣🤣so i bu onye agwu,dallu nwannem",Abuse,61
+test_igbo_00262,"""@username : ndi ofe mmanu na achu nwanyi nke ukwu!! odika chineke nyere umu nwoke ha amu ten����������������������"" ouch!!!",Hate,124
+test_igbo_00263,@username kitikpa gbagbuo gi na nna gi ebe hu.. anumanu!!,Abuse,57
+test_igbo_00264,"@username nna nna gị, nna gị, akwụna nne gị ri juo nsi ọnụ.",Abuse,59
+test_igbo_00265,"nkwobi '' ,,rt @username : isi ewu! ^_^",Normal,39
+test_igbo_00266,@username that's the tweet nwanne. mana ndi ugwu na ndi ofé mmanu amankwe.,Hate,74
+test_igbo_00267,@username onye ọgwụ ego. juju enthusiast,Abuse,40
+test_igbo_00268,"lol rt @username : akara ten ten kobo, mmezi ga ka nke igoro ego... chai!!! abum nno ezigbo onye ime ezi :(",Abuse,107
+test_igbo_00269,@username onukwu! dimkpa benin!,Abuse,31
+test_igbo_00270,@username ozunwuru anwu sachie eze oti gi  osiso!! 😏 look at the ezi bida na ewetere m onu!! udene!!! 😏 nne na nna gi ozu!!,Abuse,123
+test_igbo_00271,owegi itinye isi na otele okuko ##url,Normal,37
+test_igbo_00272,@username iwu onye oshi oo translation : you are a thief,Abuse,56
+test_igbo_00273,"""bring isi ewu and odekwu""",Normal,26
+test_igbo_00274,@username mpa gi na nne gi ofeke ofeke,Abuse,38
+test_igbo_00275,mechie eze ule gi ##url,Abuse,23
+test_igbo_00276,@username the boy chere na ọ nwere ọnụ ọjọọ,Normal,43
+test_igbo_00277,"@username ashawo kobokobo ka ibu, amu nkita ka ibu, onye oshi ka ibu. keep off my post maka amadioha amagbuogi kpai ndi mkporonmiri nzama otuharlots idumota moles you're",Abuse,169
+test_igbo_00278,@username mgbada nonsense! 😂,Abuse,28
+test_igbo_00279,nkita ara rt @username : @username lol ewu,Abuse,42
+test_igbo_00280,@username ikpu nne gi ere la..  nne gi bu ozu .. 😂😂😂😂,Abuse,53
+test_igbo_00281,"ewu, nkita ara, onye iberibe, mkpi, anu ofia, boateng, mumu ""@username : moyes' boys to the rescue.""",Abuse,100
+test_igbo_00282,"lollll..nekwa ewu ofe mmanu a..rt @username : not everybody is as shallow as u #bye ""@username : ... ##url",Hate,106
+test_igbo_00283,"@username you be confam aturu 🤣🤣🤣 mkpi , mmeeee , ewu zambia",Abuse,60
+test_igbo_00284,@username onye aghụghọ. anom ya.  kedu?,Abuse,39
+test_igbo_00285,@username ndi akpiri ogologo ego politics,Abuse,41
+test_igbo_00286,omg!!! okey bakassi just killed me with this adage: nwanyi n'acho nwa na agbo oto ehi ura.....#amvca2017,Normal,104
+test_igbo_00287,ask it rt @username : is ejayuru a guy or a gal?rt @username : @username ndi akpiri...,Abuse,86
+test_igbo_00288,@username onye iberibe. agwo tagbuogi,Abuse,37
+test_igbo_00289,@username nnukwu isi nke chukwu 😂🌚 (big head of god),Abuse,52
+test_igbo_00290,"@username happy birthday to the undefeated father of recession. onye mgbu 1 na daura. chukwu, biko ihe dị ka eze ndị ụchụ dị ka bubu a dakwasị kwana anyị ọzọ",Abuse,157
+test_igbo_00291,@username ewu awusa. nmee!!,Abuse,27
+test_igbo_00292,@username iwu otele nshi,Abuse,24
+test_igbo_00293,"#ndiamumaugha.  i juta isi nkita,i were agba ya mee gini? #ukabuilu ##url",Normal,73
+test_igbo_00294,"@username nope, isi ewu",Normal,23
+test_igbo_00295,"lool, onye mgbaji aka. rt @username : lol onye alaa""@username : ndi ofe mmanu rie nu. rt @username : igbo kwenu""",Hate,112
+test_igbo_00296,@username udele ndi zoo where are u? bring it on.. onye oshi onye nzama,Abuse,71
+test_igbo_00297,@username kiki of the most high  asa nwa  dalu nwaanyi oma,Normal,58
+test_igbo_00298,ara gbagbuo onye kpọrọ igbo asi asi m otoro gbagbuo gi gbagbukwaa chi gị  oburu kwánú na ịbụ ónyé igbo soro na akpgheri kitikpa gbá gbukwaa gị na chi gị there ##url,Abuse,164
+test_igbo_00299,"asiri gbakute... o na toh pieces, nwanyo kwa maka echi d'ime! lol",Abuse,65
+test_igbo_00300,@username ðŸ˜‚ðŸ˜‚ðŸ˜‚ðŸ˜‚ðŸ˜‚ ara agbala onye ori mandate,Abuse,58
+test_igbo_00301,@username ishi aki. black enwe.,Abuse,31
+test_igbo_00302,@username ekwensu kpokwaa gi oku! onye oshi,Abuse,43
+test_igbo_00303,@username but that insecurity doesn't stop ndị awka from collecting development levies from people? asị onye ori jide ọkụkọ..,Normal,125
+test_igbo_00304,hapu eze ule ahu... ##url,Abuse,25
+test_igbo_00305,"@username free am, no let any onukwu spoil ur nyt",Abuse,49
+test_igbo_00306,@username no chame... sọsọ ọnụ ọjọọ,Abuse,35
+test_igbo_00307,"nwoke bu palliative ndi no na nsogbu, echete e nwebe añuli ndi no na ihe mgbu, american burger ndi ji ego, sirdalud ndi agadi, omeprazole ndi obi na cha oku, mmiri juru oyi ndi akpiri na kpo nku, nwoke obi oma ndi legion of mary. angel bia this side, lenu nwoke.  only one obi ##url",Normal,282
+test_igbo_00308,jehovah bụ onye na azụm dika atụrụ.,Normal,35
+test_igbo_00309,"@username shebi it was celebs that were trending ur freedom hashtag ba? continue.....mgbe o ga a da, i mara na a naghi a gwa o chi nti na agha e su! mgbada!",Normal,156
+test_igbo_00310,@username ekwensu ogini got  me 😂😂,Abuse,34
+test_igbo_00311,"@username good for you, make we rest from your ọnụ ọjọọ.",Abuse,56
+test_igbo_00312,@username onye oshi come out that the with your family members ewu onye oshi,Abuse,76
+test_igbo_00313,@username nwaanyi mara mma 😊,Normal,28
+test_igbo_00314,technoking onye agwu.,Abuse,21
+test_igbo_00315,"enwe :p rt @username : i'll kee u oh!""@username : ishi aki @username """,Abuse,70
+test_igbo_00316,@username mechie eze ule gị... how market 😱,Abuse,43
+test_igbo_00317,"this new otele twitter handle di very wosky 😭, different sizes of mgba mgba otele 😭 chineke!!!!!",Abuse,96
+test_igbo_00318,@username 😀 ezigbote isi aki oyibo tara miri.,Abuse,45
+test_igbo_00319,lol onye ekwurekwu ##url,Abuse,24
+test_igbo_00320,@username akuko ndi ume ngwu😂,Normal,29
+test_igbo_00321,"@username kitikpa na enweghi nne na nna susu o gi onu ebe ahu, ezi bida, lekwanu efulefu a fulani gbara nne ya. i biara igosi anyi na i bu ezigbo mmadu,  ezigbo mmadu gi ahu kpuokwa na ala, ewu awusa. ihe nile no na eme na east kita, kedu ndi mba ozo na atupuru anyi onu?  anu ofia!!!",Abuse,284
+test_igbo_00322,"@username well isi is head ebule is ram, so im certain. like isi ewu, ewu is goat so, isi ebule",Normal,95
+test_igbo_00323,"@username onye oshi chineke kporo oku, udele ga eri ozo gi.",Abuse,59
+test_igbo_00324,@username you didn't even tag an igbo person. taa.. m kitikpa gbagbuo gi there,Abuse,78
+test_igbo_00325,@username isi ewu and palm wine,Normal,31
+test_igbo_00326,@username onye oshi criminal ##url,Abuse,34
+test_igbo_00327,@username udene mmiri mara,Abuse,26
+test_igbo_00328,@username nwa nza 🤣,Abuse,19
+test_igbo_00329,"@username jerry, rie nsi onye mgbu 😏😒",Abuse,37
+test_igbo_00330,"#thebible: gee nna nke mụrụ gị ntị, eledakwala nne gị anya naanị n’ihi na o mewo agadi- ilu 23:22.  #god #thedanieldallas #twitter",Normal,130
+test_igbo_00331,@username onye iberibe na nsukka,Abuse,32
+test_igbo_00332,"@username that's what you criminals are good at,   ofeke amaghị mgbe ekere nkụ ụkwa, onye mgbu..",Abuse,96
+test_igbo_00333,"instead of shawarma na bush meat; anu nchi, anu mgbada",Normal,54
+test_igbo_00334,"ọ kwa nwata zọwa nke ya,  ọ bụrụ ajọ nwa. e sokwa m na-ekwusi ike sị o,  ""egbe bere, ugo bere ma nke sị ibe ya ebena nku kwaa ya.""",Normal,130
+test_igbo_00335,@username ngwa jee nyụọ nsị ọnụ ọjọọ ekwolu ọnụ egbou ọchụ,Abuse,58
+test_igbo_00336,a diving ewu congo,Abuse,18
+test_igbo_00337,"it wasn't funny, from cigar for ụmụ youths to quarter truck load tubers of yam and practically feeding everyone. ndị imo state anaghị eji ntị anụ na ndị anambra na bịa ịlụ nwa hin nwaanyị. in fact your parents adịghị careful ndị ụmụnna na obodo ga ánákọrọchá",Normal,258
+test_igbo_00338,"@username onye iberibe, si nga puo",Abuse,34
+test_igbo_00339,"""@username : @username nne gi. nna gi. kaferi puba eba."" nnem ochie nwurugo kmt😠😠 ezinulö gi...",Normal,95
+test_igbo_00340,"ngọzi na-adịrị ndị agụụ na-agụ, ndị akpịrị na-akpọkwa nkụ maka ezi omume, n’ihi na a ga-eme ka afọ ju ha..- matiu 5:6",Normal,117
+test_igbo_00341,@username isi aki oyibo. receive healing of frontal lobe damage in chukwu okike name. iseee isee isee.,Abuse,102
+test_igbo_00342,"umunnem,biko bịanụ soro ka anyị gbaa mbọ hụ na ajo nwoke a akpọrọ elishaabbo, tara afufu maka  omume ya a jọgburu udele ma sigbue nkakwu. #igbotwittercommunity ##url",Abuse,165
+test_igbo_00343,"onye nzuzu nwa yoruba. better than yours. 😉 ""@username : @username oloshi omo igbo how ur life""",Abuse,95
+test_igbo_00344,"@username you're here calling him all sorts of things; ndi ugwu awusa na ofe mmanu ana-akpo ndi igbo chineke kesiri ike terrorists. aru! imagine being compared with boko haram. you guys need to fix up, and immediately too.",Hate,222
+test_igbo_00345,@username kitikpa gbagbuo gi na onu ahu iji akpo biafra.. shie abdulsamad rabiu of bua who was there is a biafran too?,Hate,118
+test_igbo_00346,@username nwaanyi watsup it's too early ##url,Normal,45
+test_igbo_00347,"nwata chọba nke ya, ọ bụrụ ajọ nwa.   ʟᴇᴛ’s ᴍᴀᴋᴇ ᴀ ᴅᴇᴀʟ 🤝  #mondaymotivation   ##url ##url",Normal,90
+test_igbo_00348,"@username nne gi na nna gi, are they aware? 🤔",Normal,45
+test_igbo_00349,@username bịa ebe a biko. onye aghụghọ! 😏😏,Abuse,42
+test_igbo_00350,@username ndi ofe mmanu can never be trusted..,Hate,46
+test_igbo_00351,"legit. ""@username : 'kitikpa gbagbuo gi maka ihe i mere obi'm. ewu.' rt @username : if you could say one thing to your last ex right",Abuse,132
+test_igbo_00352,nnukwu isi gi joro njo di ka bia bia di kwa ka enwe... aga m eme gi ife gba gi ose... isi ewu,Abuse,93
+test_igbo_00353,"@username nwaanyi oma,that's the deal ooo..",Normal,43
+test_igbo_00354,@username 😂😂😂😂😂😂😂😂😂.... anaghi eji amu ukwu emeja ikwikwi.... mana gawa n'ihu.... esom unu n'azu,Normal,96
+test_igbo_00355,"""@username : @username u dey mind d mugu. oloshi, onye iberibe, nkita ara""hahahahaha! achigbuola m onwe m o!! don't mind him",Abuse,124
+test_igbo_00356,@username i don’t like isi ewu,Normal,30
+test_igbo_00357,@username i bụ anụ ọhịa. otele.,Abuse,31
+test_igbo_00358,@username anu nchi o or mgbada di oku,Normal,37
+test_igbo_00359,@username hapu ndi akpiri ego ndi fulani turu ime ha..some doing it out of clannishness.,Abuse,88
+test_igbo_00360,@username 😂😂 ajọ nwa,Abuse,20
+test_igbo_00361,@username u can chase me back if u can. onye nzuzu,Abuse,50
+test_igbo_00362,"loool. onye nzuzu ""@username : yw onye ala @username : thank you fam. ""@username : @username yw av fun""""""",Abuse,105
+test_igbo_00363,@username onye nzuzu onye iberibe i n'arụ aka n'ike na esi na imi,Abuse,65
+test_igbo_00364,"hahaha.. ibiakwa""@username : i juta isi nkita i were agba ya mee gini?rt @username : @username nwanyi oma, how was de procession?""",Normal,130
+test_igbo_00365,"egbuom mmadu..*grabs cutlass*@username : cc @username rt @username : cc that onye oshi okuko on your tl #dreamchaser""",Abuse,117
+test_igbo_00366,@username nke a dika ôgbara gi gharii 🤗?..ofeke amarô mgbe ekere nkü ükwaa..fere tinye isi na ôhia.ajürüm gi simple ajüjü iwere nkpari tinye na ime ya..inaruo ikparia nne gi na nna gi..  onye nzuzu..,Abuse,199
+test_igbo_00367,@username you are just an onuku onye iberibe,Abuse,44
+test_igbo_00368,@username amu shigbuo nne gi,Abuse,28
+test_igbo_00369,"@username you mean "" onye mgbu""",Abuse,31
+test_igbo_00370,"@username onye nzuzu, onye iberibe, onye ara. ewe. anu ohia, nkita taa kwa gi anya,, ewobi,",Abuse,91
+test_igbo_00371,@username ihem mụtara bụ na ọdi mma iji aghụghọ soro onye aghụghọ,Normal,65
+test_igbo_00372,@username enugu road! akwụna ọjọọ.,Abuse,34
+test_igbo_00373,"@username ịkpụ nne gị gbakwa ọkụ ebe ahụ. i la wa anya, ebe ọ na ni gị ma asụ asụsụ obodo gi. amadioha gbawa gị anya, anụ mpam.",Abuse,127
+test_igbo_00374,@username you are a mad man. idiot ewu mumu olodo ode bastard. filho da puta.,Abuse,77
+test_igbo_00375,so ndị ugwu bu ndị oji amụ eme ọgọ. edi people are the ones representing wella in the south. ##url,Hate,98
+test_igbo_00376,@username said by onye ofe mmanu,Hate,32
+test_igbo_00377,@username ị bụ onye nzuzu na nnukwu na nke ahụ,Abuse,46
+test_igbo_00378,"@username isi nkita ko, isi okuko ni😂",Normal,37
+test_igbo_00379,@username nne gi mkpi nna gi oke mkpi ekperima lol,Abuse,50
+test_igbo_00380,@username isi aki oyibo... go figure 🤣🤣🤣🤣🤣🤣,Abuse,43
+test_igbo_00381,@username speedy bụ ajọ nwa si owerri banye nne ya n'afọ.. ezigbo efulefu,Abuse,73
+test_igbo_00382,"@username you know sometimes 'a na atụ anya ọdịdà osisi kpọrọ nkụ,nke dị ndụ e si na ukwu foru daa'",Normal,99
+test_igbo_00383,peter obi okwute is just pepper.,Normal,32
+test_igbo_00384,@username isi ewu ni bobo na,Normal,28
+test_igbo_00385,"@username there is agwu in his name, what do you expect from onye agwu?",Abuse,71
+test_igbo_00386,"@username biko gbafuo.  nwanyị akwụna, nwa agbọghọ na-enweghị uche na onye nzuzu.",Abuse,81
+test_igbo_00387,kitikpa gbagbuo gi there. onwu gbuo gi there. nwuo n' abalia. onye ara! ##url,Abuse,77
+test_igbo_00388,you wey god go punish.. makeup products kill you there....atụrụ nkwo nkalagu..... anụ ọhịa... ##url,Abuse,99
+test_igbo_00389,"lol, where is ahịa udele?",Normal,25
+test_igbo_00390,"@username chinazom, no de find my trouble. ajọ nwa",Abuse,50
+test_igbo_00391,@username onye oshi 😂😂😂😂😂,Abuse,25
+test_igbo_00392,@username ndi ofe mmanu egbugo mmadu here.,Hate,42
+test_igbo_00393,@username 😂😂😂😂 onye agwu,Abuse,24
+test_igbo_00394,"ka elete chaa, ka mgbọ ji atụ nwa enwe n'isi.  #igboproverbfriday ##url",Normal,71
+test_igbo_00395,"@username do you know that for southeastern igbo person adamu  means olodo, a daft. ònye iberibe",Abuse,96
+test_igbo_00396,@username nne nne😂😂😂...okwa ndi ofe mmanu,Hate,41
+test_igbo_00397,@username onye iberibe  like you...kitikpa gbaa gi der ewu,Abuse,58
+test_igbo_00398,nne gị bụ akwụna dị ọnụ ala ##url,Abuse,33
+test_igbo_00399,"@username mana ị ruo ụlọ, ị kpọọ nne gi na nna gị ndi iberibe. ozu",Abuse,66
+test_igbo_00400,"@username this comment is uncalled for. stop preaching such stereotypes.  ndi ugwu na ndi ofe mmanu na ako, e soru fa na ako udi ajambele a ?",Hate,141
+test_igbo_00401,@username onye mgbu  fighting for dead nigeria? big shame on you,Abuse,64
+test_igbo_00402,@username o na ato ha ka ishi nwa nza. tufia,Abuse,44
+test_igbo_00403,"@username , mechie eze ule gi there osiso.",Abuse,42
+test_igbo_00404,"@username onye iberibe a, you better go and seat down one place. anu ohia nwuru anwu",Abuse,84
+test_igbo_00405,@username 🤣🤣 onye ọgwụ ego,Abuse,26
+test_igbo_00406,agwọ aghaghị ịmụta ihe toro ogologo ##url,Normal,41
+test_igbo_00407,@username nuttin musa no go see for gate...enukwa nnukwu isi dika signboard ndi milo,Normal,84
+test_igbo_00408,@username hahahahah! ọ bụ ihe e ji mara onye aghụghọ na onye ụrụ ala. 😂,Abuse,71
+test_igbo_00409,"anu ofia ""@username : alinga usu :d""@username : nkita ara ""@username : okuko igbo""@username : ewu ""@username : mkpi na agbo ofe ga",Abuse,130
+test_igbo_00410,fuck u fake onye mgbu pasto..... ezi 🚶🏼‍♂️🚶🏼‍♂️ ##url,Abuse,53
+test_igbo_00411,"@username ✍️imana iru dị mma, adịro mma ịtụ mbọ. maka ndị ugwu na ndị ofe mmanụ egbu go anyị na obodo a, mana chukwu ga e chi ha unyi na anya nke ikpe azụ a",Hate,156
+test_igbo_00412,@username onyé iberibe nà enweghi akó n'uche kà that man bú,Abuse,59
+test_igbo_00413,@username na mumu you be. ewu awusa.,Abuse,36
+test_igbo_00414,isi ewu part 2 ##url,Abuse,20
+test_igbo_00415,ezigbo kitikpa oh ##url,Abuse,23
+test_igbo_00416,is ejayuru a guy or a gal?rt @username : @username ndi akpiri...,Abuse,64
+test_igbo_00417,"@username mercy si ""i'm a real life person"" the social media security si ""no comment"" 🤣 onye agwu",Abuse,97
+test_igbo_00418,anyi ga agwọ ndi twitter ji mmanu😂.. a di asụ plenty english na field. ##url,Normal,76
+test_igbo_00419,"'nwa nza n'agba egwu n'uzo marukwa  n' onwelu ihe na - akurunwa egwu n' ofia'' translated: a bird dancing on the road, be sure that the drum bit is by the bush. meaning: a sudden queer behaviour by a person or group of persons, the cause may not be far fetched.   ututu oma. ##url",Normal,280
+test_igbo_00420,@username very big fool. ewu awusa,Abuse,34
+test_igbo_00421,nwa ta cho bi nkaya kpọọ ya ajọ nwa #freennamdikanunow  #biafranationnow ##url,Normal,78
+test_igbo_00422,"@username 😂 😂 😂 onye ekpenta kwa!!..., onye gara ira onye ekpenta don enter nnukwu express way o.",Abuse,97
+test_igbo_00423,"onye wu nna gi? onye gi bu?  this is the greatest comeback of 2018, there is no defeating it.",Normal,93
+test_igbo_00424,otu nne gi anuofia efulefu nwamaka ##url,Abuse,40
+test_igbo_00425,"@username need to see this -------&gt;@username : @username lol biko rapu go di ndi ofe mmanu, fa ma kwanu otu e si a nu nwaanyi?â€",Hate,132
+test_igbo_00426,""" don't get bitter,get blessed""...#rev oke omezi",Normal,48
+test_igbo_00427,kitikpa gbagbuo gi ebe a!!! rt @username : @username 's boyfriend :( ##url,Abuse,74
+test_igbo_00428,"@username nwoke toochaa o chere ibe ya.   a naghi a gwa ochi nti na agha esula.   ahia a biara ma a hughi udele,  ihe mere na be mmuo   agadinwanyi daa ugboro abuo a guta ihe o bu n'abo onu.   onye iberibe a maghi na utara nwere isi.   e mee nwa ka e mere ibe ya, ogbu a laa",Normal,274
+test_igbo_00429,#biafra has come!  open ur eyes and see!  je gwa uwa nile! gwa ndi ugwu na ofe mmanu!,Hate,85
+test_igbo_00430,@username 😂😂😂.... ndi akpiri ogologo,Abuse,36
+test_igbo_00431,ka ezigbote onye oshi ##url,Abuse,27
+test_igbo_00432,@username may yours not work too. afọ njọ,Abuse,41
+test_igbo_00433,@username afọ njọ. ọ na a fu gị. ndo.,Abuse,37
+test_igbo_00434,@username you're welcome nwaanyi bekee (beautiful queen),Normal,56
+test_igbo_00435,@username kedu etu esi amata onye agwu maaru?,Normal,45
+test_igbo_00436,"@username ewu awusa obi amosu,, you will die in pain",Abuse,52
+test_igbo_00437,"@username ụmụ obiligbo  in one their songs opined that ""ị lụ ta ajọ nwanyị debe, ịmara na ọkụ mmụọ bì bé gị.""",Normal,109
+test_igbo_00438,"lool! looks like azu's head. ""@username : choose isi ewu or isi azu? — what's isi azu? ##url",Normal,92
+test_igbo_00439,@username abụm ọkpụlu n'ala nnewi... kụpụ ntị nna. amam na igaghi aghota... onye mgbu. ofulu ozu atụ nkwe dị na mmadụ.,Abuse,118
+test_igbo_00440,ụdị ikpa agwa  types of behaviour   onye nzuzu = stupid person onye aghụghọ =cunning person onye ekwurekwu = talkative ezigbo mmadụ = good person  onye asịrị = a gossip  onye ngana= lazy person  add yours ☺️  #igbolearners,Abuse,222
+test_igbo_00441,"ka ihe nile n’ejelu ndi nna gi ochie ozi, gbalu gi ogu n’ubochi ta…  iseeee!!!🙏🏻🙏🏻🙏🏻",Normal,84
+test_igbo_00442,@username where is the fraud here? agadi nwoke na agwo ofe,Abuse,58
+test_igbo_00443,"@username onye aghụghọ nwụọ, onye aghụghọ e lie ya. (con man die, con man bury am)",Normal,82
+test_igbo_00444,@username kitikpa gbagbuo gi na atiku. rijuo nu nsi onu there,Abuse,61
+test_igbo_00445,"@username nnaa e mee m wayo. jụọ feche, ọ ya akolu gị. ọgwụgo mmili nnaa. agwọ no na akirika now.",Normal,97
+test_igbo_00446,@username u 4 kuku put d whole varchester players dere naa..  onye mgbu!,Abuse,72
+test_igbo_00447,onye ori mandate @username .  onye ori  derico mandate,Abuse,54
+test_igbo_00448,"i commend sorry condemn the attack on ekweremadu by aggrieved igbo youths in germany.  meanwhile, anyị adịghị asị ndo and onye agwọ agwogo ya.",Normal,142
+test_igbo_00449,@username mbaise kii u. nwunye m aburo onye mba5. onwero ihe gbasalum with nwaanyi ozo.,Normal,87
+test_igbo_00450,chaiii mana nna ya enweghi otu na##url #okbye rt @username : otu nna gi! rt @username : o'na a'alu olu securi ... (more)  ##url,Abuse,127
+test_igbo_00451,ọ bụrọ ife niine ka a na - agwa ofeke.  not every information is meant for the non initiate. emeritus prof j a umeh. @username #igboamaka #ikenganation #igboheritage #amaigbo #igbo #igboproverbs #iluigbo,Normal,203
+test_igbo_00452,obi okwute’m! ayi so kwaaaa. let’s goooooo 🔥🔥🔥🔥,Normal,47
+test_igbo_00453,"nwa nza ri juo afọ, ọ so chi ya pụta ka ha gbaa mgba..",Normal,54
+test_igbo_00454,"@username tupu ị tinye ego na nwanyị gị, enwere m olileanya na ị tinyela ego na onwe gị? atụrụ m anya na ị tinyekwala ego na ezinụlọ gị? (nne na nna gi na umunne gi). ọ bụrụ na ọ bụghị, ị ka emechara nwoke. ịkwesịrị ịchọ enyemaka !!!",Normal,233
+test_igbo_00455,"brother nnamdi kanu, biko anyi enwere ike ipu ugbua ga buru nwa ... chi ejiela",Normal,78
+test_igbo_00456,@username you. onye ọgwụ ego 😂,Abuse,30
+test_igbo_00457,@username u be mumu â€¦ ewu,Abuse,27
+test_igbo_00458,@username nne gị bụ nwanyị akwụna,Abuse,33
+test_igbo_00459,abeg keep shut  agadi ewu ##url,Abuse,31
+test_igbo_00460,haa rt @username : anu nchi osha rt @username : mkpi asaba rt @username : under bridge ( ˘˘̯) rt @username : where ... ##url,Abuse,124
+test_igbo_00461,"kedu oge anyi na e'bido ?  ndi ofe mmanu, ndi araa ##url",Hate,56
+test_igbo_00462,"@username nne gi na nna gi mugu....  zuzughariwa na twitter ekwensu ‼️ nne gi na nna gi should be in dss dungeon in high spirit, anu ohia. you cannot do what simon is doing. illiterates everywhere.",Abuse,197
+test_igbo_00463,"@username cry inside here🤣🤣🤣🤣 my mom told me am a nigeria   onye iberibe  aturu, ewu awusa, ikpu nnegi there 🤣🤣 ##url",Abuse,117
+test_igbo_00464,"@username nne, o bu onye ara, enweghi m oge ka m gwa gi ife. ara ga gba ndi ara. ndi nzuzu ha nwe ishi ako n'uche.ofe mmanu bu ofe mmanu.ogbanje kaobu",Hate,150
+test_igbo_00465,farmer/future onye ọgwụ ego ##url,Abuse,33
+test_igbo_00466,@username nne na nna gi rie nsi  kitipka gbagbuo gi na ezinulo gi there..ozu,Abuse,76
+test_igbo_00467,@username sorry ozu….. bupu onwe gi here. odika inuro ala nne gi ofuma,Abuse,70
+test_igbo_00468,"@username akwuna kwuna, ọjị ịkpụ agadi eme ogo. onye iberibe ga ala n'iyi. agadi ekwe nka. ịkpụ gbara uka. onye oshi na onye ama. aturu na ụdị mmadụ.",Abuse,149
+test_igbo_00469,"@username ##url  energy queen, ogbeni wild udele one isi ndi gentleness oya coman use ur power elsewhere... no be only kobo kobo biz we go dey see u, come this way onye iberibe",Abuse,176
+test_igbo_00470,@username ọgbanje ga agbachiya nti🤣🤣🤣,Abuse,37
+test_igbo_00471,"ihe ahụ ị na eme nwa gi, e me gị ya, ọ ga adị gị mma?  ọ bụrụ na nne na nna gị ejighị asụsụ igbo zụlite gị, kedụ ka anya na imi kaarị ị dị gị taa dịka okenye? #subaasusugi",Normal,171
+test_igbo_00472,@username 🤣🤣 ejiofor deceived dos ndi akpiri ogologo plus because they are criminal minded,Abuse,90
+test_igbo_00473,"@username hahahaha! ona abia! and congratulations make nke ozo ahu, akwukwo blue ndi usa! okwa gi na e win na 2021 o!",Normal,117
+test_igbo_00474,"buhari orders efcc to probe aisha buhari and her family ##url ""oju nwa nkita anya, otaa onye nwe ya."" buhari bu nkita ara",Abuse,121
+test_igbo_00475,@username zombie o kwa ya? makana o na-azo umu biafra. i so na ndi juru n' umu biafra agaghi e nweta ihe ha tufurula otutu ndu maka ya. anu ohia! 'ofeke na-amaghi mgbe ekere nku ukwa'. 🙄,Hate,186
+test_igbo_00476,@username onye nzuzu di ka gi what good about him😡 #endsarsnow #endpolicebrutalityinnigeria #endsars,Abuse,100
+test_igbo_00477,"@username ofeke mmuo na mmadu, onye iberibe",Abuse,43
+test_igbo_00478,@username bilateral relations kill you there mumu. otoro gbagbuo gi there ewu. kitikpa gbagbuo gi there aturu. usu mia gi onu there udele. that's what you get for supporting a thief who stole the mandates of the people,Abuse,218
+test_igbo_00479,"@username onwelo onye juu gi,,so jee zuo ike nkapi",Abuse,50
+test_igbo_00480,@username ina akpa agwa ka nndi ofe mmanu 😀,Hate,43
+test_igbo_00481,ekwensu ihere mmegbue gi... ##url,Abuse,33
+test_igbo_00482,"who they teach you igbo? epp me too  🙋😭😭😭""@username : onye ime ezi “@username : lmaooooooo onye iberibe ##url",Abuse,109
+test_igbo_00483,@username ije ụwa bụ agwọ ije ụwa na aga ka agwọ osi aka nni aga ọ osi aka ekpe aga. mad songs from him 🔥🔥,Normal,106
+test_igbo_00484,@username ekwensu gbuo gi there,Abuse,31
+test_igbo_00485,@username why are you afraid? onye ori! ndi agadi na agwo ofe,Abuse,61
+test_igbo_00486,"@username mechipu gi eze ule gi ebe afu, atulu.",Abuse,47
+test_igbo_00487,@username aturu gbara nne gi mere oji muta gi...,Abuse,48
+test_igbo_00488,nna lekwanu this ofe mmanu nigga oohhh. ndi ara,Hate,47
+test_igbo_00489,@username onye agwu eburu bata,Abuse,30
+test_igbo_00490,"@username onye aghụghọ mmụọ. when he is ready, we will know.",Abuse,60
+test_igbo_00491,"@username if you were a little pleasant to look at you won’t want to be binding behind someone else. imaghi ihe at all, ofeke n’enweghi uche, ejima uche gi nye nkita ara ndi obodo unu, ozu nworu anwu.",Abuse,200
+test_igbo_00492,@username okalu m mma na mu nodulu onwe m dan na m nwe enyi nwaanyi ga egbu m egbu,Normal,82
+test_igbo_00493,@username ewu igbo shame on you,Abuse,31
+test_igbo_00494,"@username normally i ignore people on social media..  but bros i bụ mkpi gambia, atụrụ awụsa, ike nkịta, nkịta ara, anụ ofia, onye iberibe, i gaghị enwe ezumike na ndu gị nile, ose nsukka ga abagi na amụ. arụ gị ga na esi ka onions na crayfish. i dị ka ozuu ákwá ra ákwá. 😠",Abuse,273
+test_igbo_00495,"@username kitikpa agbagbuole nne gi nah, zuzuma, owu peter obi mere amu nna gi ji muo rubbish. udele rikwee ozu gi there.",Abuse,121
+test_igbo_00496,mgbada dey? o nè ge’nti?  nwanne dm osisor,Normal,42
+test_igbo_00497,"o_o..tot mkpi means 'horny' :) rt""@username : isi ewu nwa mkpi a di ezigbo uto rt @username : dat he-goat head is too delicious #translateinigbo""",Normal,145
+test_igbo_00498,@username ........ndị afọ njọ.. 😂😂😂😂😂 nya wutebe ha.. 💯💯💯💯,Abuse,58
+test_igbo_00499,@username obi okwute (2022),Normal,27
+test_igbo_00500,@username nwa nza rijou afọ ọ bọ chi ya ike.,Normal,44
+test_igbo_00501,@username henry bu ofeke!,Abuse,25
+test_igbo_00502,@username see onye iberibe,Abuse,26
+test_igbo_00503,@username onye nzuzu anu mpama as you are using naira to buy naira efulefu okoko,Abuse,80
+test_igbo_00504,@username nwa nza zukwanu ike!!!,Abuse,32
+test_igbo_00505,lezienụ anya maka ndị amụma ụgha ndị na-abịakwute gị n'uwe atụrụ ma n'ime ha bụ anụ ọhịa wolf na-emebi emebi.,Abuse,109
+test_igbo_00506,"@username ikpu nne gi,ekwensu kpookwa gi oku.stray bullet go soon locate you",Abuse,76
+test_igbo_00507,@username lol! a gwa ntị ma ntị anụ e gburu isi  e gburu ntị. karma is real.,Normal,76
+test_igbo_00508,@username kizz daniel ewu,Abuse,25
+test_igbo_00509,@username 😀 😀 😀  choi ndị akpịrị ogologo.,Abuse,41
+test_igbo_00510,"but am yoruba""@username : oya lead the way""@username : make we create igbo sect?""@username : onye ori nri""@username : ofe akwu na rice di oku.""",Abuse,143
+test_igbo_00511,@username si nga pụọ,Normal,20
+test_igbo_00512,"@username onye iberibe, ezi ofia, onye amosu, onye agbalionwe, nwa nkita, nwa enwe, what exactly are u trying to say? i want to send u the money drop ur account details. nwa ewu. ike mbe like u..",Abuse,195
+test_igbo_00513,#ipanforonenigeria my happiness is that this #ipanforonenigeria shit ends in tweeter lite definitely. ndi ofe mmanu na ndi ugwu jizi aha #ndigbo na aghori ndi nna nna ha . nonsense,Hate,180
+test_igbo_00514,"ilu igbo  ekwe onye ekpenta n'aka, ibi ọma agụba ya.  if a leper is offered a handshake, he will want an embrace.",Normal,113
+test_igbo_00515,@username awka na aso enwe,Normal,26
+test_igbo_00516,"this clearly shows  "" atụrụ gbalu egwu na iru bee nna gị "" ##url",Normal,64
+test_igbo_00517,@username useless kaisha onukwu sokoto ewu awusa,Abuse,48
+test_igbo_00518,arteta is a stubborn goat. ewu awusa,Abuse,36
+test_igbo_00519,@username ibu ezigbo nkita ara olodo!!!,Abuse,39
+test_igbo_00520,"@username lmao 😂 kitikpa o ji ukwu eje, i nwere amu e ji ala fat ladies, rijugonu afo. onye mgbu",Abuse,96
+test_igbo_00521,"@username agadi na agwọ ofe, onye iberibe, anụ mpama",Abuse,52
+test_igbo_00522,@username strategy? imana ibu nnukwu onye nzuzu. okpara oma afo ya. obu soso akpa gi ka ina acho iwee kpooya strategy. kitikpa gbarie gi isi ebe ahu. strategy ibidoro tupu imuo nwa. ka strategy gbaagi gi ara ebe ahu. onye uzuzu.,Abuse,228
+test_igbo_00523,"@username ọ bụ agha?  m nwekwara minamitorishima isonye.  anọ m na-eche ma m ga-aza na spanish, mana m kpebiri iji igbo ebe a.  kedu ihe kpatara m ga-eji kwuo otu a, onye nzuzu.",Abuse,177
+test_igbo_00524,@username i nwere ọnụ ọjọọ 🤣😂🤣,Abuse,30
+test_igbo_00525,"@username nwa nza na erijghi afọ, suffering from kwashiokor",Abuse,59
+test_igbo_00526,@username osi ndi ofe mmanu 🤣,Hate,29
+test_igbo_00527,oga paulo senior oke mkpi ##url,Abuse,31
+test_igbo_00528,"idiat! isi ewu!!! mkpi hausa! ""@username : fadiya""",Abuse,50
+test_igbo_00529,@username ashi  na bianca slap obiano wife. the nkita ara collect slap from ijele nwanyi  there was a slap 🤣🤣🤣🤣,Abuse,111
+test_igbo_00530,"@username nne gi na nna gi ewu na udele, useléss thing, zuzughariwa na twitter ekwensu 🐒",Abuse,88
+test_igbo_00531,"@username mmanya diochi'a aburo maka onye nwere uburu na ile ewu ka gi, nya i ga-ebuzo sachapu onu ule tupu i nghota ezigbo uto mmanya diochi'a",Abuse,143
+test_igbo_00532,@username ezigbote onye mgbu kupu😂,Abuse,34
+test_igbo_00533,"""@username : ebule!""@username : @username anu nchi!!!""""otule okuko!!!",Normal,69
+test_igbo_00534,@username lukaku- dimkpa benin 🤣,Normal,32
+test_igbo_00535,@username another akpa amu spotted..  speek for yourself and children oo  anu mpama..  this one done cashout..  @username i bu onye iberibe sir,Abuse,143
+test_igbo_00536,"rt @username : @username pls rt n check out ""onye agwu ft. shuley dee "" by @username link&gt;&gt; ##url #irepnaijamusic",Abuse,119
+test_igbo_00537,"@username nne gi bu akwuna, anuofia, efulefu",Abuse,44
+test_igbo_00538,"""as a graduate i refused to be ideal,i refused to be a prostitute""   just negodu ife agadi nwanyi noro odu dee. ike gwuru ##url",Abuse,127
+test_igbo_00539,"phyno must deal with that nkita pia mia, aha gi ya bu onye nshi. i ga ada pia. onye oshi",Abuse,88
+test_igbo_00540,@username anu ohia rere ere. udele a buru onu. nkita ara.,Abuse,57
+test_igbo_00541,@username lol dimkpa benin,Normal,26
+test_igbo_00542,"@username iti boribo negodi ka i si echu ezi na ụlọ gị ịhụ. bia ebe a na a gwa ụwa niile na na nna gị kpotara nne gị ebe ọ na agba akwuna, nke ka nke bu na ọ mụrụ sọ akwuna mujuo ụlọ..",Abuse,184
+test_igbo_00543,"@username asi nwanyi oma...the main onye mgbu but onye nwetelu #2,200...a na achupu onye nwe shop ka enwelu shop ya setie olu, o'comply kwa nalu nke ruoru ya juo ezigbo oyi😂",Abuse,173
+test_igbo_00544,me abi? rt @username : oomf's avi tho.. be looking like udene mmiri mara.,Abuse,73
+test_igbo_00545,@username ezì ị nwere aka oru? o buhọ ọnụ nne gi buru gi na enye gi nsogbu ihe a?? mkpi,Abuse,87
+test_igbo_00546,@username i don't want onyinye ekwensu,Normal,38
+test_igbo_00547,@username aturu awusa. ewu gambia. nkita calabar. udele  bini. i bu ezigbo anu ohia.,Abuse,84
+test_igbo_00548,@username nne gi maggot nna gi maggot otele nne gi maggot amu mpagi maggot onye ala idi komkom.,Abuse,95
+test_igbo_00549,"@username u dey craze, iibu onye ara, anuofia, nkita ara,",Abuse,57
+test_igbo_00550,"#simonekpa simon ekperima barr ifeanyi ejiofor etigo gi mgbada nwuru anwu n'isi 🤣🤣🤣🤣,onye mgbu",Abuse,94
+test_igbo_00551,"@username daalu, nwaanyi oma.",Normal,29
+test_igbo_00552,"tụfịakwa!!! simple instructions, you people cannot follow. you're here crying foul. anụmanụ!! ##url",Abuse,99
+test_igbo_00553,keep running man !nwoke eze ule ##url,Abuse,37
+test_igbo_00554,"@username lmao, gị na ọnụ ọjọọ, you ended with a banger 😂",Abuse,57
+test_igbo_00555,"didn't ask u na @username : sooo not funny ""@username : lmao ""@username : nna gi bu onye ochi""""@username : plz, what's the meaning o",Normal,132
+test_igbo_00556,@username ndị ụchụ  ndị araa  ndị imbeciles  ndị efulefu  ndị ume ngwụ adị aga m efu  useless people with useless leader  bunch of illetates with no traceable certificates  ndị abụrụ ọnụ  irredeemable buffoons,Abuse,209
+test_igbo_00557,@username ekwensu e romancee mamiwota  my fav phrase,Abuse,52
+test_igbo_00558,@username nna gị ga aburiri gayoyo. ịfụ kwa basụsụ ọ kụlụ gị na foto ahụ?  ekene dịrị olisa na isi gị na ụbọchị nke taa.  happy birthday 🎂 🎉,Normal,140
+test_igbo_00559,@username ekperima ishi aki ##url,Abuse,33
+test_igbo_00560,@username nnen ị nwere ọnụ ọjọọ 😁,Abuse,33
+test_igbo_00561,"@username abum nwafo igbo, ofeke, iruo begi gwa nna gi na obughi onye igbo 🤡",Abuse,76
+test_igbo_00562,"@username yes your brain is malfunctioning, not only that you're daft and stupid.  isi adịghị gi mma. okpo. i chere na ọ so gi ma asụ asụsụ obodo gi. ne kwa anụ ohia o😂😂🤡  nwanne irughi my level, lai lai. well i wish you what you wish nigerians!",Abuse,245
+test_igbo_00563,"how do you translate this to english?  ""onye iberibe muta ita atu osisi di n'ohia agwu...""",Abuse,90
+test_igbo_00564,ukwu ya ka ukwu onye ekpenta. lmao ##url,Abuse,40
+test_igbo_00565,"@username anụmanụ, can you point to 3 of those on going projects in aba? ewu awụsa.",Abuse,83
+test_igbo_00566,"oyebola @username : ebola ""@username : ekwensu ""@username : eniola""@username : yoruba names starting ... ##url",Abuse,110
+test_igbo_00567,@username sunny ekwekwana ka kitikpa gbagbuo gi,Abuse,47
+test_igbo_00568,@username nne gi otele,Abuse,22
+test_igbo_00569,@username guy shhhhhh🤫🤫🤫🤫🤫 ekwurekwu,Abuse,36
+test_igbo_00570,@username kitikpa lashapu gi ma agbatobi gi ma ndi nnanna gi anya. ezi,Abuse,70
+test_igbo_00571,":-)""@username : oh nnem nsogbu adiro""@username : @username nna a kedu ife na emezi? kee ife gi na ndi ofe mmanu na exchange words?",Hate,130
+test_igbo_00572,"""ekwensu abia late na morning mass"" - chinwetalu agu",Normal,52
+test_igbo_00573,@username ndi ara. ofe mmanu people,Abuse,35
+test_igbo_00574,"@username gba nu this mgbada nkiti,obu ndi ha tinyere anyi no onodu obodo nigeria di. onye iberibe....",Abuse,102
+test_igbo_00575,@username kitikpa gbagbuo gi there..avoid me nah please,Abuse,55
+test_igbo_00576,"@username onukwube mpama, ewu awusa.. usu racha gi onu",Abuse,54
+test_igbo_00577,@username taa kpuchie eze ule gi ka anyi fu uzo. osikwa no david.,Abuse,65
+test_igbo_00578,@username ifunaya indeed. nkita ara.,Abuse,36
+test_igbo_00579,emenike enwe weight !!!,Normal,23
+test_igbo_00580,@username nkita ara na enweghi nwanne racha gi anya. ina adika ihe eji chuo aja.,Abuse,80
+test_igbo_00581,"onye ọbụla gwara gị na ndị igbo ahụghị onwe ha n'anya bụ onye aghụghọ ma bụrụkwa onye mkpasa. a na-enwe esemokwu na nghọtahie mana ọ kwa ka ọ dị be onye, ka ọ dị be ibe ya. ọ pụtaghị na igbo ahụghị onwe ha n'anya.",Normal,213
+test_igbo_00582,@username as per nnukwu isi,Abuse,27
+test_igbo_00583,"tufac na asu asusu igbo. d'banj n'asu igbo. mi n'asu igbo... umunna asusu igbo amaka. ndi ugwu,  ndi ofe mmanu, ndi mba mmiri... igbo kwenu!",Hate,140
+test_igbo_00584,@username dont mind her jare awon agbani the red goat.onye iberibe #proudlyicons,Abuse,80
+test_igbo_00585,"ụbọchị ụmụ nwaanyị  ị na-egosi ike, ịhụnanya na onyinye n'ihe ọ bụla ị mere. site na gị ka ngọzi kachasị si abịa ụwa. udo, amara, amamihe na ebube ka ị na-ezipụta ebe ọ bụla ị nọ.  nwatakịrị ọ bụla ị kwụ n'azụ ga-abarịrị uru. 👇🏾👇🏾 ##url",Normal,236
+test_igbo_00586,"rt if proud igbo  oke ọkụkọ nke na-asị na ọ bụ onye ara [anụ ọhịa] ahụbeghị nkịta na-egbu egbu. (ọ bụrụ na onye dị njikere iche ọnwụ mgbe niile, onye ahụ dịkwa njikere ịnwụ anwụ, ọ ga-amalite ịchọ ndụ.)",Normal,202
+test_igbo_00587,@username nwaokorobia ahu bu amosu and onye iberibe.,Abuse,52
+test_igbo_00588,@username odugwu nwaanyi udo di ri gi ma,Normal,40
+test_igbo_00589,@username gbam! ezigbo nwada igbo! nne gi mulu gi! i ji ya,Normal,58
+test_igbo_00590,"judi judi, isi ewu ọbụ ego ọ ne? chicken na ugba agwọ ruo agwọ eh ha ncha ọbụ ego ọ ne? (five hundred naira) nkiri nkiri, ụmụ guys ana achaghari anya...  beer parlor discussions🎶- #flavour",Normal,188
+test_igbo_00591,@username mechipugi ọnụ. eze ule! 😠,Abuse,35
+test_igbo_00592,onye ori okuko ##url,Abuse,20
+test_igbo_00593,"@username don't mind him,he gave out of sentiments.ebe anyi na enye nsogbu ka aloba gi na enwe nsogbu .#madridfinals",Normal,116
+test_igbo_00594,this what igbo people call...  ibia na ikpo nunú gbalú nwa nza!!! ##url,Normal,71
+test_igbo_00595,rie nsi mebiri emebi!!! anu ohia nwuru anwu ##url,Abuse,49
+test_igbo_00596,"anyị ga adị ka echi, echi bu agwụ agwụ  a sị na atuoro ọmara ọmara...a tuoru ofeke.... ##url",Normal,92
+test_igbo_00597,@username onye iberibe smh,Abuse,26
+test_igbo_00598,@username dimkpa benin. ewu hausa,Abuse,33
+test_igbo_00599,@username onye oshi.... kitikpa gbagbuo gi anuohia!!! waka 🖐🏻,Abuse,61
+test_igbo_00600,"@username eze nnunnu, @username nwa nza! lmao",Abuse,45
+test_igbo_00601,@username otua ka ndụ ndị ofe mmanụ nile dị! okomoko mere ha ncha!,Hate,66
+test_igbo_00602,@username 😀🤣🤣 nobi small ndi akpiri,Abuse,35
+test_igbo_00603,ọmụmụ asụsụ ụtọ asụsụ bekee | australia ⭐️ #21 where? ʃi ɪz ɪn ˈləndən. ọ nọ na lọndọn. where is your mother? wɛr ɪz jʊr ˈməðər? olee ebe nne gi no? she is in david's house. ʃi ɪz ɪn ˈdevɪdz haʊs. ##url,Normal,202
+test_igbo_00604,"@username ị ga-ata ahụhụ, ma gị na ezinụlọ gị ga-anọgide na-abụ ohu nigeria.  ewu",Abuse,81
+test_igbo_00605,"lol onye alaa""@username : ndi ofe mmanu rie nu. rt @username : igbo kwenu""",Hate,74
+test_igbo_00606,oga go get a life onye nzuzu ha si gi ga akwukwo isi no abusilima ki ya na ko onye ala ##url,Abuse,92
+test_igbo_00607,"@username idi mma igba akanti. onye iberibe nwuru anwu. ibu uchu nyere nigeria. agadi ekwe onwu, onye uwa ojoo.  ekuke sambisa forest.",Abuse,134
+test_igbo_00608,@username tie ebewu ti kwa sa kwa ebewu..... ozu go 😀,Normal,53
+test_igbo_00609,"mechie eze ule gi, ana akoyeli ##url",Abuse,36
+test_igbo_00610,"otu nne gi, eba!!!! rie nsi. ##url",Abuse,34
+test_igbo_00611,"onye ala, onye iberibe ##url",Abuse,28
+test_igbo_00612,"@username chukwu kpo, nne gi,nnenne gi, nna gi, nna nna,gi na  ezi na ulo gi oku ndi uchu sabo nti ike ndi oshi pos nzama group of company",Abuse,138
+test_igbo_00613,"@username why not replace him with ike ekweremadu and see if igbos are following him because he is igbo   person go just open mouth bido kogheriwe ihe na enweghi isi,  ewu",Abuse,171
+test_igbo_00614,"ewoo otito delu chukwu ,isi ewu na chau gi , hahahaha tufiakwa!",Normal,63
+test_igbo_00615,"ekwe onye ekpenta n'aka, ibi ọma agụba ya. / if a leper is offered a handshake he will want an embrace. [give an inch and they will take a mile.]",Normal,145
+test_igbo_00616,@username ekwensu ga akpo nna gi na nne gi oku efuruefu anu jaki.,Abuse,65
+test_igbo_00617,@username ijuta isi nkita ijilu agba ya mee gini?,Normal,49
+test_igbo_00618,"peter obi fall my hand scatter , to weak for this politics , nwoke kwesiri e nwe  obi okwute, as okwute ndi igbo he is",Normal,118
+test_igbo_00619,"rt @username : amin!!! ""@username : goodluck ebele jonathan, kitikpa gbagbuo gi!""",Abuse,81
+test_igbo_00620,"before the cowards pass their nkita ara bill, sen.woman-beater somebody sim gwa gi na iwu onye iberibe, nuofia, ewu, eju, oluku, nchi, udele, oke, ukpana, alinga okporoko, usu, nkapi, idide, ochicha...kitikpa rachie gi anya there!! *takes a deep breat*... #saynotosocialmediabill ##url",Abuse,285
+test_igbo_00621,@username rochas ibu ezigbote anu ohia. udele mmiri mara ka igbu. chineke kpokwa onu gi oku. ewu!!!!!,Abuse,101
+test_igbo_00622,"atualu omalu, omalu....atualu ofeke ofeye isi n'ofia",Normal,52
+test_igbo_00623,@username didn't get the right news before coming to rant like nkita ara. agadi ekwe nka!,Abuse,89
+test_igbo_00624,ndi b'anyi ekene m unu!  ndi gboo si na ofeke na-agbalu ga be dibia anaro anwuru n'oge!  ka tataa aburo ubochi eke o ka! ga-eketelu anyi ihe oma!  mmamma n'isi nine ji obi ocha ebi! agamniru ka m na ayo n'isi unu ncha🙏🏾 ##url,Normal,225
+test_igbo_00625,@username ewu awusa ndi political solutions. zombie ndí prisoner of conscience. atụrụ ndí nzama na biafra struggle.  kanunta kanu's fraction of ipob.  abductors of onyendu,Abuse,171
+test_igbo_00626,"ụmụ igbo niile, anyị ekele unu.   igbo na-asị na ilu bụ mmanụ ndị igbo ji eri okwu. n'ihi nke a, ihe anyị na-ewetara unu taa bụ #ịlụigbo.  biko, mezue ilu a  ""ọchụ nwa ọkụkọ nwe ada. nwa ọkụkọ nwe.....""  #centreformemories ##url",Normal,228
+test_igbo_00627,"@username nne gi , nna gi na umu nne gi bu cha ekwensu",Abuse,54
+test_igbo_00628,@username ị bụ ajọ nwa agbọghọ 🤣🤣,Abuse,33
+test_igbo_00629,otua ka odi rt @username : onye iberibe o na-amakwanu mgbe e kere nku ukwa?,Abuse,75
+test_igbo_00630,@username ezi nwanyi di uto ❤️❤️,Normal,32
+test_igbo_00631,"@username achọrọ m nwoke toro eto, nwoke mara mma na onye kristian, nwoke nwere ezigbo obi na aka olu. achoro m nwoke nke ala.",Normal,126
+test_igbo_00632,@username impotent kwa. where izdat talk coming from. ewu hausa . si ebea puo osiso. onye ngbu!,Abuse,95
+test_igbo_00633,chimaroke onye ori! 🤣🤣🤣 ##url,Abuse,29
+test_igbo_00634,@username odee a edeela nke a kpọrọ.. ọgazị amaka.. chebiri nke a niihina ihe anaghị akọ ebe ọ na-adị. ụkọọ jisie ike na ntute asụsụ igbo dị mkpa n'oge a. daalụ,Normal,160
+test_igbo_00635,@username ability to misbehave.   ndi ume ngwu,Abuse,46
+test_igbo_00636,"@username lol... finish ya course, onye nzuzu",Abuse,45
+test_igbo_00637,@username ị nweghị ike ịpịa anụmanụ nwụrụ anwụ ihe,Normal,50
+test_igbo_00638,@username vote ohu nne gi na amu nna gi there. chineke nna gba gbuo kwe nne gi na  nna gi there nwa ekuke nkita ara.,Abuse,116
+test_igbo_00639,"na god go punish u ""@username : akpa amu nna gi rt @username : english pls ""@username : @username onye ara, t(-_-t)""""",Abuse,117
+test_igbo_00640,@username ego rijuo nsi afo ooo.. kitikpa gbagbuo gi ooo.. aga m emecha kpata gi ooo.. nekwanu onye isi ala anyi..,Abuse,114
+test_igbo_00641,@username ọnụ ọjọọ. 😂 😂 🤣 🤣,Abuse,27
+test_igbo_00642,anyị nwere ike ịhụ na asụsụ anyị nwere ike ịnwụ. ka anyi lee ihe anyi nwere ike ime iji mee ka asusu anyi di ndu.   #igbonotindonesian #africanlanguagesmatter #smwlagos #africanlanguages #igbo #culturalpreservation,Normal,214
+test_igbo_00643,onye iberibe kai ##url,Abuse,22
+test_igbo_00644,@username mgbada chijioke anyigor 0759446702 access bank  am from ebonyi state,Normal,78
+test_igbo_00645,@username anu ofia utobo echem na inwere uche  oputara na óbú mkpi gbara nne gí?,Abuse,80
+test_igbo_00646,@username agwu di na mmadu if only you know how insignificant you are ikpuchie eze ule,Abuse,86
+test_igbo_00647,oge erugo ịmalite ide ederede na asụsụ nna nna gị ma anyị ga-ebute ihe atụ,Normal,74
+test_igbo_00648,@username ara gbachikwa gi nti ewu awusa  you want to be noticed,Abuse,64
+test_igbo_00649,"@username yep i think so, ndi ofe mmanụ in their element",Hate,56
+test_igbo_00650,"onye-iberibe ""@username : onye ala ""@username : o gbasara gi ugochukwu rt @username """,Abuse,85
+test_igbo_00651,@username iwu ezigbote otele..  oya block me too,Abuse,48
+test_igbo_00652,@username ọ dị ka ofu nwaada wara anya e jidere nna anụmanụ a n'ọrụ wee rikpọọ ego ya. ma nke a kaara iji kwụ ụgwọ akwụkwọ anụ mpama a. ị fụrọ n'ụbụrụ atọgbọghị onye nke a n'isi?? anụ ọhịa nne ya na nwunye ya na agba n'iro!!,Abuse,224
+test_igbo_00653,@username 😂 😂 😂  ọkwa onye nzuzu  dị ife a oh,Abuse,45
+test_igbo_00654,@username ezigbote onye oshi,Abuse,28
+test_igbo_00655,@username noble onye agwu!!,Abuse,27
+test_igbo_00656,"@username ozu nwuru anwu. anu ohia. akpoo ndi imaputa; ""my mama say i be ibo"". idiot. 😏",Abuse,87
+test_igbo_00657,have you had a well prepared anu nchi?  or anu  ele or mgbada? ##url,Normal,68
+test_igbo_00658,@username onye ala  onye nzuzu.  get away you,Abuse,45
+test_igbo_00659,@username i am an anambra guy...yen yen yen yen. tell us you wished to be. onye ofe mmanụ nwụrụ anwụ.,Hate,101
+test_igbo_00660,@username nna sachie eze ule gi,Abuse,31
+test_igbo_00661,@username kitikpa gbagbuo gị. anụmanụ. akwụ ana tarie gị ọnụ amụ,Abuse,64
+test_igbo_00662,@username ọ bụ ndị akpịrị ga e je na ele ebuna eji achụ alakuba,Abuse,63
+test_igbo_00663,@username ndi ume ngwu.,Abuse,23
+test_igbo_00664,@username daalụ nwaanyị ọma.,Normal,28
+test_igbo_00665,"@username onye agwu.. u are a moving badluck.. okwom noolu onwem, na agba game kam si nwe ike.. ibulu ozu onwe gi plus ur badluck bata..  u don succeed to transport me from benin back to anambra..   kualu onwe gi aka",Abuse,216
+test_igbo_00666,@username anuofia nwụrụ anwụ. ofeke na esunye be ya ọkụ. ezii bida.  onye bụ nna gị. ose aka.,Abuse,93
+test_igbo_00667,@username zaamu nwanem? maka agahim arapu umunem sobe ndi ugwu!ma obu ndi ofe mmanu! maka na nnam nuru agha and ochokwara inu ozo ma osu,Hate,136
+test_igbo_00668,onye iberibe. onye ara. anu ofia. nkita ara. ike nsi. ##url,Abuse,59
+test_igbo_00669,only one reply from vector everything abọye ka ike ọkụkọ. ##url,Abuse,63
+test_igbo_00670,"@username this is what you get when @username will keep being an imbe. @username aturu, @username ezi bida, @username nkita ara, @username ozu nwuru anwu, ekweremmadu okpo ngaji, @username otimkpu nama, ngige nkapi. ugwuanyi iti mpataka. bunch of selfish sycophants",Abuse,265
+test_igbo_00671,"@username kitikpa!! onye ala ogbete! biko sim na uzo puo, oburo so igosi am ikogosi spring . ana ekwu ##url",Abuse,107
+test_igbo_00672,"@username ara gbagbuo gi, mpa gi, mma gi na umu nne gi. otele gbaakpoo gi anya. ewu",Abuse,83
+test_igbo_00673,@username nne gi na nna gi ekwensu!! 😊🤭,Abuse,39
+test_igbo_00674,"@username ozu kwe ka ọ hà, e lie ya n’oge .  however! gịnị kpatara m ga-eji akwaara onye ọ bụ nnukwu isi ákwá, ọ bụ m ga-eyi ya okpu ya?",Normal,136
+test_igbo_00675,@username nne na nna gi mkpi lagos.,Abuse,35
+test_igbo_00676,"@username udele ajo anu!   nwa dibia chuchaa aja, ahughi udele, amara n'ihe mere na-ala ndi mmuo!",Normal,97
+test_igbo_00677,"ubosi ozo onye obuna ga emepe onu si gi na inwere “igbo accent”, chia ya ochi, kpo ya “onye iberibe”!! taaa ga nodu ala!!😕",Abuse,122
+test_igbo_00678,kitikpa gbagbuo gi. anu ofia. ##url,Abuse,35
+test_igbo_00679,@username bia femi imakwa ihe oo?ezigbo isi adiro gi mma. maka na mu bu onye ala ga emem kam mara asusu nile okwaya? isi na ima ihe kowa ihe a ndeturu. ndi ofe mmanu unu ezuzu gbugo onwu unu. tufiaa,Hate,198
+test_igbo_00680,why is murray considered in tennis ? onye mgbu,Abuse,46
+test_igbo_00681,ndi akpiri mmuo. ##url,Abuse,22
+test_igbo_00682,"isi azu""@username : onwero na. isi ewu :p @username : ogini?*rme*""@username : lol chuks :d @username : hmm *jus ... ##url",Abuse,121
+test_igbo_00683,@username this lady is like u are mad who d hell are you to talk to our able barrister in such manner chineke kpogi oku onye iberibe di ka gi i dika ihe egi achu ajah onye awuru dika gi if u dint take ur time udele ga eri anu gi onye ara,Abuse,237
+test_igbo_00684,"@username otu nne gi, rie nsi ezi",Abuse,33
+test_igbo_00685,"everybody dey receive isolation money up and down,nke nwelu enwe a na agbali,chineke napu kwa enwensu ike  chai!!!",Normal,114
+test_igbo_00686,@username ribe ka onye oshi,Abuse,27
+test_igbo_00687,"the thing that posted this, is what we call ""onye nzuzu"" or ""anụ mpama"" or ""onye iberibe"" ##url",Abuse,95
+test_igbo_00688,@username ndo nwanne m nwaanyị ❤️,Normal,33
+test_igbo_00689,@username caught in the act like onye oshi ọkụkọ 😂😂,Abuse,51
+test_igbo_00690,@username kitikpa gbagbuo gi there 😒😒,Abuse,37
+test_igbo_00691,@username what are you still doing with onye ọgwụ ego?,Abuse,54
+test_igbo_00692,@username ...... person wey go die must die.. 😂😂😂😂 that guy bụ nnọọ ezigbo onye mgbu.. 😂😂💯,Abuse,90
+test_igbo_00693,hehehehe rt @username : onye nzuzu . rt @username : rie nsi onye ala rt @username : @username rie nsi biko.,Abuse,107
+test_igbo_00694,"many tins ""@username : loll onye agwu! whatchu doin on da fone sef? ""@username : ur x abi ur babe ""@username : you're bangable not dateable",Abuse,139
+test_igbo_00695,"@username ezigbo nsogbu dị, ihe bụ tere na ụfọdụ anaghị e ji ntị anụ alụ m dị na nwunye. ihe ha dị mma ya wu i na achọ amụ ga e shifti akpa nwa ha ya na ọ ma asa efere, ndị nke ọzọ na achọ ara gbara agba na ụkwụ nwere nti... ike gwụru ##url",Normal,240
+test_igbo_00696,@username ikpu mama gi .. wack ofe mmanu musician.  anu mpama,Abuse,61
+test_igbo_00697,onye ime ezi.,Abuse,13
+test_igbo_00698,@username amu nna gi onye ara,Abuse,29
+test_igbo_00699,@username o bu so isi mbe ka otara?obi okwute,Normal,45
+test_igbo_00700,@username ewu awusa political correctness gbu kwa gi there...  anu mpam... udele 💧 side...,Abuse,90
+test_igbo_00701,"eggs""@username : ishi aki""@username : ara oji ""@username : otu ocha""@username : amu nama ""@username : otele aboki""@username :""",Abuse,126
+test_igbo_00702,"""*otu nne gi na chew cabin biskit*@username : otu nngei na kpu coke lol rt @username : dan_donald @username iya eh.. otu nngei na chew chewing gu",Abuse,145
+test_igbo_00703,@username kitikpa gbagbuo gị,Abuse,28
+test_igbo_00704,@username adaugo ji ntị anụ ihe na-awughi anya!,Normal,47
+test_igbo_00705,@username iwu ezigbo anu ohia. udele na usu ka gi nma. idiot na enweghi sense. how can you be okay using your own hand to destroy your land in the name of fighting for freedom? nne muru gi gba aka.,Abuse,197
+test_igbo_00706,@username akwuna enweghị taste,Abuse,30
+test_igbo_00707,"@username nne gi anozikwanu ndu , ozu nwuru anwu na aga ije , ezi bida",Abuse,70
+test_igbo_00708,@username nkita ara ndi nzama gangs keep barking on social media.,Abuse,65
+test_igbo_00709,"@username ebe ima ihe wu efulefu, were ire gi guo eze gi onu mara onye iwu. anu mpama! zuzu wa maka obere ego ina atututa n’aka ndi ugwu. chukwu abiamma g’aluru ndi naijeria aha a. onye iberibe mmuo",Abuse,198
+test_igbo_00710,ozu wun ru. awun.  rt @username : ewu congo rt @username : *speakin in igbo* ano fia rt @username : ☹ ure just a tout rt @username : can u slap ur .,Abuse,148
+test_igbo_00711,maguire na complete ewu awusa!!😡😡😡😡,Abuse,35
+test_igbo_00712,@username onye mgbu you know is not possible 😂😂😂,Abuse,48
+test_igbo_00713,anu ohia... agu sewakwaa go onu... otele,Abuse,40
+test_igbo_00714,"onye nzuzu""@username : wish u d same""@username : onye ala!""@username : @username amen ooh""""""",Abuse,92
+test_igbo_00715,"chineke!!!!u fittnt""@username : cheii, :'( ua #blocked eyejay2310: ishi aki...how far?""notindomi: eyejay2310 ds ya avi posin is sektual oo.""",Abuse,140
+test_igbo_00716,@username mbe bu odogwu mana o kari ichere ka agu rie mgbada maka na mgbada bu anuofia na onye mgbu 'saboteur '.,Abuse,112
+test_igbo_00717,@username onye aghụghọ 😁,Abuse,24

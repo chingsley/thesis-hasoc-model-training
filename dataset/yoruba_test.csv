@@ -1,0 +1,818 @@
+id,tweet,label,length
+test_yoruba_00001,"""@username olodo rapata. but now u know how to make real babies 🤦‍♂️""",Abuse,69
+test_yoruba_00002,ooni ooni ama ni ipin kankan pelu awon ara bi edakun ama diide fun orilede ojowa ju ma se kokoema ki wa gba ola lowo olola tiiwa looni ola nko is very imperative,Normal,161
+test_yoruba_00003,"""god will bless you dearly... awon omo ole jatijati. ##url",Abuse,58
+test_yoruba_00004,"""ori awon mejeji ti daru... awon olofo meji ##url",Abuse,49
+test_yoruba_00005,iwa ibaje ti awujo wa ko lati moju toohun lodi iwa afowora tolere cc,Normal,68
+test_yoruba_00006,"""happy birthday to one of the most illustrious sons of the kuku dynasty in ijebu ode. chief olo'rogun afolabi kuku(kuku special). the fuwagboye of kuku dynasty.a man of high repute  and tested  integrity . may ur… ##url",Normal,219
+test_yoruba_00007,"""an injured player just out jumped our captain. skipper oloriburuku   #oleout""",Normal,78
+test_yoruba_00008,wolewole wodi alaseju toò ẹ jẹ́ n mẹ́nu dúró ńbẹ̀un ná ọ̀rọ̀ púpọ̀ irọ́ ní í mú wá àṣejù baba àṣ,Abuse,96
+test_yoruba_00009,abo ajá ní ń jẹ́ bẹ́ẹ̀ dámilọ́lá yé é pe araà rẹ ní orúkọ ajá mọ́,Normal,65
+test_yoruba_00010,"""@username i found a new fav crazy 😂😂😂. eleyi san lórí gan o😂😂😂😂""",Abuse,65
+test_yoruba_00011,iléèṣẹ́ ọlọ́pàá fi àwòrán àwọn adigunjalè tó pitú ní ìlú ọ̀ffà láìpẹ́ yìí sita ękunręrę iroyin wa ni iléèṣẹ́ ọlọ́pàá,Normal,116
+test_yoruba_00012,artolodumareolorun olofin yoruba instamoodinstagoodlovelighttravelodu,Normal,69
+test_yoruba_00013,"""with no due respect, orí ẹ ti dàrú ##url",Abuse,41
+test_yoruba_00014,"""ise l'ogun ise mura s'ise re, ore mi ise la fiun deni giga bi a ko ba reni feyinti  bi ole la n ri bi a ako ba reni gbekele, atere mose eni iya re le l'owo lọwọ  ki baba re l'eshin le kan bi o ba gboju lewon àtẹ tan ni mo so fún é.""",Normal,233
+test_yoruba_00015,"""a cool saturday evening 😎😎😎oki olodo ibadan ##url",Normal,50
+test_yoruba_00016,"""ori wọn dàrú ni. ##url",Abuse,23
+test_yoruba_00017,"""@username iyalaye e lo ma #suffer se bi oni ori e buru ni, omo ale jati jati""",Abuse,78
+test_yoruba_00018,ayọ́niwò = spy ní àwọn ayọ́niwò nínú ológun bokoharam has spies in the military,Normal,79
+test_yoruba_00019,"""gbogbo yin ti ya werey... koni da fun yin o.... you want to know why we are not dying abi? awon oloshi radarada. ##url",Abuse,119
+test_yoruba_00020,Olodo Governor  thank God I no make mistake,Abuse,43
+test_yoruba_00021,bi o bá ni aya gidi dúpẹ́ lọ́wọ́ orí bí o bá pade ìfẹ́ òtítọ́ má bójú weyín bí ò bá gbọ́kilọ ọjọ́ bá kan àdánwò lo mọyì akewi olayemi mi ò lè pariwo,Normal,148
+test_yoruba_00022,wegomakeam dirandeditbycashino cashinondt dop adeogunnusi cejo mrjembecashinokelfstprodbymlv supermlvlagosnigeria shogunle oshodi africa africanhiphopafricansnigerians yorubaibo,Normal,177
+test_yoruba_00023,"""olodo man 🤣😂.  standardization is a continues standard of a given conform process. ##url",Abuse,89
+test_yoruba_00024,"""@username oloriburuku ni omo eleyi o, you dey texas dey ball but you're advising the women in nigeria 😂😂😂😂😂 why do we have to live with people like this on this planet sef 😭😭😭😭""",Abuse,178
+test_yoruba_00025,"""my own tribute to mohbad  mohbad in canada |congratulations rufai |9ice #pipayment #berlinmarathon #justice4mobhad oloriburuku arewa #arsenal yorubas omooo marlians bella #chelsea #fypシ #sundayvibes #rip ##url",Abuse,210
+test_yoruba_00026,"""oloriburuka gbaa ni eranko yi sha. ori oga muri ti gbale. ##url",Abuse,64
+test_yoruba_00027,"""@username this one is pained oo😂😂...bro what u typed makes zero sense but how can u know when you dont even have sense, go and do give away with your phone because obviously its of no use, oloshi oloriburuku omo ale jati jati😂😂😂""",Abuse,230
+test_yoruba_00028,"""oloriburuku ni gbo gbo awon eleyi ooo ##url",Abuse,44
+test_yoruba_00029,"""oniro ofo! oniro offo!! ##url ##url",Abuse,36
+test_yoruba_00030,"""lol eleyi ti gba sba ##url",Normal,27
+test_yoruba_00031,"""@username you're just dumb....... have you seen the cost of living now and the standard of living? the priority is that standard of living has declined and cost of living has skyrocketted, oponu...... oloriburuku ashiere. ko ni da fun awon molebi e!!!""",Abuse,253
+test_yoruba_00032,ẹ sé àwọn ọmọlọ́mọ pa mọ́ yààrá ẹ ṣá iná síi ẹ tún dúnbú ẹni fẹ́ẹ feré gé e ìgbà wo la ó ṣe irú ìwọ̀nyí dà,Normal,106
+test_yoruba_00033,"""awa lo kan.   ema lule very soon.   apc leading always ##url",Hate,61
+test_yoruba_00034,oniranu no bobo osi yi se,Abuse,25
+test_yoruba_00035,"""iyen ma kere ni #ibadan    wa se won egbere to mo tomo  eri re a buru wan ni ri orun sa  ki o sagba ko   ki o sagba kan  #oluyolediary #ibadankofa @username ##url",Normal,163
+test_yoruba_00036,"""@username ahh, eleyi ti shi oro só""",Abuse,36
+test_yoruba_00037,a sì gbọ́ ńpa àwọn tí a ṣiṣẹ́ abẹ fún tó rán wọn lọ ọ̀run làlà àwọn tó ye iṣẹ́ abẹ ò tó àwọn tó kù,Normal,99
+test_yoruba_00038,"""olodo, people are graduating at 14, 15. ##url",Abuse,46
+test_yoruba_00039,kálára ó para mọ́ àwa ọlọ́sà tí a ṣe ìlérí pé à ń bọ̀ wá ja ìlú yín yìí lólè lóru àná a kò le wá mọ́ ó dùn wá díẹ̀,Normal,114
+test_yoruba_00040,"""join me on this train of adventure at the culturally enriched ojude oba festival in ago-iwoye,  ogun state, nigeria. #ijebu #ojudeoba #davido #ogunstate listen to ""ojude oba, ago-iwoye 2023"" by arakunrin seyi news. ##url",Normal,221
+test_yoruba_00041,"""ekiti kete oo!   lule, lona ati loko....can't figure out d rest..  anyways if u find yourself in ado ekiti this friday..  👇  tis a grand opening with a few freebies..from 12pm.  * 🍕  * abula experience.. *deliveries are available. @username ##url",Hate,247
+test_yoruba_00042,Werey Omo igbo,Hate,14
+test_yoruba_00043,"""@username awon baba ati iya ni ile ni omo ale  u bastard""",Abuse,58
+test_yoruba_00044,òye ńlá kan nínú ògbóni ni ọ̀dọ̀fin oyè magbà ni ti ṣàngó oyè wo ni olúwo,Normal,73
+test_yoruba_00045,a kì í dàgbà jù fún ohun tí a kò bá mọ̀ one is never too old to learn what one does not know there is no end to,Normal,111
+test_yoruba_00046,"""orí ot ti dàrú!  #amcovenant""",Abuse,30
+test_yoruba_00047,ọwọ́ epo ni ọmọ aráyé ńbá ni lá wọn ò jẹ́ bá ni láwọ́ ẹ̀jẹ̀ bí àṣà bá ṣì ń bẹ a jẹ́ wípé ọ̀dàlẹ̀ nìdílé ifẹ̀,Abuse,108
+test_yoruba_00048,"""who's going for #kutaphotowalk organised by @username happening in ijebu ode today? meetup: nest by kuta, oke-iléwò (8:30am) let's get ready to tell ìjèbú-òde's story with the creative #kutaphotowalk community! #mytwitteranniversary  #thegoldenmoustache ##url",Normal,260
+test_yoruba_00049,"""love is a beautiful thing its an engagement @ oki olodo junction,ibadan! ##url",Abuse,79
+test_yoruba_00050,"""this evening, rt. hon. herman hembe, hon. mark gbillah, hon.kpam sokpo, hon. benjamin  wayoh,hon. cephas ashwa hon. vihishima, and hon. ade all of lp shutdown buruku lga. benue state. we are all @username obi-datti ##url",Normal,221
+test_yoruba_00051,"""oloriburuku omo ale ##url",Abuse,26
+test_yoruba_00052,"""werey ti ri alert, ori fifo lo ma fi wo olofo ##url",Abuse,52
+test_yoruba_00053,"""oluwatobiloba ayomide ""tobi"" amusan oon is a nigerian athlete born on april 23, 1997 in ijebu ode, ogun state, nigeria, to mr and mrs amusan, who are school teachers. she specializes in the 100 metres hurdles and sprinting. ##url",Normal,230
+test_yoruba_00054,"""omo elerunwon sodi meso omo afagbara dobi   erunwon-ijebu ##url ##url",Normal,70
+test_yoruba_00055,"""@username oloriburuku ni awon to ni ę, you suppose to be in jail for giving out fake news onkr.""",Abuse,97
+test_yoruba_00056,tí ó wà ní pópó ọba ẹ̀pẹ́ lọ láti lè fi àjùlọ hàn èkó ọlọ́ọ̀pá àti ìta ni wọ́n dà sí ìta fún ọjọ́ mélòó kan láti ri wípé ìsinmi wà ní ìlú tí wọ́n ma fi yanjú ìjà náà,Normal,165
+test_yoruba_00057,"""omo ijebu ife ni mi o💃💃💃 ##url",Normal,31
+test_yoruba_00058,àwọn ará ìṣàgá dá májẹ̀mú pẹ̀lú àwọn ọmọgunbìnrin wọ̀nyí wọ́n pa ẹran fún ètùtù wọn sì jọ jẹ odi àríwá ìlàoòrùn ni àwọn ọmọ ogun dahomey fẹ́ bá wọlé àmọ́ àwọn ìṣàgá ṣì wọ́n lọ́kàn wọ́n ní  ogundahomeyatiegba yoruba egba abeokuta dahomey,Normal,236
+test_yoruba_00059,"""@username ẹ ti yà werey sir 😂😂😂😂 he's not desperate to win what again? are you playing 😂😂😂😂""",Abuse,93
+test_yoruba_00060,"""olohun loni kin gbo nkan ti emi bami so. mo yo werey danu😂😂😂 ##url",Abuse,67
+test_yoruba_00061,mo ki gbogbo omo kaaro ojiire patapata nile loko ati leyin odi a dara fun gbogbo wa o amin,Normal,90
+test_yoruba_00062,"""😅🤣🤣🤣... ogbeni sorosoke o!!! awon weyrey ti disguise 😅 ##url",Abuse,61
+test_yoruba_00063,obìnrin ló darí ikọ̀ ọlọ́ṣà náà èyí fi ìjàpá kọ́ ọrùn ó lọ́ ejò mọ́ ìbàdí ó dúró sórí odó ó sọ ẹyẹ àdàbà sókè,Abuse,110
+test_yoruba_00064,"""@username mi se omo lole logba esi wa   or someone you can refer home   i’ll give you generational scar !   omo osan ti ko popo ba awon to ni !   omo ale jatijati !""",Abuse,166
+test_yoruba_00065,won ti sinku lawrenta akeko poli ti ibon figilante pa beeyan ba je ori,Normal,70
+test_yoruba_00066,àfowófà ni ó pa èkúté ilé nígbà tó jeun tó yó tán o ránsé pe ológbò o níkí ológbò ma sode kó súré wá àfowófà ni ó pa èkúté ilé sikiru ayinde barrister,Normal,150
+test_yoruba_00067,"""eleribu ni yin oooo ##url",Abuse,26
+test_yoruba_00068,awodi ti o paso da kii segbe agilinti alaso yebe yebe,Abuse,53
+test_yoruba_00069,"""🙄sebi ori gbogbo wa ti daru ni ##url",Abuse,37
+test_yoruba_00070,"""@username eyin olofo ti e po lori appu yi😂""",Abuse,44
+test_yoruba_00071,"""(couple fighting)  ọkọ: laye laye e ma so pe owo ẹ ni mo n ná mọ  iyawo: owo mi lo n na!  ọkọ: jeki ori pe o  iyawo: (locks his shirt) se o fẹ na mi ni? oloriburuku abóra má wẹ̀!  (husband raises his hand and drops it) ahh! gba mi l’oju ki iya ajinikirun sun cell""",Abuse,265
+test_yoruba_00072,"""omo ale jati jati kan tun leleyi.   low budget skones. ##url",Abuse,61
+test_yoruba_00073,"""@username o ti lule, awon iya ti deyin""",Abuse,40
+test_yoruba_00074,ọlọ́run á bá àìní wa pàdé àmín tweetyoruba,Normal,42
+test_yoruba_00075,"""@username lolu be like... afigba ti omo oloriburuku mashan' fani yi fe ba temije😂😂😂""",Abuse,85
+test_yoruba_00076,"""if dna is free, nigeria maa daru, ile ola ma d'horo, rogbodiyan maa sele, isinku orun maa soro, akufa maa rapid gaann, olopa 👮‍♂️ maa ko everybody, omo eleran a je egun-un-gun.😁""",Normal,179
+test_yoruba_00077,"""“emi naa o mọ́ pe alákọrí ẹ̀ máa padà dé ní òní baby. but ma worry, mo ma parọ fun pe a ni isọ oru awọn obìnrin ni weekend, ma dẹ wa gbe ija ka ẹ mọ’lé” ##url",Abuse,159
+test_yoruba_00078,"""ole ni everybody #nairamarley  na who dem catch go carry am  #oloshoponitwitter""",Abuse,81
+test_yoruba_00079,"""lemme know oo,incase we are related or village pipo!😏 me: i'm from lagos state my family house is in mushin,but originally from brazilian quarter in lagos island.....yeah omo eko gangan nimi!😋😋😉....i'm also half ijebu alare.....omo oba ni ijebu ode oya,your turn....? ##url",Normal,274
+test_yoruba_00080,"""i'm almost certain that the moment you typed this and got to ""just like the military..."", your brain told you this is watery shit but you carried on anyway because that's what you do and who you are.  orii gbogbo omo tuntun adugbo ti wo tan because agba radarada ni eyin yi. ##url",Abuse,281
+test_yoruba_00081,"""eyin o ni cook-a-thon oshi yi, e don do sbeg.""",Normal,47
+test_yoruba_00082,"""weyrey ni bóbó yén shá😂😂😂 ##url",Abuse,32
+test_yoruba_00083,"""@username engaging you in any intellectual capacity is a complete waste of time because you have reasoning of an imbecile. an olodo ràbàta. if you can misunderstood or twist obi's simple answer on the health question, i very much doubt if you can understand anything unless it's blablablue""",Abuse,291
+test_yoruba_00084,"""#kwarastatevolunteers have started the #sdgsfamilyactivation  day 1   patigi bode sa'adu ajanaku village, oke oyi edidi sabo oke alangua's / tipper garage sanrab / mfm  taaoheed / basin mubo street  salako alagbado / sobi new yidi road onikanga gra gaa akanbi  ...are activated ##url",Normal,284
+test_yoruba_00085,ẹyin dídín àti ẹran ọ̀yà tí a gé sí wẹ́wẹ́,Normal,42
+test_yoruba_00086,a ò kí ń ṣe ẹni burúkú nítorí a jẹ́ oníṣẹ̀ṣe,Normal,44
+test_yoruba_00087,"""olodo ni pere,you are describing painting without the background?""",Abuse,67
+test_yoruba_00088,"""the best part of your father's sperm  spilled out of your mother's diseased vagina during procreation. not surprised we ended up with this undercooked version of you. oloshi oloriburuku. ##url",Abuse,193
+test_yoruba_00089,"""@username oloriburuku ni john....""",Abuse,35
+test_yoruba_00090,"""@username 'o se lekini olule, o se lekeji olule, igba to se lori eleketa totun lule, o sunkun lori television'.""",Abuse,113
+test_yoruba_00091,"""bí a ò bá rí ọyàn mu, bí ọ̀lẹ làárí. ##url",Normal,43
+test_yoruba_00092,"""@username untop fraud nitori òlòrun. for the fact that he said he wear people mortgage,  koni bò ni bè. kaa kure. òmò ale jati jati. #hushpuppy""",Abuse,145
+test_yoruba_00093,torí owó la ṣe kówó rẹṣin,Normal,25
+test_yoruba_00094,"""@username ori yin o pe rara...  agba radarada alainironu.   with all evidences against deziani and you could still be courageous to spill this nonsense, you shouldn't be seen among sane men. what kind of an evil man are you? what kind of an omo ale are you?   mumu afofungbemu...  ode!""",Abuse,287
+test_yoruba_00095,"""@username good morning, omo ogbon, omo oko, not omo ale, awon lole logbesi!""",Normal,77
+test_yoruba_00096,"""odejinmi is deceiving omiwunmi and the mumu is believing everything.  #amitura""",Abuse,80
+test_yoruba_00097,"""@username your father is a man man no doubt, olórí burúkú ọmọ àlè""",Abuse,67
+test_yoruba_00098,"""@username oloriburuku nie se ..ode ma shofo tomo tomo ni""",Abuse,58
+test_yoruba_00099,"""awon ómò ale jati jati.  elon isn't a fool like u and your generation to be thinking like u. ##url",Abuse,99
+test_yoruba_00100,ìjẹ̀bú káre ọ́hùnún gaàrí ìjẹ̀bú ẹ̀bìrìpòòbìrìpò,Normal,48
+test_yoruba_00101,"""aj is a bitch for fighting smart, being tactical and winning back his lost belts  àní orí gbogbo yín tí dàrú  🤦🏿‍♂🤦🏿‍♂🤦🏿‍♂🤦🏿‍♂  #ruizjoshua2 #joshuaruiz2 #andyruiz""",Abuse,165
+test_yoruba_00102,"""last minute, chinedu gbadebo tí lulè, confusion everywhere ##url",Abuse,65
+test_yoruba_00103,lókè ọya níbí orin òyìnbó ni àwon ẹgbẹ́ akórin ṣọ́ọ̀ṣì wa ma n kọ bíi ọ̀pẹ́ẹ̀rẹ̀ ṣùgbón a ṣe ìsìn orin kan níjọ́sí wọ́n bá pe onílù kan wa okùnrin yìí ma gbá ìlù oooo háà àjẹbí lógbọdọ̀ jẹ́ọmọ àyàn tómọ èdè ìlù ni,Abuse,213
+test_yoruba_00104,"""garri ijebu pelu omi tutu would slap hard now with this beans 😩😩""",Normal,66
+test_yoruba_00105,"""i mean some people don't even know what valentines entails......awon oniranu☹️ ##url",Abuse,85
+test_yoruba_00106,"""@username imole ati egbe pdp ma lule ni saturday""",Hate,50
+test_yoruba_00107,kí ní fà á tí a fi pé ọmọlẹ́hìn islam ni ìmàle,Normal,46
+test_yoruba_00108,"""olorikori omo ale yoruba. o daju pe ooo tile ire jade! won ma fi e jofin gbeyin ni! owo ma to ba ee! ##url",Abuse,107
+test_yoruba_00109,"Radarada oloshi ,,, posterity will judge you.",Abuse,45
+test_yoruba_00110,kádàráàyànmọ́ | destiny kò sẹ́ni tó lè pa kádàrá dà no one can change destiny,Normal,77
+test_yoruba_00111,Oloshi,Abuse,6
+test_yoruba_00112,"""aṣọ ẹgbẹ̀légbèje ni t'ọ̀gà. ń'nú oṣù tuntun t'agẹmọ yìí, olódùmarè yóò ró wa ní aṣọ tuntun. aṣọ ìyà di aṣọ ọrọ̀. aṣọ ìbànújẹ́ d'aṣọ ìdùnnú tòun ayọ̀. aṣọ òfo di aṣọ ìbùkún. aṣọ òṣí d'aṣọ iyì. aṣọ orí burúkú d'aṣọ orí ire.  bẹ́ẹ̀ ni yóò rí!""",Normal,241
+test_yoruba_00113,"""@username eyin olodo gbogbo😂😂😂💔""",Abuse,33
+test_yoruba_00114,"""oriburuku omo ale!! oponu ayerade ##url",Abuse,40
+test_yoruba_00115,"""@username haaaaa! ori awon eleyi ti daru ooo""",Abuse,46
+test_yoruba_00116,"""@username olówó ti gba ìyàwó òle oo🥲💔""",Normal,39
+test_yoruba_00117,Who's this omo ale eleribu? So Lagos Gov is so jobless that he will come to ur doorstep?  .abunu,Abuse,96
+test_yoruba_00118,"""@username werey is an understatement. awon oloriburuku alatenuje meji.""",Abuse,72
+test_yoruba_00119,"""olori buruku niwon ##url",Abuse,25
+test_yoruba_00120,"""awan oloriburuku children of hxate 😂🤣 ##url",Abuse,44
+test_yoruba_00121,"""@username olodo oma sofo ni""",Abuse,29
+test_yoruba_00122,lásán kọ́ là ń dẹ́tù ó ní ẹni orí ẹ̀ bẹ́tù mu one does not wear ẹtù cap as a matter of course only certain people have heads suited for such a cap,Normal,146
+test_yoruba_00123,"""@username oloriburuku, omo ale!""",Abuse,33
+test_yoruba_00124,"""you people do too much, ori é tí gbale, how can say this to someone's mother. no limit to this stanship, so na wizkid send you this nonsense. ọmọ ale jati jati. ##url",Abuse,167
+test_yoruba_00125,"""these guys are very useless. àwọn ọmọ werey gbogbo ##url",Abuse,57
+test_yoruba_00126,gbobo ọmọ kaarọ ojire ni ori twitter ṣe alafia ni ẹ wa gẹgẹ bi emi na ṣe wa nibi pakati ọrọ mi si yin ni wipeyoruba dun tweetinyoruba,Normal,133
+test_yoruba_00127,nítòótọ́ àsìkò ti tó fún wa ọ̀dọ́ láti darí síṣẹ́ àgbẹ̀ n ò ní o di àgbẹ̀ kùràkùrà má ṣìmí gbọ́ o,Normal,99
+test_yoruba_00128,"""@username after we meet at the poll, you'll continue your begging 🙄.   olodo rapata. ##url",Abuse,91
+test_yoruba_00129,"""@username 🤡🤡🤡oponu awon ile e ni eleriburuku oponu ole narcos""",Abuse,63
+test_yoruba_00130,"""@username ọmọ alè 😂""",Abuse,21
+test_yoruba_00131,ẹ̀ṣẹ́ iná lọ̀nà kejì tí a fi ń mú ọmọ atọ̀ọ́lé tají lójú orun níṣe ni iyèe rẹ̀ máa sọ bítọ̀ bá dé láti lọ yọ́mi gaàrí,Abuse,117
+test_yoruba_00132,o di arin na ko odi o ju ala o di gbere,Normal,39
+test_yoruba_00133,e never reach èpè level sebi all of us na nigerians nino bú everybody o pè mí ní wèrè ko pe family friend yín ni stupid tó bá ti jẹ́ ko feel alright mura si,Abuse,156
+test_yoruba_00134,"""@username iragbiji olokemeji,  tako tabo lori ara won, okan yi lule, oku kan…. ##url",Normal,85
+test_yoruba_00135,"""@username oloriburuku omo rankirani gbogbo iran lo ma go blind. god will destroy your lineage""",Abuse,95
+test_yoruba_00136,"""mammoth crowd welcomes ogun pdp gubernatorial candidate honourable oladipupo adebutu as he leads mega campaign rally to ijebu north.  #iturade #ladoxtriplea ##url",Normal,163
+test_yoruba_00137,"""@username wère oloriburuku ẹní ofo, ẹni àdánù called them simple criminal. i wonder if this liars remember that he has children that will pay the price of his atrocities. àgbàlagbà onirọ, àgbàlagbà tó ṣe òrò bí èwe.. ẹníkú rè""",Abuse,227
+test_yoruba_00138,"""@username that your name sef ... o ti feran owo ju . owo yen na lo ma pa e . ode oshi omo pa bi osan bo""",Abuse,105
+test_yoruba_00139,nigbana mole funyin laridaju nipe bope boya gbogbo ero okan wa gbogbo ero n gba wa a wasi imuse sugbon a ma ni lati şe opolopo suuru nitori gbogbo lamo pe won o ko rome lojokan ️ moshood,Normal,186
+test_yoruba_00140,"""guy koriburuku e si oun... ewo ni oro oshi ##url",Abuse,49
+test_yoruba_00141,"""this!!!! yoruba's will say ""oko buruku se fe ano buruku o ose ni"" ##url",Normal,72
+test_yoruba_00142,"""@username oloriburuku ni eyin @username yi oooo i complained since yesterday about transaction of 100,000plus and u didn't reply""",Abuse,130
+test_yoruba_00143,"""the beauty and diversification of language is so wonderful!!! funny enough olukumi in ijebu means a bossom friend, ore kori kosun!!! ##url",Normal,139
+test_yoruba_00144,"""olofo!!! 😂  i stan!! ✊🏾 ##url",Abuse,30
+test_yoruba_00145,"""@username baba e ni oloriburuku koni daa fun iya we.""",Abuse,54
+test_yoruba_00146,"""ewo ni gbogbo radarada yi na ##url",Abuse,35
+test_yoruba_00147,"""@username of cos why wouldn’t he be your role model. omo ale alailojuti alapa ma sise""",Abuse,87
+test_yoruba_00148,Omo ode,Abuse,7
+test_yoruba_00149,"""@username omo yiiiiii, eleyi po, ni osan friday. bobo eee ngba dun gan niooooo.""",Normal,81
+test_yoruba_00150,"""@username akemọ́ju ni irẹ ń ké, atanmọ́ju ni mọ́namọ́na n tan ọwọ a lu bàtà n dúró, ẹsẹ aluyalu n tó ilẹ̀ rederede, radarada ni n gbeyin èrè òṣùpá china, lónìí ẹ ti di afupinna, ara yín lẹ́ ó pa ẹ ti di labalaba tí ó fẹ́ dibo legun, aṣọ yín má faya pérépéré""",Abuse,259
+test_yoruba_00151,à ń kí ara wa kú u òmìnira àmọ́ ṣé lóòótọ́ ni wípé a ò sí lóko ẹrú mọ́ ṣé lóòótọ́ ni wípé a gba òmìnira ṣé lóòótọ́ ni wípé a ò sì lábẹ́ àwọn èèbó amúnisìn mọ́ ṣé lóòótọ́ ni wípé a ti dá dúró gedegbe ṣé lóòótọ́ ni,Hate,212
+test_yoruba_00152,ẹ̀yín ará ẹ jẹ́ kí elédùà jẹ́ olùrànlọ́wọ́ wa ní gbogbo ìgbà ẹ̀dá èèyàn á máa dójú tini nígbà míràn,Normal,99
+test_yoruba_00153,"""éléyí ó yérí ó ##url",Normal,21
+test_yoruba_00154,"""you got it.  ole is always will be an ole  oloju kokoro   agbaya ##url",Abuse,71
+test_yoruba_00155,ogun àfọ̀njá yìí ló mú àwọn ọmọ ọ̀yọ́ láti àréwá sálọ sí iléifẹ̀ ní gúúsù lọ́dún,Normal,81
+test_yoruba_00156,"""@username olodo ni werey re.""",Abuse,30
+test_yoruba_00157,àwọn fúlàní mùsùlùmí tí àwọn ọ̀dọ́ pa ní náà kí ọlọ́run ṣàánú wọn ntorípé ọmọ ènìà làwọn náà wọn ò jẹ̀bi nkankan,Normal,112
+test_yoruba_00158,bẹ́ ẹ bá wá rí ọ̀kọlà ẹ má mà mà bu ẹ má pè é lójú ẹlẹ́gba ẹ má fi rẹ́ẹ̀rín àṣà ilẹ̀ẹ wa ìgbaanì ló ńgbé lárugẹ,Abuse,111
+test_yoruba_00159,"""happy birthday lilo aderogba 🎉  when you deem it right, ko reach out, o le  lo mi as you desire because lilo ni emi na. o le demi bi ade, o le ro mi, ole gba mi as you wish.   ko ni nice day, ko de stay jiggy ❤️ ##url",Normal,218
+test_yoruba_00160,OTI LULÈ,Abuse,8
+test_yoruba_00161,"""how can you put ""handsome ashiere and intelligent olofo"" papọ in a sentence 😳😳 mo foh oooo 🤣 🤣 🤣 🤣 🤣 🤣""",Abuse,104
+test_yoruba_00162,odi igba ti won ba gbegba oroke ki emi to yin wonigba naa ni moma mo boya super eagle niwon toto tabi super chicken esther adejoke,Abuse,130
+test_yoruba_00163,"""@username ebola infected bats always looking for who to infect with their dance of shame virus everytime they see obidient antivirus   awon oloriburuku oloshi odanran""",Abuse,168
+test_yoruba_00164,dáhùn ó sì wí fún un pé lóòótọ́ lóòótọ́ ni mo wí fún ọ bí kò ṣe pé a tún ènìyàn bí òun kò lè rí ìjọba ọlọ́run johanu jesus answered said unto him verily verily i say unto thee except a man be born again he cannot see the kingdom of,Normal,231
+test_yoruba_00165,"""beauty personified 🥰👑  omo olofo loma binu omo ologo if you no u no #tachaisbig  #tachaisbig ##url",Abuse,99
+test_yoruba_00166,"""igba o lo bi orere.... boba koro oshi madun enitoni suuru kiiseyan kekere.... bobakanle oshi na goke.... bomode oku oshi madagba  ohun ti oto shima po danu  igba o lo bi orere.... tough times don’t last... tough people do... #tuesdaymotivation""",Normal,245
+test_yoruba_00167,"""@username ninu rogbodi ti oun shele, eleyi tun fe ta puna .. if you don't understand yoruba e no go sweet""",Normal,107
+test_yoruba_00168,"""@username oloriburuku ni yin""",Abuse,30
+test_yoruba_00169,"""unai emery is a wanker....uses 442, plays chukwueze.  uses a more suitable formation, 433...benches chukwueze. oloshi!""",Abuse,120
+test_yoruba_00170,"""who will come help you beg him now sebi you still get 1.7million for hand do you still need boyfriend àwọn olórí burúkú gbogbo ó ní kú rẹ ajeh ọmọ oshi if am the boyfriend na kill i go kill you ṣebi na what we hear who knows what other things she has been doing ##url",Abuse,268
+test_yoruba_00171,"""@username eleyi ma ti ya were""",Abuse,31
+test_yoruba_00172,àkùkọ kọ ajá gbó ẹyẹ́ibeere yoruba,Normal,34
+test_yoruba_00173,"""@username her front teeth like that of rabbit...omo àlè játijáti 🤣🤣🤣""",Abuse,70
+test_yoruba_00174,"""@username o lule ti 😂😂😂""",Normal,25
+test_yoruba_00175,ọdẹ tó bá ṣiyèméjì òun lẹranko ńpa an indecisive hunter easily gets killed by an animal in the forest be decisive indecision can come with intolerable risks,Normal,156
+test_yoruba_00176,"""olófo ló ń bínú ológo, ìyẹn ò jọjú!""",Normal,37
+test_yoruba_00177,"""simple question, how much do you make monthly? ma ro mi ni ejo oshi ##url",Abuse,74
+test_yoruba_00178,"""olofo ni bobo yi""",Abuse,18
+test_yoruba_00179,"""@username oloriburuku ni e.   well-meaning yoruba people like me will keep speaking up so they don’t categorize us all as a lowlife bigot like you.   also, return your certificate to unilag. you’re a failure. ##url",Abuse,215
+test_yoruba_00180,"""the game is the game but ori gbogbo yín ti daru 😂  #unilorindecides23""",Abuse,71
+test_yoruba_00181,àwa ọmọ mùsùlùmí òdodo ẹ kú ọdún un ẹ̀yí ò ní jẹ́ àṣemọ a óò rí míì lọ́lá ọlọ́run ọba,Normal,88
+test_yoruba_00182,"""@username koni dafu iya baba e... omoale jati jati""",Abuse,52
+test_yoruba_00183,"""@username oloriburu nie se oloshi alenu werey omo ale,wo awon tobi e ti fi obo jona o""",Abuse,87
+test_yoruba_00184,"""@username thank you for resetting her brain 🧠 jare. she asked for it and she's getting hundred dose. omo alaileko radarada osi""",Abuse,128
+test_yoruba_00185,"""oloriburuku ni iya yen! ##url",Abuse,30
+test_yoruba_00186,ati douglas oo ati bebeee lai se odi  ori gbogbo yin ti buru oo useless mofos,Abuse,77
+test_yoruba_00187,"""olofo, eyan méjìlá péré ni wéré ẹ follow na. ó wrong na. olofo, sá ju orin kan lè ##url",Abuse,88
+test_yoruba_00188,ló ń jẹ́ kí ẹrù u wèrè ó pọ̀ ẹn ẹn bẹ́ẹ̀ ni o àìlèmójúkúrò ló ń mú kí ẹrù u wèrè ó pọ̀,Abuse,86
+test_yoruba_00189,"""@username olodo. incoming ko, outgoing ni.""",Abuse,44
+test_yoruba_00190,"""nje ari eni to fe bami po werey laaro yii?""",Normal,44
+test_yoruba_00191,"""~ unrelated, but o yẹ ki e ma gbe enu burúkú sòún le kan kàn, oponu, ode ##url",Abuse,79
+test_yoruba_00192,"""@username akanbi ómó olodò ídé🤍🤍🤍""",Normal,35
+test_yoruba_00193,"""sì senator nì èleyi àbi sún òwó nà. kwara central tí sún òwó nà ooo. mòtí sòró sò kè 🔊📢🎤 @username ##url",Abuse,105
+test_yoruba_00194,"""@username ori gbogbo yin buru bi t’eegun to n le werey""",Abuse,56
+test_yoruba_00195,"""@username your entire household are foolish, oponu ayirada! omo ale jati jati""",Abuse,79
+test_yoruba_00196,"""@username ode ni eleyi.""",Abuse,25
+test_yoruba_00197,ọlọ́hun yọ ọmọ ikọ̀ agbábóòlù ńnú ìjàmbá ọkọ̀ tí ẹni márùún fara pa,Normal,69
+test_yoruba_00198,"""@username oloriburuku to doko tan 🤣""",Abuse,37
+test_yoruba_00199,"""ìwé òwe 6:30-31  [30] nwọn ki igàn ole, bi o ba ṣe pe, o jale lati tẹ́ ọkàn rẹ̀ lọrùn, nigbati ebi npa a;   [31] ṣugbọn bi a ba mu u, yio san a pada niwọ̀n meje; gbogbo ini ile rẹ̀ ni yio fi san ẹsan.""",Normal,202
+test_yoruba_00200,ebi wá ń pa ṣọ́ṣọ́ ganan báyìí kò lágbára mọ́ ó ti fẹ́rẹ̀ẹ́ kú wọ́n tún ń wá ̀bá,Normal,101
+test_yoruba_00201,ère èṣù a máa mú ọ̀pá lọ́wọ́ nítorí nínú ìṣẹ̀dálẹ̀ ayé èṣù ni agbófinró ọlọ́pàá ọ̀pá èṣù ni ọ̀gọ,Normal,96
+test_yoruba_00202,a lè ní ma ń tèlé gbogbo obìnrin bíi ajá tàbí kí a gbọ́ yé é jẹun bíi ajá ̀bá,Abuse,77
+test_yoruba_00203,"""onana abi owawa abi chiwawa abi kini werey nje?? aye keeper yen ti baje  @username """,Abuse,85
+test_yoruba_00204,"""nigerian police is just a minus for nigeria...see as dem pai army officer for ikorodu now they are running...awon oloshi""",Normal,122
+test_yoruba_00205,"""now that whatsapp is down, let's switch to facebook messenger. wón ti lulè!""",Abuse,77
+test_yoruba_00206,mo gbọ́ tuntun àrà me è rírí ní mozambique wọ́n ní wúrà ń bẹ lágbáríi apárí wọ́n bá ń pa apárí kiri,Normal,99
+test_yoruba_00207,"""@username it's like this is one of those òlòrìbùrúkù sets of people""",Abuse,69
+test_yoruba_00208,"""omo buruku l'ojo ti re na real yoruba proverb 🤔 ##url",Normal,54
+test_yoruba_00209,"""oloribuku ni e ooo what is your own ???  abanije oniranu gbogbo ... @username don't mind him jare your good we give you way . ##url",Abuse,132
+test_yoruba_00210,níṣe ló yẹ kí ẹ máa rọ́ ọrọ̀ tí ẹ kó padà sí ìlú ni ọwọ́ọ yín ló wà ẹ kàn ń dá tútù láwọ́ ará ìlú ń gbẹ,Normal,103
+test_yoruba_00211,gbobo ọmọ kaarọ ojire ni ori twitter ṣe alafia ni ẹ wa gẹgẹ bi emi na ṣe wa nibi pakati ọrọ mi si yin ni wipe yoruba dun,Normal,120
+test_yoruba_00212,lmao won do awon kan ni ile oko wan wotun dodi awon elomi i just have one thing to say aye yin ti baje no,Abuse,105
+test_yoruba_00213,aasa wu obo faari wu inaki ohun ti o daa naa wu ole,Abuse,51
+test_yoruba_00214,"""where do you think omo buruku ni ojo ti e comes from? ##url",Normal,60
+test_yoruba_00215,"""eleyinju ege apon bepore mi🥰 ayinke mi owon(to be praised and loved) ayinke lowe lodo, gbogbo okunrin yo ose sita. won ni gba temi gba temi.  woni bi eleyi otie je aya eni, aa si je ale eni🥺❤️😍 ##url",Normal,200
+test_yoruba_00216,"""@username ko de ni dafun ayé e. oloribu weyrey oju igo. if na your papa and mama go vote nd dem shoot dem dere na ds same rubbish u go talk. omo alé""",Abuse,150
+test_yoruba_00217,tó bá wá jẹ́ ọkọ ìyá yìí ló yá ní wèrè gẹ́gẹ́ bí ara àdúgbò ṣe ti lérò a jẹ́ wípé lóòótọ́ nǹkan ń bẹ,Abuse,100
+test_yoruba_00218,"""@username but gbogbo eleyi o necestri na! #voteerica""",Normal,54
+test_yoruba_00219,ẹ káàsán o ẹ̀yin èèyàn pàtàkì ṣé àlàáfíà ni ní oṣù kẹ́rin yèyé akilimali funua ọládé bùn mí ní ìwé ìròyìn aláròyé kan mo sì ka ìròyìn nípa ògbóni ó sì hùn mí láti pín ohun tí mo kà,Normal,180
+test_yoruba_00220,"""@username this is a stupid question @username infact you are very stupid to asked this question. oloriburuku ni gbogbo yin""",Abuse,124
+test_yoruba_00221,"""a ti di ibo. a ma wo le. by god's grace. asiwaju akanbi omo olodo ide. jagaban borgu. ##url",Normal,92
+test_yoruba_00222,"""@username 🚶🏃🏃🔥  ig:idoko.edwin yt: oloja edwin""",Normal,48
+test_yoruba_00223,"""@username lol olodo oshi  onibon alainitiju""",Abuse,45
+test_yoruba_00224,"E no go better for you. Jide, Ko deni ragba fun e",Abuse,49
+test_yoruba_00225,odùsáàrá ni orúkọ ìyáa ṣàngó ni orúkọ ìyáa èṣù ️,Normal,48
+test_yoruba_00226,"""radarada! so, you want to be terrorising me in my state, ori ẹyin fúlàní yìí má ti dàrú o ##url",Hate,96
+test_yoruba_00227,kò sí ìlú tó ṣe orò tó ìjẹ̀bú àti ẹ̀gbá àwọn ẹgbẹ́ òṣùgbó ló dá a sílẹ̀ òṣùgbó ni ògbóni ní ìpínlẹ̀ ògùn,Normal,104
+test_yoruba_00228,"""@username oloriburuku ni e, omo ale radarada""",Abuse,46
+test_yoruba_00229,"Oga ade ,abeg go rest",Abuse,21
+test_yoruba_00230,"""@username ódé and opoonú. you accidentally watched it for a whole 4 min and you called it accidentally? stop fooling yourself after you satisfied yourself with it.""",Abuse,165
+test_yoruba_00231,bí a bá wí tàì wí nípa nínífẹ̀ sí àṣà yorùbá àwọn aláìmọ̀kànmọ̀kan wọ́n á máa ní abọ̀rìṣà ni babaláwo ni ó ṣe,Abuse,110
+test_yoruba_00232,ẹ má da lóhùn ẹlẹ́tẹ̀ẹ́ ni,Abuse,26
+test_yoruba_00233,"""when a female friend suddenly starts copying and pasting relationship quotes on her what'sapp status, just know one male gender has done it again. àwọn alakọ̀ri. 😁  messi usman trump magu #wecantbreathe""",Abuse,204
+test_yoruba_00234,"""o rogun ologun debiti aya... o ti ri ile ola nle, o fee ku sibe..oloshi omo at’ko wa ba’le je...omo at’oko wa ba’le je.. onirinkurin, elese osi meji..ikan o gbekan bii owu jango.. owu ti’ya gbon, l’omo ran.. awon ajuse radarada..e koriibu lor, kee koriibu danu jina jina rere🤣🤣 ##url",Abuse,284
+test_yoruba_00235,"""gbogbo awon ota wa, awon abanije, awon asoroeni lehin laida, awon afoju feni,mafokan feni,awon oju lari, ore o denu, ni olorun yio ba ja. eyin oloriburuku  eni jere tomo tomo 🙏🏾🚶🏾‍♂️""",Abuse,184
+test_yoruba_00236,arghh kí jega dẹ̀ yí tábìlì po kò ní lẹ́yìn tí a kó ìbò jọ́ tán goodluck ebele jonathan ló jáwé olú borí,Normal,104
+test_yoruba_00237,àwọn ọ̀dọ́ péjọ̀ sí fún àpérò ọlọ́dọọdún ọ̀dọ́ ilẹ̀ afrika àjọ ò ní tú o,Normal,72
+test_yoruba_00238,"""se a ri ènìyàn ti o le fun mi loruko osere omo ibo kan, nigba igbesi ayé àwọn osere tiata wọnyi,  ola balogun, hubert ogunde, jab adu, moses olayia?""",Normal,150
+test_yoruba_00239,"""@username eni eleni 🙆🏾‍♂️ o latí survive aye to búrú yí.....""",Normal,62
+test_yoruba_00240,"""ole ni bobo yen indeed ##url",Abuse,29
+test_yoruba_00241,"""mo nilo ọlọrun ni gbogbo ọjọ.  ǹjẹ́ kí n má gbàgbé láé ní ọjọ́ tí ó dára jù lọ, pé mo ṣì nílò ọlọ́run lọ́nà ogbon gẹ́gẹ́ bí mo ti ṣe nígbà tí ó burú jù mí lọ. @username ##url",Normal,175
+test_yoruba_00242,"""awon oloriburuku ti won ko wa si wahala re!   won ti fe bere,    we are not fools,  no amount of tweets will bring your party back to power ##url",Abuse,146
+test_yoruba_00243,"""oriki  corona corona virus tuale oo🙌, omo ologo😉 amuni duro sile tipa tipa😞 amuni da aso bomu dan dan😷 amu ara ilu okere wa si ile ni tulasi🤕 omo buruku ton seru ba gbogbo eniyana😨 ooda jini jini bole🏃""",Normal,203
+test_yoruba_00244,wọ́n ti pa ní mọ́ṣáláṣí ṣọ́ọ̀ṣì wọn ò yọ ẹlẹ́sìn kan sílẹ̀ èmi ò rò pé ọ̀rọ̀ ẹ̀sìn ni tilẹ̀ yìí o,Normal,97
+test_yoruba_00245,iwọ ti ò rò wipe aye n fẹ ọ dijú kí o se bi ẹni kú kin se gbogbo eniyan ló fẹ ọ denu sọra fun aye ọrẹ mi,Normal,104
+test_yoruba_00246,odindin ọba aládé wa di ohun tí à ń fi ẹ̀bẹ̀ wá kiri ọba igbá kejì òrìṣà náà ló di ìwọ́lẹ̀ débi pé wọ́n ń jọ́ba ilẹ̀ yorùbá gbé,Normal,127
+test_yoruba_00247,"""oloriburuku ni gbogbo yin😂😂😂 ##url",Abuse,35
+test_yoruba_00248,"""@username you must have come from a toxic family, going trough so many life challenges that you can't overcome .omo ofo ,oloriburuku.""",Abuse,135
+test_yoruba_00249,Baba iya e ti lule,Abuse,18
+test_yoruba_00250,"""@username abi oloriburuku lawon eleyi?""",Abuse,40
+test_yoruba_00251,ẹni tí kò bá rí fún ọmọ kì í gba tọwọ́ ọmọ whoever is unable to give to a child should not deprive the child of what he or she has if you cant give dont deprive if you cant make better dont worsen,Normal,196
+test_yoruba_00252,"""orí yín tí dàrú. eyin olosi jatijati yìí. ẹ máa relegate ni ##url",Abuse,66
+test_yoruba_00253,"""@username oloriburuku ni won, over sabi they kill them.""",Abuse,57
+test_yoruba_00254,ni òwúrọ̀ kùtùkùtù ọjọ́ kan ó tọ́ ìyáa rẹ̀ lọ láti ṣàlàyé ọ̀ràn náà tí ojúu rẹ̀ ń rí nílé ọkọ ó sọ fún ìyáa rẹ̀ wípé ọ̀rọ̀ ọkọ òun ti sú òun wípé òun kò leè farada ìhùwàsíi rẹ̀ mọ́,Normal,180
+test_yoruba_00255,"""@username ogboju ode ninu igbo irunmole""",Normal,41
+test_yoruba_00256,oloriburuku pataki ni bobo yi won ti fi ori e gba paro,Abuse,54
+test_yoruba_00257,"""@username oponu ni e.  olofo to n binu ologo.""",Abuse,47
+test_yoruba_00258,"""today was another remarkable day in the history of egboroland as elegboro of ijebu jesa hrm oba (engr) moses olufemi agunsoye {abikehin ekun agunsoye ii} marks his 5th coronation anniversary in line with 2022 egboro day. after which we attended jumat service. ##url",Normal,266
+test_yoruba_00259,"""@username ori e daru rufai omo ale""",Abuse,36
+test_yoruba_00260,gbogbo ẹyin ti wọn lo láti ní orílè èdè yí lára ọlọ́run a ní yín lára ẹyin ọmọ àlè jati jati,Abuse,92
+test_yoruba_00261,ọmọ yoòbá ò ṣé a mọ ọlọ́run kí ìmàle àti ànásárà tóó dé àbí a ò mọ̀ ọ́,Normal,71
+test_yoruba_00262,ẹ gbóhùn ẹnu mi ẹgbẹ́ mo dé mò ń re igbó ọ̀dájú o ènìà tó ní ìyá ó padà lẹ́yìn mi ẹni ó bá ní baba ni ó máa kálọ,Normal,112
+test_yoruba_00263,"""man city ti lule o, be like liverpool lokan bayi o""",Hate,52
+test_yoruba_00264,"""“the code i live by today is based on the advice of my dad. so, my dad has been my guide and backbone.” - hushpuppi   your father gave you fraud code ? abi ẹrí omo ale jatijati yi kẹ̀ ? 🤣😂""",Abuse,190
+test_yoruba_00265,"""ori eh ti daru ##url",Abuse,21
+test_yoruba_00266,"""à mònó tete ma a bo o à mònó tete ma a bo wa.  aye n daru o  à mònó tete ma bo aye n kolo o  à mònó tete bo ##url ##url",Normal,120
+test_yoruba_00267,"""shey werey man shey awon alainise yii ni? won o feran e nile ni? ##url",Abuse,71
+test_yoruba_00268,"""awọn wayrèy oloriburuku 🇳🇬 police officers! #buharimustgo #june12thprotest #june12protest #keepiton ##url",Abuse,106
+test_yoruba_00269,"""@username ibile ni awon eleyi 🙏🏾""",Normal,34
+test_yoruba_00270,èyí kìí ṣọ̀rọ̀ ẹ̀sìn o ó kọjá ẹ̀sìn tó bá jẹ́ tẹ̀sìn ò ní pa ọmọ àríwá ará ìtaẹlẹ́sìn mìíràn nìkan ni wọ́n á pa,Hate,111
+test_yoruba_00271,"""aunty mi eyin l'enka oro won kun, olofo l'oun binu ologo.  ade ori okin ni omo balogun...... ##url ##url",Abuse,105
+test_yoruba_00272,"""@username ọmọ ale ni é""",Abuse,24
+test_yoruba_00273,"""shey ori yin daru ni? abi kini gbogbo arrogance ti en disolay pelu ignorance yin? ##url",Abuse,88
+test_yoruba_00274,"""✔️ iphone x   ✔️ 64gb   ✔️price :165,000  ✔️ kaduna 📍  ✔️ nationwide delivery   dm/call:  07032655719   aids mayorkun ayra teni fulani olodo kwankwaso apostle suleiman oxlade atiku niger delta lake chad rufai biology #oyowelcomesobidatti ibadan peter obi ipob nnpc even tinubu ##url",Normal,283
+test_yoruba_00275,"""forget about the money 😂😂😂 shó yá wérèy ní 😂🤌🏽💔 ##url",Abuse,54
+test_yoruba_00276,"""lmfaooo. olofo koba ologo, ade ori okin🎼🎼 ##url",Abuse,48
+test_yoruba_00277,"""ko ni da fun gbogbo eyin rep ti e approve loan yii. eyin ole oloriburuku. e fe fi gbogbo wa ya owo tan abi. e sa fe ta orile ede yii si oko eru. ##url",Abuse,151
+test_yoruba_00278,olókùú là ń kí pé ẹ kú aráfẹ́rakù báwo la ṣe ń kí ẹni tó ń ṣetó ṣe ìgbéyàwó ibeere yoruba,Normal,89
+test_yoruba_00279,"""@username wéré, you must be out of your reasoning for saying that. oloriburuku, o ni ku're.""",Abuse,93
+test_yoruba_00280,ojúmọ́ rere mọ́ wa lónìí oṣù ire ajé oníso ibòoji mẹ́rìndínlógún á wá wa wálé lọ́láa elédùà ẹ pé á á ṣẹ,Normal,103
+test_yoruba_00281,"""@username really , omo ale leleyi ooooo bandits and yo vice president  eleribu nioooor""",Abuse,88
+test_yoruba_00282,ikú dóró ikú ti pa ọ̀kan lára àwọn ògbóǹtarigi àgbáṣà àti èdè yorùbá lárugẹ bàbá akínwùmí ìṣọ̀lá ti di ẹni ilẹ̀ ó di gbére ó dàrìnàk ó dojú àlá sùnun re o yoruba,Normal,161
+test_yoruba_00283,awọn agbowode si tọ̀ ọ wá lati baptisi lọdọ rẹ̀ nwọn si bi i pe olukọni kili awa o ha ṣe o si wi fun wọn pe ẹ máṣe fi agbara gbà jù bi a ti rán nyin lọ mọ́,Normal,155
+test_yoruba_00284,"""fire outburst at iperin ijebu ode ogun state. ##url",Normal,52
+test_yoruba_00285,àti ọdọ ọlọ́run ní nítorí ẹyin ń sọ tí yín pé irú àwọn gegele àti àwọn miran tó wà níbè lásìkò ti mo wà ní jọba ẹ wá wòó sí àwọn tí nibẹ nisin yìí àti pé gbogbo eyin ọdọ tí ẹ ń ṣe wàhálà yìí ẹ ń wo ó pe kini àǹfààní wàhálà tí ẹ ń ṣe,Normal,232
+test_yoruba_00286,ojú ìmàle ò kúrò lọ́tí ó sọ́mo rẹ̀ ní lèmọ́mù,Hate,46
+test_yoruba_00287,alakikanju ọlọ́pọlọ pípé àti olódodo ọ̀dọ́mọdé ni yẹmí jẹ́ nínú ìtàn àròsọ yìí tí kọ́lá àkínlàdé kọ kíni ojú rẹ̀ rí nípa ìsọdodo àti ìwà òtítọ́ tí ó ń hù kíni ìgbẹ̀yìn yẹmí ǹjẹ́ òdodo gbèé   yemidabira atelewo yorubayorubabooks,Normal,227
+test_yoruba_00288,happy birthday adegas odidi oma ugbonla more grace              lepetv lepezone lagos nigeria nysc ilajetv ilaje ikale apoi ondo ulenuse yoruba,Normal,143
+test_yoruba_00289,"""osun state apc senetors, state chairman and the rest losing their polling units respectively 🤣🤣🤣  📣📣📣📣 senetor kini olule  senetor keji olule  awon to ku nko 🤣🤣 imole de ooo 💡💡💡 #osundecides2022""",Hate,196
+test_yoruba_00290,Alaye shut up.. Olofooo,Abuse,23
+test_yoruba_00291,"""ní òwúrọ̀ ọjọ́ ajé.......... (it's monday morning)  ká t'ẹpá mọ́'ṣẹ́, ká má sì ṣe ṣ'ọ̀lẹ, ka múra ṣíṣe, ká bẹ elédùwà, kó fi èrè sí iṣẹ́ wa.  ìbùkún àt'ọ̀kèwà á wà lórí gbogbo wa o. àṣẹ.  #lekkimassacre #atiku #obidatti023 #asake #tobiamusan #tems #chi chi ##url",Normal,263
+test_yoruba_00292,"""omo olodo ide ##url",Normal,20
+test_yoruba_00293,"""whereas one lady was charging 1,500 for 5k at wuse 2. ole lo poju ninu yin. ##url",Abuse,82
+test_yoruba_00294,"""full makeup ontop nysc passing out.. gbogbo eleyi o necessary sha""",Normal,67
+test_yoruba_00295,"""all thanks to judas, if not for dat guy, we for no get holiday today. ọmọ burúkú lọ́jọ́ ti ẹ 😀😀😀😀""",Normal,99
+test_yoruba_00296,"""frodd by ezigbote ogbo, anumanu ... mumu , efulefu ... the most stupid being ever liveth #bbnaija""",Abuse,99
+test_yoruba_00297,legal luminaries of ikorodu from the lasunwon royal family otunba t o shobowalebenson left otunba adeniran ogunsanya middle justice micheal olawale odesanya right,Normal,162
+test_yoruba_00298,"""ok let's start from here.. pardon my write up, i'm not that eloquent like my bro @username . so, after 28 years of interregnum, ie, 28 years of no paramount king in ìjẹ̀bú igbó, we are fortunate and lucky to have a king, another orimolusi of ìjẹ̀bú igbó. ##url ##url",Normal,267
+test_yoruba_00299,bórí kan bá sunwọ̀n á ran igba ẹni bí orí ọkọ́ bá sunwọ̀n á ran ìyàwó orí mi máà padà lẹ́yìn mi wo ibi rere gbé mi dé ẹsẹ̀ wo ibi rere sìn mí yà orí ìwọ làwúre kí igbá iléè mi ó máa lé sí i àṣẹ,Normal,193
+test_yoruba_00300,ẹgbẹ́ aláṣọ osùn ni ó bẹ aláàfin igbákejì òrìṣà lọ́jọ́ ajé oníran ìran ni ẹgbẹ́ tó wà,Normal,85
+test_yoruba_00301,ó dìgbà tí a bá ń la odindin èèyàn pínin sọ́tọ̀ọ̀tọ̀ tí a ó dẹ̀ tún un tò padà fúnra wa,Normal,87
+test_yoruba_00302,"""@username olofo ni man yi sha 😂 ##url",Abuse,38
+test_yoruba_00303,"""#ojudeoba2019 #alatishedynasty #blackmoors #strongblackman 💪🏿💪🏿💪🏿🙌🏿🙌🏿🙌🏿 @ ijebu ode ##url",Normal,90
+test_yoruba_00304,àwọn ará ìṣàgá dá májẹ̀mú pẹ̀lú àwọn ọmọgunbìnrin wọ̀nyí wọ́n pa ẹran fún ètùtù wọn sì jọ jẹ odi àríwá ìlàoòrùn ni àwọn ọmọ ogun dahomey fẹ́ bá wọlé àmọ́ àwọn ìṣàgá ṣì wọ́n lọ́kàn wọ́n ní,Normal,187
+test_yoruba_00305,ráńṣẹ́ sí àwọn ẹ̀gbá láti ti ọwọ́ ọmọ wọn bọ aṣọ kí wọ́n padà sí ìlú wọn ajá ní ń wí ẹran ní ń sọ̀rọ̀ ni àwọn ẹ̀gbá fi ọ̀rọ̀ ìjọba britain ṣìí àbùkù ò ní ilé ibikíbi nií ti ń dé bá ni lálejò ni ìjọba britain fi èsì ẹ̀gbá ṣe ní britain bá gbé,Abuse,241
+test_yoruba_00306,ó tọrọ ààyè tí yóò pàgọ́ sí ogifa olórí ilẹ̀ fi ààyè kan fún bìní àti àwọn ti rẹ̀,Normal,81
+test_yoruba_00307,"""🤣🤣🤣🤣🤣🤣🤣 f-o-u-r aduragbemi. u-r-u-h aduragbemi ojo. @username . àdúrà o gbe eleyi rara. @username hafa? ##url",Abuse,110
+test_yoruba_00308,"""elucidate not ejaculate...  weyrey ti like oko ju🤣🤣🤣""",Abuse,54
+test_yoruba_00309,"""can someone please explain this to me, ori mi t'ifẹ dàrú oo 😩😩 ##url",Normal,69
+test_yoruba_00310,kò sí ohun méjì bí kò ṣe pé àwọn ọ̀tá ti ń kógun bọ̀ àwọn ọmọogunbìnrin dahomey ni wọ́n ń kógun bọ̀ nílùú ẹ̀gbá lálẹ́ ọjọ́ burúkú èṣù gbomimu tí à ń wí yìí,Normal,155
+test_yoruba_00311,kíyèsára fún ìbéèrè ìgbàpadà ọ̀rọ̀ìfiwọlé gẹ́gẹ́ bíi ìlú wo ni a ti bí ọ tàbí kí ni orúkọ ẹrankoàyànfẹ́ẹ̀ rẹ nítorí ìdáhùn lè jẹyọ láti inú àkọsílẹ̀ lórí ẹ̀rọalátagbà rẹ ó lè hùn ọ́ kí o yan ìbéèrè ìgbàpadà ìṣàmúlò tí kì í ṣe òótọ́,Normal,231
+test_yoruba_00312,"Omoale!  U don’t think in Yoruba , Onikure!!!",Abuse,45
+test_yoruba_00313,"""@username u never hear d saying 💁🤣eko gba(accomodate) ole(thief),o gba olè (laziness)""",Abuse,87
+test_yoruba_00314,èdùmàrè aláṣẹ ọba a mú lérí ṣẹ wáá mú léríi rẹ ṣẹ láyé mi jọ̀wọ́ bàbá elédùmarè baba jọ̀wọ́,Normal,91
+test_yoruba_00315,You can never smell that seat Omo ale jatijati,Abuse,46
+test_yoruba_00316,"""oloshi beg you for what? them suspend her mean say she go die.. oloriburuku apodá eyan. bitch simmer your ego.. ##url",Abuse,118
+test_yoruba_00317,"""@username oloriburuku ni man emefiele yii sha. ofo lo ma shey.""",Abuse,64
+test_yoruba_00318,"""@username ani oloriburuku nise … ibile wo lo tiwa ni eko … omo werey … no be everybody be ipob here okay …i be confirmed awori man … omo werey … iku pa e""",Abuse,155
+test_yoruba_00319,ẹ káàsán ẹ kú u bójú ọjọ́ ṣe rí i want to appreciate the efforts of every language activist that has handled this account before now i say welldone to you sàdánkátà yín o,Normal,170
+test_yoruba_00320,"Baba sope, @TheBolaATinubu  house boy ,Omo ishe ,you ran away from the debate? Oloriburuku omole olodo Ewu-Gambia shege Barawo oloshi",Abuse,133
+test_yoruba_00321,"""aeon omo ale jatijati ##url",Abuse,28
+test_yoruba_00322,"""so here's my cousin doing her part in nigeria. for dry sweet garri ijebu without stones,  not needing sugar,  contact odunolaogunkanmi. she's based in abuja. @ abuja, nigeria ##url",Normal,181
+test_yoruba_00323,"""ó lulẹ̀. 😜😜 ##url",Abuse,18
+test_yoruba_00324,"""that's how i went to yoruba road market. wanted to buy garri, the woman said ordinary garri is 300naira per bowl but ijebu garri is 700naira.😄  give me ordinary garri, i will convert it to ijebu...   èmi ìjèsà òsómàáló!😂😂😂😂""",Normal,225
+test_yoruba_00325,ẹ̀wà àti gaàrí ìjẹ̀bú tó kan gógó,Normal,33
+test_yoruba_00326,Is this what you call a rally olodo oshi,Abuse,40
+test_yoruba_00327,"""oro asiwere loma n yato... jijo ni ti ologbon. most of our means of production are still largely in the guild system phase akin to the pre industrial age of the 17th century in the west. #africa rise up! #nigeria rise up! #ilorin will rise and we pledge. believe that! #ilorinni ##url",Abuse,285
+test_yoruba_00328,ọ̀pá ò lè pa agogo abínú ẹni ò lè pa kádàrá dà dámidámi ariwo kì í pa alámàlà ẹnu ayé ò ní pa mí mo ṣẹ́gun oṣó mo ṣẹ́gun ajé mo ṣẹ́gun aláròká mo ṣẹ́gun àìbẹ́gbẹ́pé mo ṣẹ́gun gbogbo mo di aṣẹ́gun ẹ kú ọjọ́ ìṣẹ́gun o,Normal,215
+test_yoruba_00329,"""this should be...'wa!abi oloriburuku  ni iya e ni' 😂 ##url",Abuse,59
+test_yoruba_00330,"""refuel max is now 1100. buhari ko ni da  fun e oo. omo ale jatijati""",Abuse,69
+test_yoruba_00331,"""let’s all report this account for victim shaming. accounts like this are the ones that deserve bullying on this app. oponu apoda. oloriburuku. ko de no da fun e l’aye yii ati orun. rot! ##url",Abuse,192
+test_yoruba_00332,"""abi oloriburuku leleyi ni ##url",Abuse,32
+test_yoruba_00333,ibi ọ̀rọ̀ lórí èèbó ìjàpá ọlọ́gbọ́n àrékérekè ni mò ń bá bọ̀,Abuse,60
+test_yoruba_00334,wọ́n ní ọwọ́ ara wa ni a fi fa ìfàkufà a ti tú ṣẹ́ ọlọ́run wò a ti da ètò tí a dá iléayé lórí lé rú nítorí àmọ̀jù,Normal,113
+test_yoruba_00335,Ori gbogboyin ti daru,Abuse,21
+test_yoruba_00336,"""you people are sick. ori yin ti daru. what sort of creepy and zombie behavior is this? ##url",Abuse,93
+test_yoruba_00337,"Thank you, Governor. You shall be remember for this. Èkó ó ní ba jẹ ó.",Normal,70
+test_yoruba_00338,"""@username and u were sleeping and was able to respond at 4:30am? ode ni e… omo jati jati ni e. o ni sense… 😁😁😁""",Abuse,112
+test_yoruba_00339,Oloshi.  U are just an attention seeker,Abuse,39
+test_yoruba_00340,"""@username i  will just say it in my mind ""se oloriburuku ni eleyi ni""""",Abuse,71
+test_yoruba_00341,báyìí ni àfọ̀njáláyà ṣe fi ọwọ́ fa wàhálà sílẹ̀ yoòbá,Normal,53
+test_yoruba_00342,"""voted early this morning, sanwoolu 4+4. @username gbadebo seyi makinde oloriburuku""",Abuse,84
+test_yoruba_00343,romans awa si mọ̀ pe ohun gbogbo li o nṣiṣẹ pọ̀ si rere fun awọn ti o fẹ ọlọrun ani fun awọn ẹniti a pè gẹgẹ bi ipinnu rẹ̀,Normal,122
+test_yoruba_00344,"""ogun state governor, prince @username attended the birthday ceremony of foremost ogun state industrialist, chief bisi rodipe in ijebu ode. september 4th, 2019 📷 @username ##url",Normal,177
+test_yoruba_00345,ìjọba láwọn mọbi tí wọ́n wà àsìkò ò sì tíì tó kí wọ́n ó lọ gbà wọ́n nígbẹ̀sìn,Normal,77
+test_yoruba_00346,"""@username ki werey lòbà awòn egbe rè ni upiweka road""",Abuse,54
+test_yoruba_00347,d àgọ́ìwòyè ní ìjẹ̀bú ló ni òrùnkẹ́n ewì alohùn ni oral literature yoruba,Normal,73
+test_yoruba_00348,"""@username pls don't forget what i sent earlier on including baba words...like olule, emilokan and co""",Normal,102
+test_yoruba_00349,Eko oni baje,Normal,12
+test_yoruba_00350,"""ogbeni odi of ijebu ode!!! ##url",Abuse,33
+test_yoruba_00351,àmọ̀tẹ́kùn ti lé àwọn ọ̀daràn tó ńda màlúù kúrò ní aleniboro ní ìlú ṣakí ní ìpínlẹ̀ ọ̀yọ́ nítorí aburú ọwọ́ wọn fulani abuja amen what god captain universities zobo ginger deji,Abuse,176
+test_yoruba_00352,"""kosi tá ṣe fe perí ajá tá ni perí isasun. lowe lowe nìlù agidigbo, adití lon gbó, afoju lon lu, aro lon jọ sí, ologbon lọ lè ẹ yẹ bẹẹ ọ̀mọ̀ràn ni mo.""",Normal,151
+test_yoruba_00353,àwọn àgbà ló máa ń pòwe pé ìbínú kò mọ̀ pé olówó òun kò lẹ́sẹ̀ nílẹ̀ ìbínú àbíjù le kóni sínú ìyọnu lóòótọ́ ọmọ àlè ènìyàn ló rínú tí kò bí àmọ́ ọmọ àlè náà ni wọ́n ń bẹ̀ tí kò gbà tàbí tó bínú débi pé ó kóra rẹ̀ sínú ìyọnu,Abuse,223
+test_yoruba_00354,here is my interview on the plight of lgbt people in nigeria in yoruba language this is the first ever interviewing that talk about sexuality in bisi alimi ìyà mi rò pé n kò leè ṣe ni àmọ́ n kò ní ìfẹ́ abo ni mo ṣe fẹ́ akọ,Normal,222
+test_yoruba_00355,Ori inu re lo buru,Abuse,18
+test_yoruba_00356,afọ́jú ń gbá bọ́ọ̀lù,Hate,20
+test_yoruba_00357,"""@username oro pesi ję. ah awon eleyi won drag gan 😂. ruona.... abeg na 🤣""",Normal,74
+test_yoruba_00358,ológìní dúró tandi kò mira ó na ìbọn rẹ̀ sí lákátabú ò sì yín níbọn nígbà tí ọta ìbọn bàá lákínyẹmí ara inú bí ẹrin,Normal,115
+test_yoruba_00359,"""#theabeokutaboy #onthemove #weekendtrips #warri #enugu #letsdomore   #activecitizen #actasone  #jcinigeria @ adefisan, ijebu ode ##url",Normal,135
+test_yoruba_00360,"""@username omo oloja oke ni di ogun,omo fabunmi orara lada. omo afaganja omo arogun yo. omo oke agbonna, omo oke ludi ogun atiri ogu""",Normal,133
+test_yoruba_00361,"""@username i chose not to go this way! but thanks for speaking up! what’s your definition of general knowledge? is general knowledge suppose to be christian histories for a muslim student? but weyrey lo por ninu yin! awon ara ile baba e ni ode! olor!buruku omo ale""",Abuse,265
+test_yoruba_00362,"""awon olofo ti won binun ologo. enikure ##url",Abuse,45
+test_yoruba_00363,"""ati beyoncé ooooo ati cardib ooooo... ori gbogbo yin ti daru... mttee##url",Abuse,75
+test_yoruba_00364,Olodo oshi,Abuse,10
+test_yoruba_00365,ayọ̀àlááfíà àti ìlera to péye ni ọlọ́run afi fún wao,Normal,52
+test_yoruba_00366,ẹ jẹ́ kọ́mọdé kó wá ò ẹ jẹ́ kọ́mọdé kó wa ẹ̀ẹ̀mejì jòjòló ọmọ́ kékeré jòjòló o àwọn lọ̀rẹ̀ẹ́ elédùmarè ẹ jẹ́ kọ́mọd,Normal,115
+test_yoruba_00367,"""meet olori oluwakemi. aya oba sikiru kayode adetona ogbagha ii   awùjalẹ̀ (the biopic)  he became the youngest ọba in the almost 700-year-old history of ìjẹ̀bú land, he also became the longest serving first-class monarch in nigeria.   dede ọmọ nàìjíríà, wẹn ku oju lọna o. ##url",Normal,279
+test_yoruba_00368,"""oti ya weyrey. ##url",Abuse,21
+test_yoruba_00369,ọdún lọ sókè ọ̀wọ̀ tí di ìlú tó dúró gírí tí ó sì ní odi sí àríwá àti àríwáìlà oòrùn èkìtì odi sí àríwá àkókó àti odi sí gúúsù ìlàoòrùn benin ọ̀wọ̀ gbógun dìde sí àwọn ìlú kéékèèké wọ̀nyìí ifọ̀n sobe imoru ute ajagba abbl láti jẹ́ aláṣẹ lórí wọn,Normal,245
+test_yoruba_00370,hilariousbobo yi o gbadun men,Abuse,29
+test_yoruba_00371,"""@username beggar are better than stealing....eyin oloriburuku omokomo gbogbooooo..kaada fun yin""",Abuse,97
+test_yoruba_00372,"""@username olódo ni yín ma....""",Abuse,31
+test_yoruba_00373,"""mo ṣekeni, mo lulẹ̀ mo ṣekeji, mo tu lulẹ̀""",Normal,44
+test_yoruba_00374,obo dupe dun ju dun dun lo o,Normal,28
+test_yoruba_00375,báyìí ni wọ́n ṣe bẹ̀rẹ̀ sí ní fọ́n ká kiri sáàárín ìlú tí ó wà lágbègbè ọya títí wọ́n fi dé ilẹ̀ yorùbá,Normal,103
+test_yoruba_00376,"""ko si omo kidi ni apc ni ?....awon omo buruku, oniranu, alatenuje alainironu nah e plenty for southwest wing of apc. ##url",Hate,123
+test_yoruba_00377,"""olofo lo nbinu ologo  happy birthday sheikh faruq onikijipa al-miskin billahi  more years to come  @username our own two glorious men in ilorin may god continue to protect you home and abroad ##url",Normal,198
+test_yoruba_00378,"""o fe sheykeji o ti lule. #osundecides2022 ##url",Abuse,48
+test_yoruba_00379,shebi oloun lo da obo eniyan lo de da dido wa fe lo fun e wo iwo lo ma jawon pe iwo ko ni iko di e ni omo okunrin se koto kini yen se o ni dido o ni la ti kan left and right kan mo pe iwo gan set arrow,Normal,201
+test_yoruba_00380,"""baba nla oloriburuku ni man yi sha 🤮🤮🤮 ##url",Abuse,45
+test_yoruba_00381,Ogun loma pa e,Abuse,14
+test_yoruba_00382,"""lmaooooooo. oloriburuku ni bobo yen. ##url",Abuse,43
+test_yoruba_00383,abuku nla gbaa ni ki won fi eniyan joye awodi ko ma le gbe adiye,Abuse,64
+test_yoruba_00384,"""awon eleyi nbinu gan,whatever they believed in they go all out to support check @username record. asiwaju bola ahmed tinubu is sure lucky to have a supporter like otedola femi. ##url",Normal,183
+test_yoruba_00385,"Olodo, are you aware that the campaign is officially over on Thursday? You are violating the electoral law dude.",Abuse,112
+test_yoruba_00386,yorùbá a má fi orúkọ ẹranko ṣe àpèjúwe ọmọ ádámọ̀,Normal,50
+test_yoruba_00387,"""life is not a competition let’s have some fun 🎊 #yoruba #omoologo #ogunstate #ijebu #omoba #omoijebualare #omoijebu ##url",Normal,122
+test_yoruba_00388,wọ́n á ní ajagajígì ẹni tí ó mi kùkùté mi ra rẹ̀ kíni ajagajígì ibeere yoruba,Hate,77
+test_yoruba_00389,"""@username omo ibo 😇  oya oya you dun catch me 😂😂""",Normal,50
+test_yoruba_00390,"""@username level oribu òfo wo nìyẹn?""",Abuse,37
+test_yoruba_00391,àti o àti ìjọba o kò sẹ́ni tó ládèéùn nínú àwọn méjéèjì ṣíọ̀,Abuse,60
+test_yoruba_00392,"""e we so o omo alárè our delish ijebu trio (ikokore, ebiripo and ojojo) will be available for delivery and pick-up today. dm or call 07036461956 to place your orders @username #chefibile #tiwantiwa #ijebufoodie ##url",Normal,216
+test_yoruba_00393,"""@username olori ebi yin ni mumu""",Abuse,33
+test_yoruba_00394,"""iruu patience buruku wo leleyi nitori olorun 😩maati feshe yo bobo yen leyin danu😂tanni patience ofo😂😂😂 ##url",Abuse,109
+test_yoruba_00395,"""@username àwọn wo tuni eleyi torí ọlọhun 🤓""",Normal,44
+test_yoruba_00396,"""@username oloriburuku pastor osinwin. from buhari to tinubu. ##url",Abuse,67
+test_yoruba_00397,"""let people 'mourn' in piss, plis dear. olófo ni beauharry""",Abuse,59
+test_yoruba_00398,"""werey ni ajulọ, kò jù bẹ lọ 😆😆😆😅 ##url",Abuse,39
+test_yoruba_00399,"""@username olofo ni 😂""",Abuse,22
+test_yoruba_00400,"""awon eranko to fi awon eniyan bora.. these gutter mindset people still work under christian organization but they set boundaries when it’s comes to marriage.. with dat her face wey look like forbidden fruit🙄..radarada 😏😏 ##url",Abuse,227
+test_yoruba_00401,"""@username no wonder they call u omo osun.omo ale omorisha jati jati.omo eranko""",Abuse,80
+test_yoruba_00402,"""dead nigga  olofo ##url",Abuse,24
+test_yoruba_00403,"""where are my ijebu people at? 🙌🏻💃🏻 omo alare, ewe so o! 😁❤  #ijebu  #alágaroyale 👸🏻 #yourfavoritealaga 😍 ##url",Normal,111
+test_yoruba_00404,ọ̀bọ lágídò lẹ́bí tó pọ̀ nígbó sọ mẹ́rin péré ńnú wọn,Normal,53
+test_yoruba_00405,"""olofo lo nbinu ologo  ade ori okin""",Normal,36
+test_yoruba_00406,"""ori eleyi ma ti daru.. ##url",Abuse,29
+test_yoruba_00407,àwọn òmùgọ̀ kan ò mọ̀ wípé kàlẹ́ndà tí ń bẹ níbí kí calendar ti wọn tó máa bẹ,Abuse,77
+test_yoruba_00408,"""@username you call your fellow woman ashewo because of a show? leeeemmmmaaaaaoooo!!!! what she has achieved in her life, it will only take god's grace for you to achieve it in your life. oloriburuku omo pau bi ibon.""",Abuse,217
+test_yoruba_00409,"""@username ori e buru bi eegun to nle weyrey, omo ale jatijati!""",Abuse,64
+test_yoruba_00410,àwọn ọmọ ogun núpé ṣígun lọ sí ìgbòho ìjà tó le ni tí àwọn ọ̀yọ́ fi ìjà náà sí ẹ̀yìn odi ìgbòho ọ̀yọ́ ṣẹ́gun núpé tí wọ́n sì mú olórí ogun núpé tí ń jẹ́ lamojo àwọn ogun méjì yìí fi ọ̀yọ́ sí ipò kòṣémú nínú ìjà ogun tí wọ́n sì fi pa àrokò ogun fún,Normal,247
+test_yoruba_00411,"""ode buruku ni bobo yen sha. rapist oshi 🙄 ##url",Abuse,48
+test_yoruba_00412,"""olowo n shey òrẹ́  olowo  oloshi n shey ọ̀ta arawon""",Normal,53
+test_yoruba_00413,"""@username ọmọ ale ni yín sir 😂""",Abuse,32
+test_yoruba_00414,"""@username you did well jàre my leader. god bless you!👏🏾✌🏾🤲🏾😘💥💯✔️ àwọn olóríburúkú atokowábaléjẹ́! 😀😂🤣""",Abuse,103
+test_yoruba_00415,à ṣì ń retí àwọn olùdíje ipò gómìnà ìpínlẹ̀ èkó ní gbọ̀gán èrò ti wà níkàlẹ̀,Normal,77
+test_yoruba_00416,"""werey lawon eleyi sha. e score inuyin dun. nigba ti game mi ti cast. ##url",Abuse,75
+test_yoruba_00417,"""priime omo  buruku ##url",Abuse,25
+test_yoruba_00418,"""nkan buruku....gate ni eleyi masho gbeyin  sogun laaye mii ##url",Normal,65
+test_yoruba_00419,"""ìşe ènìyàn ni ìşe ȩranko... cc: @username ##url",Normal,48
+test_yoruba_00420,aṣiwèrè èyàn ló ńsọ pé irú òun ò sí irú ẹ̀ pọ̀ ju ẹgbàágbèje lọ only a deluded person will claim theres none li,Abuse,112
+test_yoruba_00421,kò sí ìtàn míì tí a rí kà tàbí gbọ́ nípa ìrìnàjò odùduwà dé ifẹ̀ oòdáyé mẹ́ta la mọ̀ wọ́n sì jọra wọn díẹ̀,Normal,107
+test_yoruba_00422,nígbàtí a ò rí káàdì gbà bóo la ó ṣe yan ẹní hùn wá ojúṣe wa ni láti dìbò kẹ̀ ẹ ẹ ò fẹ́ ká ṣe ojúṣe wa gẹ́gẹ́ bí ọmọ ìlú,Normal,121
+test_yoruba_00423,"""alfa oloja ninu awe it's good for you both alfa and omo kewu samdollar003 lilbrymebabao  @username empirejabulani_official popoolakausara  tunrayo_popoola @username … ##url",Normal,173
+test_yoruba_00424,ọ̀rọ̀ àpọ́nlé adverb it is a word that modifies a verb adjective in a sentence ìdòwú sá lọ ráúráú ìdòwú runs off completely eré náà tètè tàán the race finished too quickly igi ìrókò náà ga gogoro the ìrókò tree is very tall,Normal,223
+test_yoruba_00425,"""olófo l’ó máa n’bínú ológo…""",Normal,29
+test_yoruba_00426,"""lmaoooo gboro buruku lenu eye ##url",Abuse,36
+test_yoruba_00427,"""@username oloriburuku ni gbogbo iran e.  ofo loma se.  omoburuku osi.""",Abuse,71
+test_yoruba_00428,"""biggie ti tọ̀ weyrey 😂😂 e go dey reason hìn life why e call sholzy back😂😂omashola stopeet i like eet😹😹#bbnaija #bbnaijaallstars""",Abuse,129
+test_yoruba_00429,"""ìwọ ọmọ àlè jati jati yi, gbogbo yín tí ẹ fẹ dá orile-ede yi láàmú ọlọ́run a dá yín láàmú. ##url",Abuse,97
+test_yoruba_00430,kí á tan iná pa agbọ́nrán ká fọ̀pá gbọọrọ pejò ká dìtùfù ká fi gbọ̀wẹ̀ lọ́wọ́ọ ṣàngó ní ìṣojúu mádiyàn lagaraá ṣe ńdáni  esinoro yoruba,Normal,135
+test_yoruba_00431,ohun tí wọ́n gbé sí alákọrí lórí nìkan ló mọ̀ ó rò wípé a ò tí ì máa ka ọjọ́ kí ọlọ́ṣà tó ó dé,Abuse,94
+test_yoruba_00432,"""@username imagine oh. ani oloriburuku ni won. won fe ba nigeria je ni""",Abuse,71
+test_yoruba_00433,"""oshi ọ̀rọ̀ wo lon sọ gan? ##url",Abuse,32
+test_yoruba_00434,"""@username omo odo oloriburuku werey, oloshi, ewu , malu 🤣😂🤣😂🤣""",Abuse,63
+test_yoruba_00435,"""@username ogun will kill your entire generation  and everything in your generation  will be destroy in your eyes. oloriburuku olofo""",Abuse,133
+test_yoruba_00436,"""@username olodo ni bobo yii sha 🤣🤣🤣🤣 ##url",Abuse,43
+test_yoruba_00437,"""greetings from ijebu ode as wasiu ayinde begins coronation rites for olori omooba akile ijebu title. ##url",Normal,107
+test_yoruba_00438,"""@username correct bro...ifà ni yeye fàyè,ìfàyè ko yèku àwà ýè ku sori elenini&lt;&lt;&lt;&lt;&lt;&lt;&lt; nobody come close to shaheed osupa when it comes to àyàjò and òfò in fuji.""",Normal,182
+test_yoruba_00439,ìpalẹ̀mọ́ bẹ̀rẹ̀ pẹ̀lú ìkọ́pàájáde wọn yóò róṣọ funfun mọ́dìí fìlà àgà pupa lórí ọ̀pá lọ́wọ́ ké arò ẹ̀yọ̀ dé ààfin eyoorisa yoruba,Normal,130
+test_yoruba_00440,"""to mark the 5th years coronation of kabiyesi, hrm oba (engr) moses olufemi agunsoye. the elegboro of ijebu jesa. the planning committee wishes to intimate the public that kabiyesi shall grant a press conference on 11th nov 2022 join via the link below. 👇 ##url ##url",Normal,267
+test_yoruba_00441,"""awon olofo meji ##url",Abuse,22
+test_yoruba_00442,"""eleyi tun gbenutan o o ##url",Normal,29
+test_yoruba_00443,"""honestly if our senseless government know how to embezzle crypto am 1000% sure they will never ban it. am sure they don't know that banning crypto is just like saying they are banning dollars....🤣🤣🤣 awon werey jatijati oponu ode alainironu!!!""",Abuse,244
+test_yoruba_00444,olódo mò ń gbádùnun rẹ bí ṣe ń gbádùnun jẹ́ ó wà bẹ́ẹ̀,Abuse,56
+test_yoruba_00445,"""awon ole jati jati. manifesto ni won tun ji. very dull set up of humans.""",Abuse,74
+test_yoruba_00446,"""has in is better to be single than dating awon oloriburuku somebody,chai epele😂🤷🏾‍♀️👍 ##url",Abuse,92
+test_yoruba_00447,"""otun ti zee ooo....   awa lo kan.  disobedient and atiku ema lule. ##url",Hate,73
+test_yoruba_00448,òjíjí bá jí wọn ẹnikẹ́ni tí ìrànlọ́wọ́ọ̀ mi bá ń bẹ níkàwọ́ọ rẹ̀ afà máa fà wọ́n bọ̀ pitipiti nítorí ẹṣin ní í pé bo ẹran nínú igbá ṣìkìtì ni ẹyẹ ń pé bo ẹyìn lóko kí ọmọ aráyé ó máa fi ọlá ńlá wá mi kí ọlà ṣù bìrìbìrì bò mí,Normal,224
+test_yoruba_00449,ajá tó rí mọ́tò tó dúró fi araa ẹ̀ bọ ògún ẹ jẹ́ kí á gbọ́ ìkílọ̀ kí á wọ ìbomúbẹnu bí a bá ń jáde,Normal,98
+test_yoruba_00450,ẹ kú ajálẹ́ o,Normal,13
+test_yoruba_00451,"""you are showing hiw your parents did a very bad job by showing support for someone that disrespect an elderly person oloriburuku omo ofo. onikure ##url",Abuse,152
+test_yoruba_00452,wọ́n gba wèrèe àṣàa aláṣà ó burú jáì torí wọn ò gba wèrèe àṣà ti wọn,Abuse,68
+test_yoruba_00453,"""omo ologo (omo ologo) omo ologo (omo ologo) won fe gbogo mo mii lowo awon olofo (awon olofo)...""",Abuse,97
+test_yoruba_00454,Your father not our father OLE NI GBOGBO YIN. You will have to return that certificate of return.,Abuse,97
+test_yoruba_00455,parioweyii ẹlẹ́mi ń kawó olóbì ń sọ̀  ibeere yoruba,Normal,51
+test_yoruba_00456,èwo nínú àwọn ọba wọ̀nyí ló kọ ìwé síjọba gẹ̀ẹ́sì ní a ọba adéyẹmí b ọba síjúwadé d ọba ẹṣìnlókùn,Normal,97
+test_yoruba_00457,"""gbọ t'èmi náà ##url  #yoruba #nollywood #filmclips #movie #morocco #tiktok #olodo #wednesday ##url",Normal,99
+test_yoruba_00458,"""@username omo ale alailojuti , awon egbe e di governor and you are here abusing people because of politicians , werey 🤣🤣🤣🤣""",Abuse,124
+test_yoruba_00459,"""una fada shameless club e no go better for that oloriburuku ole ajibole ##url",Abuse,78
+test_yoruba_00460,ní ìlú ìjẹ̀ṣà àtijó ní àsìkò ẹrú àlejò tí ó bá wọ ìlú ìjẹ̀ṣà sugbon tí ìrìn rẹ̀ bá mú ìfura dání wọn ma pá tí wọ́n sì ma fi orí rẹ̀ kọ́ sí ara odi ìlú ní adó èkìtì àlejò tí ìrìn rẹ̀ bá mú ìfura dání wọn ma mú lọ sí ojúbọ esuowakurungbon kí ó wá lọ búra,Hate,252
+test_yoruba_00461,"""the statue builder on d builder .... omo ale ni dj se...  so okorocha ni omo ologo, eleyi yi ti rogo lowo efcc  #apcpresidentialprimaries""",Abuse,139
+test_yoruba_00462,ìkíni ní ilẹ̀ yorùbá sí ẹni tí ń ṣe àárẹ̀ ẹ pẹ̀lẹ́ o ẹ má fi ara sílẹ̀ sí àwọn tí wọ́n ń ya ara wọn ó dàbọ̀ ìpàdé wa bíi oyinó dàbọ̀ kí a má pàdé mọ́ sí ẹni tí èèyàn pàdé lọ́nà ẹ pẹ̀lẹ́ o ẹ yára lọ sí ẹni tí ó ń sinmi ẹ kúu ìsinmi,Normal,230
+test_yoruba_00463,"""@username eleyi tun boro je""",Normal,29
+test_yoruba_00464,"""just a gentle reminder that @username has not see sunshine stars play at the akure township stadium since he became governor.  the last time he saw them play was during a week 37 match against fc ifeanyiubah in ìjẹ̀bú òde back in 2017.  sunshine stars won 4-0 that day.""",Normal,271
+test_yoruba_00465,"""@username this is where they usually pick u up from! iru hoeniranu wo ni eleyi? 😕""",Abuse,83
+test_yoruba_00466,"""imagination bi ole bi ole por ni owo awon iyawo yahoo yi 😂😂 ##url",Abuse,66
+test_yoruba_00467,"""oloriburuku tu bored ni oru 😂 obo ti bee werey 😂 afi oko yi nah 🤣""",Abuse,67
+test_yoruba_00468,"""members of this party will come and online and say the governor is borrowing, meanwhile, they stole everything blind..awon ole, jegudujera, oofon🤬🤬🤬🤬 ##url",Abuse,156
+test_yoruba_00469,"""e wo bi awon eranko she pa iyan danu.  ha! ikule a bi ya mo o""",Normal,63
+test_yoruba_00470,àti ti parí ìjà wọn báyìí wọ́n ti ṣe ètò ìrẹ́pọ̀ fún ọdún mẹ́wàá láàrin arawọn,Normal,78
+test_yoruba_00471,"""@username please nothing has been done on my account despite your tracking number...... shey e fe fi ebi pami ni? abi kini gbogbo radarada yi""",Normal,143
+test_yoruba_00472,"""pls advice should i join soldier after nysc.comment plswoliarole #woliagba_ayoajewole #woliagbaye_official #iamlizzyjay #ijebu #gorosoekiti #gbengaadeyinka #davidoofficial #omobabacomedian #aycomedian #asiricomedy… ##url",Normal,221
+test_yoruba_00473,ajá lọ má jẹ ẹnu ẹ àti bàbà wéré tó bí omokomowhy you want no kuku stay for that your place,Abuse,91
+test_yoruba_00474,"""sanwoolu! sanwoolu!! sanwoolu ooo!!! so fun awọn aja to n da rogbodiyan lẹ laarin awọn to n fi ehonu han ni alausa ki jawo lapon ti o yo. if not ofo lomi ẹfọ n se o.  #endswat #thugs@username """,Normal,194
+test_yoruba_00475,"""@username awon oloriburuku aye yin o ni da""",Abuse,44
+test_yoruba_00476,"""i did not like agẹṣinkólé one bit, but you see this jagun jagun....... ẹ fílẹ̀ fún @username . àjànàkú kọ̀já mo rí nnkan fírí, bá a bá rérin, ẹ jẹ́ á pé a rérin🙌🏾🙌🏾""",Normal,166
+test_yoruba_00477,"""🙆  wèrè lọ ń cock ìbon ni ṣá.  ẹ̀yin kíni burúkú @username , una don see this? all of una no go die beta.  #endsarsnow #endsars #endpolicebrutality #endswat  #end @username , dem kúkú no dey useful. ##url",Abuse,205
+test_yoruba_00478,"""we take on @username tomorrow at the otunba dipo dina stadium, ijebu ode.  #dinbyl #tcccup21 ##url",Normal,99
+test_yoruba_00479,"""lmfaooooooo   isé éyan n’isé erankó 😂 ##url",Normal,44
+test_yoruba_00480,láìpẹ́ ni obìnrin arẹwà ẹfọ̀n dé láti paradà di ẹranko ni kò bá rí àwọ̀ọ rẹ̀ mọ́ níbi ó fi pamọ́ sí,Normal,99
+test_yoruba_00481,"""@username if una like make una buy òpómúlérò una go still lule""",Abuse,64
+test_yoruba_00482,"""awon olofo 👀""",Abuse,14
+test_yoruba_00483,"""ę fi mbarak silę ko ma ba radarada ka. bobo to nfi hustle sere ni, omo inu ę loma pada ma fun ni raba. #punchline #hustlehard #nosleeplive #nairamarleytickets #nairamarley #marlian #marliansfest #marlians""",Abuse,206
+test_yoruba_00484,"""@username not small oo i also know asunkungbade of daura eleyi of ogun state. emilokan of nigeria""",Normal,99
+test_yoruba_00485,ọ̀yẹ̀kú bá ará pópó ya òkúu wọn tán ni wọ́n bá sọ ọ́ di ọ̀yàkú ọ̀yaikú,Normal,70
+test_yoruba_00486,"""baba ẹ lọ snore ni cell, ọmọ àlè jatijati ##url",Abuse,48
+test_yoruba_00487,"""orishirishi oshi anointed whore ##url",Normal,38
+test_yoruba_00488,nínú ìwé eré oníṣe yìí wọ́n wí fún adéagbo títí kò gbọ́ wọ́n sìpẹ̀ fun kò gbà nípa àwọn ìwà ìbàjẹ́ tí ó ń wù àfi ìgbà tí ojú rẹ tó rí ohun tí ojú ń wáṣebí afàgò kẹ́yin àparò ni,Abuse,176
+test_yoruba_00489,"""@username ehyaaaa dirty hausa with brown teeth. hausas destroyed nigeria. go your back to your deserted lands filled with hunger and terrorism. oloriburuku omo ale jati jati eranko""",Hate,182
+test_yoruba_00490,"""@username olofo ni keyamo yi shaaa  like we are not dummies man!🤷🏽‍♂️""",Abuse,71
+test_yoruba_00491,"""onirun laya bi obo baby, omo ale omo ibo oni jere  osinwin eniyan okanre oni bale ##url",Hate,88
+test_yoruba_00492,àgùtàn tó bá bá ajá rìn á jẹ ìgbẹ́ ajá tó bá bá ewúrẹ́ rìn á jẹ èpo iṣu a sheep that moves with dogs will eat faeces and a dog that moves with goats will eat yam peelings be mindful of your close associates good morning,Normal,219
+test_yoruba_00493,"""eleyi a kàn má rerin oshi kan ni🤣🤣""",Abuse,36
+test_yoruba_00494,"""@username beeni ko si gbodo tu u danu omo iku ti’ku ko le pa omo arun t’arun ko le gbe de omo ofo, t’ofo ko le se….” ##url",Normal,123
+test_yoruba_00495,"""oloriburuku omo ale jati jati ##url",Abuse,36
+test_yoruba_00496,"""kitty kat oshi ti eyin girls yi fin doko kiri ma pada di kati kati mo yin lowo 😒😒😒😒""",Abuse,85
+test_yoruba_00497,"""@username omo ale yoruba ni e. who is the oba of lagos?   ##url",Hate,64
+test_yoruba_00498,"""those almajiri twitter should borrow their self brain 🧠 ooo before those mumu celebrities will take us for fool... abo oro lanso fun omoluabi""",Normal,143
+test_yoruba_00499,"""oya  maami,awoón tí íjébu 😂😂😂😂😂😂 ##url",Normal,39
+test_yoruba_00500,a kò lè tìtorí pé a fẹ́ kí ẹṣin kú iṣẹ́ ka wá ní kórí adé rinsẹ̀ we cannot ask the king to trek simply because,Normal,110
+test_yoruba_00501,"""@username take the case to the court now, oloriburuku masafannii.""",Abuse,67
+test_yoruba_00502,wọn ṣe títí ohun gbogbo ò sunwọ̀n wọ́n wá padà tọ olódùmarè lọ wọ́n kó ẹjọ́ wọ́n rò fún elédùmarè elédùmarè wá bèrè lọ́wọ́ wọn wípé obìnrin kan ṣoṣo tí ń bẹ láàárín yín ńkọ́ ǹjẹ́ ẹ fi ìmọ̀ ṣe tirẹ̀,Normal,197
+test_yoruba_00503,sì jogún ilé oko àti ìyàwó wọn pẹ̀lú ipá àwọn tó gbìyànjú àti sálọ ni wọ́n sọ di ọmọ ọ̀dọ̀ àpàpàǹdodo nígbà tí kò sí ǹkan láti jẹ ní wọ́n bá fi ìkàọ̀dàn sílẹ̀ tí wọ́n mórí lé àwọn oko ìjàyè àwọn olóko ìjàyè dìde ìjà padà sí àwọn tó ń gbógun ja oko wọn,Normal,251
+test_yoruba_00504,"""@username u must be outside this world, oloriburuku omo ale arungun.early lead kill you there 😏""",Abuse,97
+test_yoruba_00505,rẹ́rẹ́ rún nílùú libya bí a bá ń naka àbùkù sì libya ó yẹ ká pé àkíyèsí àwọn ìjọba wá láti gbájúmọ́ ojúṣe wọn lábẹ́lé nípa ìpàsè ìṣe fún àwọn ọ̀dọ̀,Normal,147
+test_yoruba_00506,Y u stammering and you wan become Governor... Soro soke werey ogbeni gbadebo  Sanwolu is our Governor and we are fine with him,Abuse,126
+test_yoruba_00507,"""@username 😂😂😂😂😂 oloriburuku ni bobo yen. i'll locate him and beat him up if he does tbh""",Abuse,89
+test_yoruba_00508,not part of he is the major problem we are facing as a nation ronu oje nile oro je nile egungun baba dara dara aku ma ku amo na run ma lo,Abuse,137
+test_yoruba_00509,O lule last last naa ni,Abuse,23
+test_yoruba_00510,"""olohun o she, mi o ni circle oshi! ##url",Normal,41
+test_yoruba_00511,"""@username ofó yi por 😂""",Normal,24
+test_yoruba_00512,oníṣẹ́ mi ti ńbọ̀ á fi tí ẹ fi ránṣẹ́ yìí hàn kí ẹ bá mọ̀ pé àtọ̀dọ̀ mi ló ti wá ẹ ṣeun,Normal,87
+test_yoruba_00513,"""koni dafun awọn ti won nie . iwo ọmọ ale játi jati yi. awọn eyan mi  na ni o peni radars yen abi. don't worry. ##url",Abuse,117
+test_yoruba_00514,"""@username awon omo ale gen z.""",Abuse,31
+test_yoruba_00515,"""@username oloriburuku ni awon to bi e.... because i no follow you talk....""",Abuse,76
+test_yoruba_00516,"""the osun ilerioluwa/olule should prepare to re-present oyetola again in 2026 with their shenanigans and see hell again.""",Normal,121
+test_yoruba_00517,"""leemao. eranko ni e ##url",Abuse,26
+test_yoruba_00518,"""abio  omo ale omo oko  #likefatherlikeson ##url",Abuse,48
+test_yoruba_00519,"""@username béni, sé à mò pé óríṣìíríṣìí àrokò ní mbé? élèyì ò jò t'èbè tàbí ìránsè óó, ó dàbì t'ógún ní ó!""",Normal,107
+test_yoruba_00520,alákọrí oníjìbìtì kan tún fẹ́ jí àwọn olóore lówó nípasẹ̀ ọ̀rọ̀ yìí njẹ́ ẹ ò ríi pé ẹ̀dá míràn kanlẹ̀ ya ìkà aláìbìkítà ni,Abuse,122
+test_yoruba_00521,"""awon olofo 😆 🤣 ##url",Abuse,21
+test_yoruba_00522,"""lmao... awon olofo 😂 ##url",Abuse,27
+test_yoruba_00523,"""🔵ọlẹ̀ á sọ nínúu gbogbo obìnrin tó ń w'ọ́mọ  🔵bàbá ra ẹran abàmú  - ọmọ inú ọmọ ènìyàn ni 'ọlẹ̀', ọmọ inú ẹranko tàbí ọmọ ẹyẹ ni à ń pè ní 'àmú'.  #inyoruba #yoruba  #learnyoruba #language ##url",Normal,195
+test_yoruba_00524,"""@username how about the yoruba parents that’s supporting p.o and igbo parents that’s supporting tinubu? ……. oloriburuku ni yin i smell tribalism from people like you""",Abuse,167
+test_yoruba_00525,ọmọ yorùbá àtàtà ni mi ni mo fi nání tiwa ntiwa n ò kí ń ṣe ọmọ àlè ọmọ ọkọ ni mi mi ò mọ tì ẹ ọmọ ọkọ ni ọ́ ni àbí ọmọ àlè,Abuse,123
+test_yoruba_00526,"""@username bingo is a name given to a dog. dogs behave like humans. dogs are loyal to their masters and are not treated like slaves. at least they are better than 'use and dump"" agbado street urchins. mumu tí ó ti ṣí' èrè ni ẹ. oponu.""",Abuse,235
+test_yoruba_00527,"""bbc news yorùbá - baṣọ̀run gáà: àgbà ìjòyè ní ọyọ ilé tó le è yípadà sí ẹranko tó bá wù ú ##url",Normal,96
+test_yoruba_00528,"""@username olodo ni bobo peteru yen""",Abuse,36
+test_yoruba_00529,"""this is jungle justice in ipob biafraud. awon oniranu ##url",Abuse,60
+test_yoruba_00530,ọ̀rọ̀ a máa yí èèyàn padà bí ọ̀pá ti máa nyí àkárà padà ̀bá,Normal,59
+test_yoruba_00531,"""garri ijebu on the go 😍😍  #garriijebu  #garri #garritohyummy  #crispyncrunchygarri ##url",Normal,89
+test_yoruba_00532,"""ori gbogbo yi ti daru""",Abuse,23
+test_yoruba_00533,ashura ni iṣọtẹ ti olododo ati ominira pẹlu nọmba kekere igbagbọ ati ifẹ nla si awọn alade aafin ati awọn ikogun igberaga ati awọn olurannileti ogoji ti ashura lati fi si iwaju ti igbesi aye awujọ wa,Normal,199
+test_yoruba_00534,"""awon oloriburuku #keepiton weyrey alaso . ##url",Abuse,48
+test_yoruba_00535,"""oti daru momiloju oo 🙄🙄 ##url",Normal,30
+test_yoruba_00536,"""kò síbi tí ìṣe ò sí. mò ń wo ètò afẹ̀ríhàn tí ó dá fìrìgbagbòó lóríi àwọn ìgárá ọlọ́ṣà orí ẹṣin ní britain nínú ọgọ́rùn-ún ọdún kẹtàdínlógún (17th century).  ẹní bí olè kò bímọ, àwọn àgbà l'ó wí bẹ́hẹ̀. ##url",Normal,209
+test_yoruba_00537,esogban fi yé ni pé níbi ìjókòó onítábìlìpo lọ́balọ́ba ẹkùn ìwọ̀oòrùn ní ọba bìní nìkan ló kọ ọba sílẹ̀,Normal,103
+test_yoruba_00538,àwọn àgbá bọ̀ wọ́n ní páńsá ò fura páńsá já síná àjà ò fura àjá jìn onílé tí ò fura olèé kó o kí ni àwọn yorùbá ńfi páńsá ṣe,Normal,124
+test_yoruba_00539,"""@username ko ti e kan mi cuz oloriburuku ara e o give a f bout nobody but himself""",Abuse,83
+test_yoruba_00540,ìyá máì gé e bàbá máì gé e ìyá máì gé e baba máì gé e o baba máì gé oooo aráyé ẹ gbọ́ o rìkíṣí ti dé o kò sáyọ̀ nílé o jàm̀bá ti dé ẹ fara yín mọ́ra káyé lè yẹ wá o ẹ múra síṣẹ́ o jàm̀bá ti déééé,Normal,195
+test_yoruba_00541,"""@username awon ole oponu, olule 🤪🤪🤪🤪 ##url",Abuse,43
+test_yoruba_00542,òwe àwọn àgbàlagbà kan ló pé ọdẹ ló mú iṣu délẹ̀ yìí kò sẹ́ni mọ ibi tí wọ́n ti ń gbin iṣu iṣẹ́ ọdẹ ni láti pa ẹran ìgbẹ́ fún ará ìlú fún ohun jíjẹ àwọn akíkanjú ọdẹ ti kọjú ìjà sí àwọn ẹranko abìjà inú ìgbẹ́ bíi kìnnìún àti ẹranko búburú gbogbo,Normal,245
+test_yoruba_00543,"""@username sprayed her armpit?? team gifty👏🏿👏🏿 oloyinbo oshi #bbnaija""",Abuse,70
+test_yoruba_00544,ẹ sọ fún yobo kó lọ rọ́kú nílé a ò nílòo rẹ̀ mọ́,Normal,48
+test_yoruba_00545,ẹ̀dá inú omi ti ń dínkù odò gbogbo ti ń wọ ẹ̀wù ìràwé ẹranko inú aginjù ti ń parẹ́ ǹjẹ́ kí ló máa ṣẹlẹ̀ sí àwa ọmọ ènìyàn,Normal,121
+test_yoruba_00546,"""olofo to ń bínú ologo...""",Normal,26
+test_yoruba_00547,"""@username ani oloribuku ni yi 🌚, we are moving with our 25%-50% up north, let others de manage 0.0000 south , awon olule 🤡🤡🤡 ##url",Hate,131
+test_yoruba_00548,ẹgbẹ́ òṣèlú pdpti ké gbàjarè síta nípa bí àwọn èèyàn kan nínu ìjọba ààrẹ mùhámádù buhari àti ẹgbẹ òṣèlú apcṣe ṣe owó biliyan mẹ́talelọgbọn kúmọkùmọ  edeyorubadunleti yoruba lagos ìbàdàn abéòkúta òsogbo th of january,Normal,215
+test_yoruba_00549,"""kilo kan vinicius ninu èlèyi 😂😂🤣🤣 ##url",Abuse,40
+test_yoruba_00550,olè tí ó nífẹ̀ẹ́ ará ìlú nìyẹn o kì í ṣe àwọn olè ọ̀jẹ̀lú tí à ń pè ní òṣèlú tí ó jẹ́ wípé ti àpò ara wọn nìkan ni wọ́n mọ̀ bámúbámú ni mo yó mi ò mọ̀ bóyá ebi ń pa ọmọ ẹnìkan,Abuse,175
+test_yoruba_00551,"""olofo lon binu ologo 🧢 am loaded with my personal g!!!!   mr money asake tiwa savage #loaded #skillz ##url",Normal,107
+test_yoruba_00552,láì sí ìṣẹ̀ṣe kò le è sí ohun atọwọ́dá tí ọmọènìyàn fi àwòkọ́ṣe ìṣẹ̀ṣe ìṣẹ̀dá olódùmarè ṣe,Normal,90
+test_yoruba_00553,ejò tó múra ìjà,Normal,15
+test_yoruba_00554,ọmọ ọba ìlú ni ajénifújà jẹ́ kí ogun tó kó ìlú wọn tí ó rán baba rẹ lọ sọ̀run tí ó sì sọ dí ẹrú kí ó tó gba ibẹ̀ dé oko àárù ó rí àǹfààní láti de ipò baba rẹ̀ ní ìgbàtí ó yá ǹjẹ́ ajénifújà padà dé orí àpèrè baba rẹ  ajenifuja atelewo yoruba yorubabooks,Normal,252
+test_yoruba_00555,"""ojúṣe wa si ìjọba  a) bẹ́ẹ̀ni ni pé kò sí ọmọ re nínú iban, àmọ́ lọ́pọ̀ ìgbà, ọmọ burúkú inú ìban ni ọdẹ n mú láti pèsè jíjẹ àti mímu fún àwọn ẹbí rẹ̀, bẹ́ẹ̀ni òun yìí ni àwọn ológun n mú láti dáàbò bo ará ìlú""",Normal,211
+test_yoruba_00556,"""awon set olofo ni won 🦇 2023 ##url",Abuse,35
+test_yoruba_00557,"""@username radarada,  rederede, awon osinwin eniyan.""",Abuse,53
+test_yoruba_00558,ó fẹ́ rí wèrè she wantu see crazy,Normal,33
+test_yoruba_00559,ẹni tó ńbẹ̀rù àti ṣubú àti dìde á nira fún un whoever is scared of falling will find rising pretty tough nothing ventured nothing gained be bullish take calculated risks,Normal,169
+test_yoruba_00560,"""omo ale ni eleyi o ##url",Abuse,25
+test_yoruba_00561,"""cook her🙏🏽 awon holier than though. tori ewo ni question ofo!?!? ##url",Abuse,71
+test_yoruba_00562,"""maybe he'll have to suspend his retirement. awon olojoro oshi ##url",Abuse,68
+test_yoruba_00563,"""a ma pada fi werey port oro ílé ayé yi ni cos o ti súmì but ko ni rè mì💪🏽""",Abuse,75
+test_yoruba_00564,"""asuu must extend the strike just for oyetola to have a taste of what students in nigeria are going through since he started studying the just concluded election in osun state. ode oshi 🤣""",Abuse,188
+test_yoruba_00565,"""eranko ni bobo yen. 😂 ##url",Abuse,28
+test_yoruba_00566,òrìṣà búra mọ́ nítorí ìdájọ́ àwọn òrìṣà ti ń pẹ́ jù lójú aólẹ̀ ṣùgbọ́n idà aláàfin ni wọ́n fi ń búra láti ṣe ìdájọ́ fún ẹni tó bá ṣẹ̀ lẹ́hìn tí aláàfin aólẹ̀ gun orí oyè ẹni tí ó jẹ́ ọ̀tá fun tí ó yẹ kí wọ́n ṣe ìdájọ́ fún ni kó dárúkọ aólẹ̀,Normal,240
+test_yoruba_00567,lẹ́hìn tí wọ́n ti ṣẹ́gun òwu àwọn ìjẹ̀bú àti ifẹ̀ parapọ̀ fi ìyà jẹ ìkijà nítorí wípé wọ́n fún òwu ní oúnjẹ nígbà tí ogun náà ń lọ lẹ́yìn tí wọ́n run ìkijà tàán wọ́n wá pa àṣẹ wípé kò sí ẹni tí ó gbọ́dọ̀ tún gbé òwu dìde mọ́ àwọn olórí ogun ifẹ̀,Normal,245
+test_yoruba_00568,"""you must be an oloriburuku oloshi, its decent not descent 🤡🤡🤡 #bbtitans #bbtitans2023 ##url",Abuse,92
+test_yoruba_00569,"""smh baba werey ni eleyi ooo ogun po gidi @username ##url",Abuse,57
+test_yoruba_00570,"""@username oloriburuku ni yin sir""",Abuse,34
+test_yoruba_00571,"""your caption says it all. buying votes ahead of time, ori gbogbo yin tali daru. ##url",Abuse,86
+test_yoruba_00572,"""if looters know what d future holds 4 them,they would have behaved otherwise. where are d millionaires of yesteryears? oogun ile lo ko,ogbon iyara lo nsun,ojo ti o ba pa oju de ni gbogbo e pari. asiwere nko oro( riches)jo,laimo eniti o ma jogun re.stop accumulating illicit money""",Normal,281
+test_yoruba_00573,"""@username you dont have to waste your time exchanging chat with this "" idoit"".   he said he is commanding you😃😃😃, it shows how he talks to his wife and mother at home. òniranu àjeyiñ àwò, radarada òsì.""",Abuse,203
+test_yoruba_00574,"""i confessed my feelings to you😒,   you come replied with   “mad ooo”   kosi igba ti oni pada ya weyrey na   🏃‍♂️🏃‍♂️🏃‍♂️🏃‍♂️🏃‍♂️""",Abuse,130
+test_yoruba_00575,"""@username this just shows how uncultured and immature you are but iwo ati awon family e o ni jeere. o kan yin o ni bale. ofo lo mi efo she, ofo le ma she. kndfy laapapo eleribu omo pa bi bon 🤡""",Abuse,194
+test_yoruba_00576,"""@username your entire generation even the one that are yet to come will go through one sickness or another that money wouldn’t be able to cure ijn…. oloriburuku òmó ale""",Abuse,170
+test_yoruba_00577,"""oloshi ni ac milan, score to make it 1-1 weere tun lo concede""",Hate,63
+test_yoruba_00578,"""oriyin ti daru ##url",Abuse,21
+test_yoruba_00579,"""@username tell that to those didn't raise you well at home, ẹyin ọmọ àlè jatijati wọ̀nyí.""",Abuse,91
+test_yoruba_00580,"""a city united in the mud awon olofo😹😹😹""",Abuse,40
+test_yoruba_00581,"""kíni afójú fé fi àwòrán se""",Abuse,28
+test_yoruba_00582,"""olofo ni ghandi. ko pade sars nii ##url",Normal,40
+test_yoruba_00583,"""#didyouknow in 1832: the egbas in a bid to defend their territory defeated the ìjèbú in a war known as the battle of owiwi.""",Normal,125
+test_yoruba_00584,"""@username were ni ẹ, ẹyin ọmọ jatijati wọn wọn yìí. ó dá bí ẹni pé orí àwọn òbí ẹ tíì dàrú nílé.""",Abuse,98
+test_yoruba_00585,"""yoruba says afoju ni orun ma sun. when you are not doing the right thing with time you'll know how far""",Normal,104
+test_yoruba_00586,"""yes oh, that is his manifesto for campaign, olodo jatijati datti ##url",Abuse,71
+test_yoruba_00587,"""olowo lon se ore olowo, oloshi lon se ore oloshi. olorun ma je kin gbabode""",Normal,76
+test_yoruba_00588,"""@username bàbà ń laku bàbà ẹ ní werey, oloriburuku ọmọ àbí pabẹ, ayé ẹ dẹ má bá jẹ ní, if ẹ sure  for you come to my dm""",Abuse,121
+test_yoruba_00589,"""ayo ni o @ ijebu igbo ##url",Normal,28
+test_yoruba_00590,"""@username they are still plenty to join him in kirikiri who laugh last laugh best ,eniiikure,awon omo ale jatijati ##url",Abuse,121
+test_yoruba_00591,ìjẹ̀bú ló ni ẹ̀lẹ́kú ẹ̀gbá ló ni gẹ̀lẹ̀dẹ́ awùrú elégbódo ìjẹ̀pà alápánsánpá,Normal,77
+test_yoruba_00592,"""@username omo iya mi, a oni bu ara wa je. koni buru fun wa. i can’t wish you bad, i just can’t. we dey together regardless of your political decision.  haba, it shouldn’t get to that extent.""",Normal,192
+test_yoruba_00593,"""you don't need any motivational speaker to motivate you or fuel your hustle, of you sit down and take a look back at your parent, how they brought you up, the struggle and every every, nobody go tell you to to ""tepámóshé""  olofo oníró òshì làwon  motivational speakers yen ✋ 🚶""",Normal,278
+test_yoruba_00594,america ni àgbà ọ̀jẹ̀ apàlọ́ ti kọ́ọ́ pa àlọ́ fún òyìbó ẹ̀yìn tí bàbá padà dé nigeria ni wọ́n ṣe àkọ́kọ́ ère alálọ̀ọ́ fún ọmọdé,Normal,127
+test_yoruba_00595,ògbómọ̀ṣọ́ mi àtàtà mo kí yín o ògbómọ̀ṣọ́ ògbómọjúgun ìlú àwọn akin ìlú tí ogun ò le kólọ ìlú ti wọ́n ti ń jẹkà kí wọ́n tó mùkọ yangan,Normal,135
+test_yoruba_00596,kò sí ẹni tí ọlọ́run ò ṣe fún à fi ẹni tó bá ni tòun ò tó there is no one god has not blessed there are only those who still crave for more everyone has reasons to be thankful weve all been blessed even if in different ways,Normal,223
+test_yoruba_00597,"""‘owó lulè’ : how football rejects nff’s money ##url via @username """,Abuse,68
+test_yoruba_00598,"""omo ole jati jati😂😂😂😂 ##url",Abuse,28
+test_yoruba_00599,"""@username ani mumu ni bobo daniel yi seh 🤣🤣""",Abuse,45
+test_yoruba_00600,"""@username 20k for how many years..ori gbogbo yin ti buru.""",Abuse,59
+test_yoruba_00601,oun a ní kí òkóbóo wọ́n bọ̀ wọn ò bọ̀ ọ́ wọ́n lá wọn lè bọ igbaa abẹ́rẹ́,Abuse,72
+test_yoruba_00602,"""@username your mother grandmother and all your female offspring are and will be stupid for the rest of their life. oloriburuku.  koniragba dun iyalayae. i full ground here for you. ofo lomashe""",Abuse,194
+test_yoruba_00603,Cast bro olofo,Abuse,14
+test_yoruba_00604,"""@username warrior, akanbi, olodo ide 😭😭""",Normal,41
+test_yoruba_00605,ẹ gbé ilé ọkọ yín kò sí ilé ọkọ kan bí ààfin láìṣe pé aya mú ọkọ rẹ ládé orí e,Normal,78
+test_yoruba_00606,won ti fi obo dido shey tiyin ni series yiimio wo mon,Abuse,53
+test_yoruba_00607,"""@username oloriburuku ni man yii sha""",Abuse,38
+test_yoruba_00608,"""how can you bring stripper to your own wedding, ati oko ati iyawo… olofo ni won""",Abuse,81
+test_yoruba_00609,ẹni tó jọba tán tó tún ńwo òkè fẹ̀ fẹ̀ fẹ̀ ṣé ó fẹ́ di olódùmarè ni a person already crowned a king still kept looking upward in dire expectation does he want to become god contentment is it lack of contentment can be stressful,Normal,227
+test_yoruba_00610,"""@username àwọn ọmọ alè ##url",Abuse,29
+test_yoruba_00611,"""all of you just dey shout christian too stingy, oju kokoro yin ti po ju 😂.                who stressed you when you dey do ileya ?                                                               abi werey ni gbogbo yin ni 😹""",Abuse,223
+test_yoruba_00612,ẹ kú ọdún eidalfitri ẹ̀yin ẹlẹ́sìn ìsìláàmù ẹ̀mí yín tó rí ẹ̀yin oṣù yìí á ṣe bẹ́ẹ̀ lámọ̀dún ẹ rántí fi àdírẹ́sì ránṣẹ́ kí a lè wá yọwọ́ ṣíbí o  ire   eidalfitr yorùbá prayers ramadanmubarak,Normal,190
+test_yoruba_00613,"""yall twitter motivational speaker, ori gbogbo yin ti daru""",Abuse,59
+test_yoruba_00614,"""2 days to go . follow @username for more info .  #kakanfo #mcrystalcinemas #nollywood #blockbusters #fateofalakada #comingsoon  . showing @username abeokuta  @username .ijebu ijebu-ode  @username .oyo owode-oyo ##url",Normal,217
+test_yoruba_00615,ha odidi six taosan ‍️,Normal,22
+test_yoruba_00616,"""@username àbí ọdẹ ní eleyi ni. tell who and who because your are the one feeding him àbí.""",Abuse,91
+test_yoruba_00617,bí wọ́n ti ń bí nílé ni wọ́n ń bí lóko bí ẹ bá rí méjì awo bẹ́ẹ̀ ẹ̀yin ò mọ awo òtúá ló ti tú ìbejì sínú ilé ńlá ẹ̀ bá rí awo bẹ́ẹ̀ ẹ̀yin ò mọ awo,Normal,146
+test_yoruba_00618,no dey look uche on d street ogbeni sabi your people stay woke on the street of gidi ogbeni ji masun grinoshodifinest,Normal,117
+test_yoruba_00619,"""2/3...babatunde raji fashola  (agege station)  lateef jakande (agbado station)  vice president osinbajo (kajola station)   funmilayo ransome-kuti (papalanto station)  wole soyinka (abeokuta station)  segun osoba (olodo station)  ladoka akintola (omio-adio station)...""",Normal,269
+test_yoruba_00620,"""elo ni cake  ""5,000 ni o""  ahah, tori icing sugar kekere te fisi yii naa? sebi awon kan lo n ta 2,500.   ""epele o, abolojata, oloja meta muri kan. adaniduro de ongbese.""""",Abuse,171
+test_yoruba_00621,mo ebí wọ́n ní ikú kì í pa ọmọ ẹtà lójúran àmọ́ àwọn apẹrannpakúpa tí ó kún igbó lóde òní ti pa ẹtà tán nígbó nítorí wọ́n fẹ́ yọ ẹpọ̀nọn rẹ̀ tà fún àwọn iléeṣẹ́ tó ń ṣe òróró olóòórùn dídùn tí à ń fí sí ara  eranigbe yoruba,Abuse,223
+test_yoruba_00622,ìwọ ọmọ àlè jati jati yi gbogbo yín tí ẹ fẹ dá orileede yi láàmú ọlọ́run a dá yín láàmú,Abuse,87
+test_yoruba_00623,"""@username omo a bi pabe, oloriburuku omo ma sha n fani   awon baba e pupo yen lo n bawi   iwo omo ale jatijati""",Abuse,112
+test_yoruba_00624,"""@username olofo oloriburuku kodeni dafun iya laku iya  koshida danu  who dey follow your mama play abi dis one forigbalè ní aben shiere koshilo ko kooru lo""",Abuse,157
+test_yoruba_00625,"""@username amin ase edumare  won o de ni bo nibe  oloriburuku team  bastards and retards players.""",Abuse,98
+test_yoruba_00626,"""@username awon brother kunle ofo""",Abuse,34
+test_yoruba_00627,"""any mua, model or anybody who's free around ìjẹ̀bú igbó, or oou environment who feel like taking some dope shots like this should hit me up. let's try something new with during this period. #mobilephotography 📸 @username 🛠️ @username &amp; @username cc:@username ##url",Normal,269
+test_yoruba_00628,yunfa ló gba àwọn ọ̀darànmọràn fúlàní lálejò lókè ọya àfọ̀njá ló pè wọ́n wá sí ilẹ̀ káàárọ̀oòjíire àm,Hate,101
+test_yoruba_00629,wọ́n di ọmọdékùnrin náà nígbèkùn ṣùgbọ́n bí ẹni pé òwú aláǹtaakùn ni wọ́n fi dì ni ó gbọn okùn tánránin tí wọ́n fi dì í dànù wọ́n bì í lulẹ̀ wọ́n sáré kan ààbà mọ́ ọn lẹ́sẹ̀,Normal,173
+test_yoruba_00630,ǹjẹ́ o mọ̀ pé olóyè mọ́ṣúdì káṣìmáawòó ọláwálé abíọ́lá ni ààrẹ ọ̀nà kakanǹfọ̀ ilẹ̀ tó jẹ kẹ́hìn,Normal,95
+test_yoruba_00631,"""with all due respect sir, orí yín ti burú ní ti egun tó nlé werey 🙄 #endsars #endswat ##url",Abuse,92
+test_yoruba_00632,"""@username akanbi omo olodo ide..... wa gun lemi.... baami tinubu""",Normal,66
+test_yoruba_00633,"""chief of staff to president, prof. ibrahim gambari, speaker of the house, hon. femi gbajabiamila and senate president ahmed lawan felicitates with the wife of asiwaju, senator oluremi tinubu on her husband's emergence as apc flagbearer for 2023 presidential elections.  #bat2023 ##url",Normal,285
+test_yoruba_00634,ǹ jẹ́ tí gbọ́sọ pé ẹṣin inú ìwé lásánlàsàn ni yín ṣé lòótọ́ ni òkóbó ni yín bankw,Abuse,81
+test_yoruba_00635,omo olobo nla ni isiwoomo petu airamasayoruba heritageatunbimathewgarri ijebu ijebuisiwoijebu ısıwo,Normal,99
+test_yoruba_00636,"""i say it with my full chest some men are mad aje... olofo omokunrin ##url",Abuse,74
+test_yoruba_00637,"""@username oloriburuku! iya ti ba e mule ni egbe isu""",Abuse,53
+test_yoruba_00638,"""gìrí mú wèrèy... ìgbín ni èrò e 😂 ##url",Abuse,40
+test_yoruba_00639,"""hot fluffy moimoi straight out of the pot. oya bring your soft bread or ijebu garri😋 . . #moimoi #moimoielewe #leafmoimoi #beanpudding #africancake #nigerianfood #naijafood #naijafoodie #abujafoodie #lagosfoodie #lannyskitchen #abujacaterer #abujavendor #abujabasedcaterer ##url",Normal,279
+test_yoruba_00640,"""(yoruba adage)  àjànàkú kọjá a mo rí nkan fìrí, bí a bá rí erin, kaapa r'erin.  (translation)  the elephant is beyond what is said to be seen in a jiffy; it's presence is unmistakable.  all eyes shall see the manifestation of god's beautification in our lives and homes ijmn. ##url",Normal,282
+test_yoruba_00641,"""i don't know you ooo but you are nothing but a useless animal. has it gotten to this stage. i swear oloriburuku ko po ju ninu yin. go back and tell who send you.. or you use your real handle to tweet this. ogun lo ma pa gbogbo yin.. ##url",Abuse,239
+test_yoruba_00642,kú orí ire oo wà á dàgbà bí àgbà tíí dàgbà o ò ní dàgbàyà kú ọjọ́ ìbí o bílíkí súlè,Normal,83
+test_yoruba_00643,"""@username werey, cry more. o ò ní jèrè. olórí burúkú maṣànfàní ènìyàn. if you like, insult my generations, na u sabi.""",Abuse,119
+test_yoruba_00644,"""asiwaju ole di ero eyin!  now we march for @username #batified #apc2023 #inecelectionresult ##url",Abuse,98
+test_yoruba_00645,no mind him he put mouth on top matter wey no concern him mo gbá sí wèrè lára ó dún ó block mí èmi náà block ẹ̀ padà we dey even follow each other nio thats before he went for twitter ban not knowing the wèrè is back here too,Abuse,225
+test_yoruba_00646,bí ohun aburú tàbí ohun ìbànújẹ́ bá ṣẹlẹ̀ ní àárín àwọn ìjẹ̀bú wọn ò kí ń gbé ọtí jáde láti mu ibi ayọ̀ àti ayẹyẹ ni wọ́n ti ń mu ọtí,Normal,133
+test_yoruba_00647,Chinedu you are nothing but a fraud. Oju e lo ri ete e o ni ba,Abuse,62
+test_yoruba_00648,"""@username adele onisuru … there’s no atom of suru in you … when you talk of omó alé … it shows all over your face that you resemble them .. sadly. common sense . you don’t even have 🙈👌🏿☠️ your candidate looks like a vomit 🤮. at least osinbanjo doesn’t . good night""",Normal,266
+test_yoruba_00649,"""@username .e.o miokanju follow @username for more update . .  . . #marliamendonça #wednesdaymood #follow4followdc #followforfollownaija #vídeo #followmebaby #followmeplz #wednesdaymorning @ ijebu ode ##url",Normal,206
+test_yoruba_00650,wọ́n fẹ́ pa moses wa o,Normal,22
+test_yoruba_00651,"""@username awòn baba baba ę ni werey àlàsò🤣🤣. òmo radarada!""",Abuse,60
+test_yoruba_00652,wọ́n ni àgbájọ ọwọ́ lá fi nsọ̀yà mo ti di ọmọ lẹ́hìn yín báyìí o,Normal,64
+test_yoruba_00653,e jowo e ba mi fi orin ebenezer obey yi si o kii seru akata,Normal,59
+test_yoruba_00654,"""i don't like those ones,this is actually meant for the elder statesman and agba!!! those ijebu royal ones make me look like someone whonhas arrived, mi ò dẹ̀ tíì dé ##url ##url",Normal,177
+test_yoruba_00655,"""iwo ati mama ati baba e ni arindin, have a nice day oloshi 🥰🥰 ##url",Abuse,68
+test_yoruba_00656,"""gbogbo yin ti yà weyrey 🤣🤣🤣🤣😅🤣😅😂🤣😂 ##url",Abuse,41
+test_yoruba_00657,"""@username jesu... o shey ikiji, sugbon ma je ko lule""",Normal,54
+test_yoruba_00658,ajá mọ ọmọ tirẹ̀ í fún lọ́mú ó mọ ti odù ọ̀yà í kì mọ́lẹ̀ kíni odù ọ̀yà,Abuse,71
+test_yoruba_00659,"""oríkì erin àso 🐘 ni àjànàkú. kìnnìún 🦁kọ́ ni ògìdán, òwe kan ní ògìdán kì í ṣ'ẹgbẹ́ ajá: oríkì ẹkùn abìjà 🐆ni ògìdán. ìrísí àkàlàmàgbò yàtọ̀ sí igúnnugú... ##url",Normal,162
+test_yoruba_00660,ẹrú ò leè ní ẹbí ohun ìní tàbí dúkìá kankan ipò kan náà ni ẹrú pẹ̀lú ajá ẹṣin olówóo rẹ̀ wà,Abuse,91
+test_yoruba_00661,"""@username aaye e, aaye awon ti o ni e, isinku awon to ti lo ni idile yin koni kuure, ofo lomi efo n se, ewe ata koni to ata pon radarada lon gbeyin ere osupa, ofo lon gbeyin ile aworo, radarada lo ma gbeyin e. ooni ri ti aje je lola eledumare. olofo""",Abuse,251
+test_yoruba_00662,ogun aláwọ̀ funfun pẹ̀lú ìjẹ̀bú ní ọdún àwọn ìjẹ̀bú àti britain kọjú ogun sí ara wọn ní ìgbà tí àwùjalẹ̀ ìjẹ̀bú ti ọjà ejìrìn èyí tí í ṣe ọ̀nà ọ̀rọ̀ ajé èkó sí òkè ọya ìjẹ̀bú kó ọmọ ogun ẹgbẹ̀rún mẹ́jọ jọ pẹ̀lú,Normal,210
+test_yoruba_00663,"""on sighting the agẹmọ grotto, the awujale of ìjẹ̀bú òde sent the ogí aláwọ ọba there and the olújàgbórí was installed as the high priest of agẹmọ. #agemo #trendingnow #jagunjagunmovie""",Normal,185
+test_yoruba_00664,"""soro soke werey  talo ni 7, talo ni 2 ##url",Abuse,44
+test_yoruba_00665,ṣe dandan ni ki awon olidije máa sọ̀rọ̀ odi si aràwọn láti tayọ ó yẹ kí ọdọ ronú wo,Normal,83
+test_yoruba_00666,"""sugbon, obinrin ya werey gan o ##url",Abuse,37
+test_yoruba_00667,"""omo alẹ́ jatijati ##url",Abuse,24
+test_yoruba_00668,"""@username aye e ma baje ni, oloriburuku omo ofo""",Abuse,49
+test_yoruba_00669,"""ko ni dafun ebo ofo te n gbe kiri.  werey wo lo bere ebo oshi lowo yin?  bastards and demagouges politicizing culture, snacking their heads in tinubu's ass.  so, only apc is lagos, every other aspirant who is not from apc is an enemy?  okan gbogbo yin o ni bale. ##url",Abuse,269
+test_yoruba_00670,"""@username ko de ni daa fun oloriburuku yen! aye yin ma baje ni! eyin werey jatijati yii!😡""",Abuse,91
+test_yoruba_00671,"""@username it is unfortunate that your father is an unfortunate man who gave birth to an unfortunate son...oloriburuku omo jati jati...""",Abuse,136
+test_yoruba_00672,"""this is not the higher institution i use to watch in yoruba film o 😭😭😭  man lya yil pọ  werey lawon odunlade adekola o🤕🤕""",Abuse,122
+test_yoruba_00673,ẹní dépò tí kò jalè tẹbí tará ni yó kààràn sùn olúwa rẹ̀ wọ́n a wípé alákọrí ni wọ́n a ní kò dá nkan mọ̀n àbẹ́ẹ̀ rí nkan,Abuse,120
+test_yoruba_00674,"""ba onire yo o! olofo lo n binu ologo!""",Normal,39
+test_yoruba_00675,adùnúnṣe bí ohun tí ọlọ́run ṣe tán aṣòroóṣe bí ohun tí ọlọ́run kò fẹ́ as easy to do as what god has completed and as difficult to achieve as what he detests if god is in it it will work out keep hope alive,Normal,205
+test_yoruba_00676,ojú ìmàle ò kúrò lọ́tí ó sọ́mo rẹ̀ ní ìmórù máhá,Hate,49
+test_yoruba_00677,"""bí a kòbá réni fèyìn tì bí òle làá rí, bí à kòbá réni gbára lé, a tera m'ósé eni...""",Normal,85
+test_yoruba_00678,"""people who put awolowo and tinubu in same context are daft.  infact oloriburuku omo ale oponu afokungbemu ni yin.""",Abuse,115
+test_yoruba_00679,"""@username maa wo oloriburuku ti aiye e ti baje yi. ode afikunfokomu, omo yanminrin. alaiyebaje, omo abipabe. o ye ki iya e fi e se mestruation dannu ni. ajokuta ma mumi.""",Abuse,171
+test_yoruba_00680,ọmọ àlè nọwọ́ sókè,Abuse,18
+test_yoruba_00681,"""eleyi tun ya mi lenu o🤪 ##url",Normal,30
+test_yoruba_00682,"""ti yin ti rin 😏  eyin werey gbogbo 😂😂😂 ##url",Abuse,45
+test_yoruba_00683,"""this rat in my room tears at least 3 sachets of pure water before morning and doesn’t drink any. kini gbogbo radarada nitori olorun""",Normal,133
+test_yoruba_00684,"""🤦‍♀️🤦‍♀️🤦‍♀️😄😄😄😄 ọ̀rọ̀ burúkú tòun terin ##url",Normal,47
+test_yoruba_00685,ẹni tó lórí rere tí kò ní ìwà rere ìwà a rẹ̀ ló máa ba orí rere rẹ̀ jẹ́ anyone blessed with good fortune but who lacks good character will soon lose his good fortune to his bad character far more than our aptitude our attitude shapes our altitude,Normal,246
+test_yoruba_00686,"""awon oloriburuku aba taye eni je in one picture, ##url",Abuse,55
+test_yoruba_00687,"""@username tani omo ale ninu emi ati e iwo tu je ako ti ile ta, apooda atóóle the closest rock wey your obi go near na zuma rock.  tinubu go rule you and your family for 8 years bo oku looku.""",Abuse,192
+test_yoruba_00688,"""@username 😆 olodo upon 30""",Abuse,27
+test_yoruba_00689,àwọn ọmọ unilag kọ̀yà wọ́n kọ àbùkù wọ́n ṣe bí ewúrẹ́ ati àgùntàn tán bojúwẹ̀hìn wọ́n fèpè félépè,Abuse,97
+test_yoruba_00690,"""@username oti gbe won ni handicap 🤣🤣🤣🤣🤣 omo yin o se agbafo ohun gbe aso wa le, eri oju ole e mu. radarada""",Abuse,108
+test_yoruba_00691,"""oju toti mo ra .....ole ni oun mora mo ##url",Normal,45
+test_yoruba_00692,kò sí ẹ̀wọ̀n gbére kò sí ìkọkọìkọ̀yàwó kò sí ìfipábánilòpò kò sí ìwà ìbàjẹ́ ọ̀gá dé ni gbogbo pálapàla dé,Normal,105
+test_yoruba_00693,"""ẹkisodu 22:7  [7] bi ẹnikan ba fi owo tabi ohunèlo fun ẹnikeji rẹ̀ pamọ́; ti a ji i ni ile ọkunrin na; bi a ba mu olè na, ki o san a ni meji.""",Normal,143
+test_yoruba_00694,"""olofo ni babe yi ##url",Abuse,23
+test_yoruba_00695,"""olohun maje ki a bi omo ale ##url",Normal,34
+test_yoruba_00696,"""@username which other language but pidgin àwọn olodo ràbàtà. 😁 😁""",Abuse,66
+test_yoruba_00697,"""fellow nigerian youth, please who are the children @username talking about? is he calling us children? ""ogede ti wo koko ye tan o ti wa di igi buruku"" were jatijati... #sorosokegeneration #desmondidiot #goodgovernance""",Abuse,219
+test_yoruba_00698,"""bori ba pe nile ori le buru oo""",Normal,32
+test_yoruba_00699,The eleyi of Lagos. Lori iro.,Abuse,29
+test_yoruba_00700,"""oloriburuku ni southampton yiii sha😒""",Abuse,38
+test_yoruba_00701,"""na god go kill you.. oloriburuku omo alé jati jati ##url",Abuse,57
+test_yoruba_00702,Is Tinubu running for Lagos governor? Ori e ti buru,Abuse,51
+test_yoruba_00703,"""@username olodo atiku of all people""",Abuse,37
+test_yoruba_00704,"""@username en binu ori, poverty konii tan niran yin laelae.tinubu kolo kobayin.kilon biyin ninu lori oro asiwaju?inu iwo ati awon oloriburuku tobie konii dun ##url candid advice for you and your good for nothing parents is stop blaming tinubu for your predicaments.""",Abuse,266
+test_yoruba_00705,"""your excellency báwo? ẹ yọ excellency dànù kúrò lórúkọ werey... talo ni excellency olofo? #endsars #endpoliceharassment #endpolicebrutality #endsarsimmediately""",Abuse,161
+test_yoruba_00706,ìgbín ò lè sáré bí ajá ìyẹn ò ní kó máà de ibi tó ńlọ the snail is truly not as fast as the dog yet this wont st,Normal,112
+test_yoruba_00707,orúkọ àwọn mẹ́ẹ̀dógún tó jẹ́ ìmàle ńnú ọmọbìnrin |,Hate,50
+test_yoruba_00708,"""it was nice having hon. olusegun ajanaku; chairman parliamentary council oyo state house of assembly. .  reviewing the achievements and challenges of the outgoing 8th assembly of the state on the program #ojutaye with oladapo ibikunle . #no1familyradio📻 ##url",Normal,260
+test_yoruba_00709,oríṣìíríṣìí itú làwon jagunjagun ń pa lójú ogun wọ́n a yírapadà wọ́n lè di ẹranko ọmọdé àti obìnrin ọlọ́mọge,Normal,108
+test_yoruba_00710,"""my friend collected money from someone in exchange for my number 😂😂,omo ale ni oyinda""",Abuse,87
+test_yoruba_00711,"""@username lol oloja ni jare 😄""",Normal,31
+test_yoruba_00712,ejò ọ̀pọ̀lọ́ ìjàpá ìgbín ọ̀nì,Normal,29
+test_yoruba_00713,"""@username baba e ni omo ale jati jati. alaye baje, oloriburuku. olanreyin""",Abuse,75
+test_yoruba_00714,"""when people retaliate or fail to have sympathy for people like this, one bastard will ask for humanity then.   this is a stupid post here but nobody is looking for humanity. awon omo ale abugije. okan iya yin o ni bale ❤️ ##url",Abuse,228
+test_yoruba_00715,"""seeking to recruit young and vibrant indigenes of the following areas as sales representatives for companies.   offa, lafiagi, baruten, kaima, ibadan, ogbomosho, imeko, abeokuta, ado-odo otta, ijebu ode, ikorodu.""",Normal,214
+test_yoruba_00716,"""baba iya re radarada oniranu ##url",Abuse,35
+test_yoruba_00717,"""""ìwà ọ̀lẹ ló ńba ọ̀lẹ lẹ́rù; ọ̀lẹ ṣe tán, ó ní wọn ò fẹ́ràn òun / an indolent is preceded by his character,but complains that he or she is not accepted. [our character often confronts us with unpleasant consequences;change your character to change any unwanted outcome]""""",Normal,272
+test_yoruba_00718,"""@username oloribuku ni o,ati awon to bi o oloshi alatenuje koriburuku e lo bastard  omoale😏""",Abuse,93
+test_yoruba_00719,"""#osogbomeetsibadan   man of the match: centre referee   olojoro oshi""",Abuse,70
+test_yoruba_00720,mo kí olóṣèlú gbogbo àwọn ọlọ́wọ̀gbálẹ̀ àwọn ẹlẹ́ṣin ẹ rọra kó owó wa jẹ o ó kù lódò ni omi aṣiwèrè,Abuse,99
+test_yoruba_00721,"""""...adójú tini ọmọ àlè."" #youryorubahumantranslator #yoruba #africanlanguage #locallanguage #translation #translator""",Abuse,118
+test_yoruba_00722,"""@username you are really dumb and you and your family members will not know peace in this life and in the hereafter....oloriburuku ashinu alayebaje omo ale jati jati""",Abuse,167
+test_yoruba_00723,"""you don't know the kinda situation you'll die in. continue ṣògo!  ẹranko ##url",Abuse,79
+test_yoruba_00724,"""president kizzle when a man fucks up: okurin buru, okurin ya werey gan  pk when a woman fucks up: hmmm, omo x 1000 ##url",Hate,121
+test_yoruba_00725,"""he still got the complete monie points 🤦🏾‍♀️  oloshi 😂😂  #bbnaija #bbnaijaallstars""",Abuse,84
+test_yoruba_00726,"""@username see grammatical stories that has and can never take them anywhere hear aso rock. awon olofo tonbinu ologo them them..""",Abuse,129
+test_yoruba_00727,"""someone just told that me it's actually oloju kokuro and not oloju kokoro. i've been for wrong for over 30 years.""",Normal,115
+test_yoruba_00728,"""@username ooo dùn werey ọmọ àlè jatijati""",Abuse,42
+test_yoruba_00729,kọ́kọ ó tó kú wèrè orí ìyá ọlọ́mọ márùnún yìí ré kọjáa bẹ́ẹ̀ àmọ́ wẹ́rẹ́ wẹ́rẹ́ lare rẹ̀ ńsàn lẹ́hìn ikú ọkọ rẹ̀,Abuse,112
+test_yoruba_00730,"""i really really really really really really really really and a whole lot really do not understand you ole.  shey oloriburuku ni e ni ##url",Abuse,140
+test_yoruba_00731,"""@username lol, olodo, 360 degrees view""",Abuse,40
+test_yoruba_00732,aarẹ wa ati gbogbo olori ilu wa ti ọrọ kan ẹ da iyanṣẹ lodi awọn ẹgbẹ olukọ faasiti duro,Normal,88
+test_yoruba_00733,"""oloriburuku.  eranko jati jati. blocked. ##url",Abuse,47
+test_yoruba_00734,ní pé kò sí nínú òfin ẹgbẹ́ pé ẹgbẹ́ ò fàyè gba ẹnikẹ́ni láti wùwá jàndùkú lórúkọ opc,Abuse,87
+test_yoruba_00735,"""asake is loaded, olofo lon binu ologo 👏👏👏 ##url",Normal,48
+test_yoruba_00736,"""just a few words to them in italy.....  awon olofo. 😂""",Abuse,55
+test_yoruba_00737,"""everyone is motherfucking hypocrite.  ogun kee all of una wey drop una aza and will still criticize yahoo boys eyin oloshi, oloriburuku gbogbo. ##url",Abuse,150
+test_yoruba_00738,"""i present to you the orimolusi of ìjẹ̀bú igbó, ọba jaiyeola adebajo ojuromi vi....  official photography coming soon.. i'm still at the crowning and office staff presentation ceremony.. ##url",Normal,192
+test_yoruba_00739,oko tá ni ele yi  tá lọ ní obo yí ìwọ ni lọ ní femi  se mo tẹ kan lè beeni damilola  ṣe kí n má lọ lọ díè díè tàbí kín te sì na pot    na ur man no sabi use yoruba língua wella during sex,Normal,187
+test_yoruba_00740,ìròyìn yàjóyàjó ilé ìgbìmọ̀ aṣòfin nàìjíríà ti bu òǹtẹ̀ lu ₦ ẹgbẹ̀rún lọ́nà ogbọ̀n gẹ́gẹ́ bí owó ọ̀yà tí ó kéré jù,Normal,114
+test_yoruba_00741,"""the paramount ruler of ijebu land.. oba sikiru adetona... #ojudeoba2018 #documentary #ijebu #ijebuland #smilesnmorephotography 💯 #traditions # @ ijebu, ogun, nigeria ##url",Normal,172
+test_yoruba_00742,"""gtbank may u guys be unfortunate, awom oloriburuku gbogbo""",Abuse,59
+test_yoruba_00743,"""@username goan apologize to your iyalaya e lona orun. omo ale jatijati!""",Abuse,73
+test_yoruba_00744,gbogbo ẹni tó bá pagúnugún kìí kágún  gbogbo èèyàn tó bá pàkàlàmàgbò kìí póṣù  ikú òjijì fún gbogbo àwọn tó fẹ́ máa pa àwọn ọ̀dọ́ nàìjíríà nípakúpa túẹ́  yoruba endsars,Abuse,168
+test_yoruba_00745,"""ọ̀lẹ:  ọ̀lẹ yán, ọlọ́jà gbọ́ 🤔  ọ̀lẹ ò r'áíyé wá 😵  ọ̀lẹ da'sọ ìyà bo'ra sùn 😩  ọ̀lẹ ràdàràdà, a pa sìọ̀sìọ̀ 🤦‍♂️  ẹni bí ọ̀lẹ l'ọ́mọ kòì r'ọ́mọ bí 🙅‍♂️  àdàpè ọ̀lẹ ni òròjú  ọ̀lẹ ò ní ìgbìyànju  ọ̀lẹ áá ní ìṣe yìí le ""nkò ní le ṣeé""""",Normal,235
+test_yoruba_00746,obo lowo yin eyin oniranu burukuibo lo ti so pe,Abuse,47
+test_yoruba_00747,òkú ní owó òkú kò ní owó òkú yóò náwó  ó ti di dandan kí òkú ó ná owó   ahun kìí gbó kí ó máà yọrí   ẹ̀yin tó ni ayé ẹ yọ orí èmi adéṣínà ọmọ owókòníran sí rere   iwure ojoaje yoruba,Normal,182
+test_yoruba_00748,apẹ ló yẹ kó jẹ́ kì í ṣe àdògán mo gbé ọ̀rọ̀ mi jẹ  ìkòkò apẹ irin àrìrò tí a fi irin ṣe ni àdògán  atunko yoruba ape,Normal,117
+test_yoruba_00749,"""supreme court tún ti fẹ̀yìn wọn lulẹ̀""",Hate,39
+test_yoruba_00750,"""oloriburuku nii gbogbo yin....eyin olofo ##url",Abuse,47
+test_yoruba_00751,ẹ jẹ́ ká ka yorùbá apanilẹ́kún jayé episode kí ló fa àìbalẹ̀ ọkàn fún tèmídùn lẹ́yìn tí ọkọ rẹ̀ kú find out at someone said i interpreted the emotions well,Normal,155
+test_yoruba_00752,bí wọ́n bá ti ẹ̀ kọ nípa àwọn ẹni dúdú bẹ́ẹ̀ wọn kò ní sọ ẹ̀kúnrẹ́ ìtàn àmúlùmálà ni wọ́n pa òótọ́ run,Normal,103
+test_yoruba_00753,"""i will butcher such animal to the last piece as such will serve as example to any other modafucker who is has been doing it or planning to.. awon oloriburuku eranko #coza#busoladakolo ##url",Abuse,190
+test_yoruba_00754,ǹjẹ́ o mọ̀ wípé ìnagijẹ àwọn ọmọ ìyá wa tó ti oko ẹrú brazil dé ni àgùdà agbègbè tí a fún wọn gbé ló di pópó àgùdà,Normal,114
+test_yoruba_00755,"""ijebu ode- odogbolu- babcock- ikenne- shagamu- ibafo mowe- mfm- berger.....i'm back in lagos safe and sound.   thank god for the safe trip.""",Normal,141
+test_yoruba_00756,a ò le è torí pé ayé dayé ọ̀lájú kí a máa fi ojú egbò gúnlẹ̀ tótó ṣe bí òwe àwọn àgbàlagbà láyé òde òní àwọn lọ́kọláya ò ka ojúṣe wọn láàárín àna kún ọ̀pọ̀ ló ní ayé ti lajú ju tàná lọ torí náà wọ́n ń ṣeyán bí ọkà,Normal,213
+test_yoruba_00757,"""it's hard to avoid @username , no matter how civil you want to be. @username is not your father's mate...oloshi oni iranu ##url ##url",Abuse,134
+test_yoruba_00758,"""@username haaaaaa stop lying na oloriburuku that palliative is even owned by private company ( ca covid) not fg … ti yin ti ta ooo oloriburuku oniro. the 2 states i know that share palliative are ogun, and lagos but na only few people get it because it’s not the ca covid own""",Abuse,277
+test_yoruba_00759,hàín odidi ọmọ kẹ̀,Normal,18
+test_yoruba_00760,"""accusing iya oloja of scammer of 1billion. during this economy crisis we face in nigeria.    #scammers""",Normal,104
+test_yoruba_00761,"""item7 mixed with coleslaw, plantain, chicken, extra beef and hollandia tutu dey hungry me sha!  who i fit send go from ilorin from ìjẹ̀bú òde? 😂 😂 😂""",Normal,150
+test_yoruba_00762,"""*iroyin pajawiri*    awon ologun agbègbè ile yorùbá ti a mor si amotekun tun se bebe ni owuro yii nipa didekun iwa odaran.  ikan ninu omo leyin egbe apanilaya ti a mo si rattus rattus ase agbako awon amotekun ni dede ago mefa koja iseju metadinlogun........... ##url",Normal,267
+test_yoruba_00763,original staff office of oba of lagos by chief abisoye oshodi,Normal,61
+test_yoruba_00764,ṣé ẹ ní ìbéèrè lórí àwa ni ní àwọn ìdáhùn tó dángájíá fún àwọn ìbéèrè yin kí ẹ ka a kí ẹ tun sọ fún àwọn ọrẹ́ and mọlẹbi yin kí gbogbo won mọ̀ ní pa ️ e ṣeun wa o,Normal,162
+test_yoruba_00765,"""ìmólè, kí òkùkù bó'lè eku ni wón, wón ma je so'ólè 🕊 💡 ##url",Abuse,61
+test_yoruba_00766,"""@username omo eni oni buru titi ki ale fun ekun paje    ema je ka gbagbe asa wa tori wipe asa wa ni ise wa...  ebawa ra oja loni ki aje obu igba je(kindly patronize us today).   we deals in all kinds of kampala,tie&amp;dye, art work,adire ibile and so on,distribution nationwide  dm:09164645962 ##url",Normal,301
+test_yoruba_00767,"""awon oloriburuku akoshi bero 🙄 ##url",Abuse,37
+test_yoruba_00768,orí burúkú kò wú túúlú ẹnì kan kò mọ ẹsẹ̀ aṣiwèrè lọnà a kì í mọ orí olóyè láwùjọ nítorí pé orí tí yóó jọba lọ́la ẹnì kan kò mọ,Abuse,127
+test_yoruba_00769,"""@username oti lule !!!  opportunist turned political godfather. lol""",Abuse,69
+test_yoruba_00770,dropping soon repostgetrepost  owe oweleshinoro oyoosun omoluabi osogbolagosstate lagos ondo ogun ilorin ife alafinofoyo ibadan eko yoruba ikire love abeokuta oshodi ikeja nigeria,Normal,179
+test_yoruba_00771,ìgbà ò lọ bí òréré ayé ò lọ bí ọ̀pá ìbọn ọ̀rọ̀ ò wọ̀ mọ́ pẹ̀lú nta bàbá jìmí ṣólàńkẹ́ tún gba lọ àlọ́ tún tẹ̀síwájú,Normal,115
+test_yoruba_00772,"""i don't know what your aids had been telling you, you do not contribute to the growth of d 'progressive growth' you mentioned. a lot of people in ọ̀ta, ìjẹ̀bú òde to ìmuṣin, ìbafo, mòwe, ìjokò etc are raining curses on you on a daily basis for the state of their roads. ##url",Normal,276
+test_yoruba_00773,"""omisore ti lule. omi ibo ti gbe omisore lo. #imolede #osundecides2022 🔥💡""",Abuse,74
+test_yoruba_00774,"""oshi ni uba se lati aro""",Abuse,25
+test_yoruba_00775,ìní edo àti láídé fowóṣeré tó ń ṣe tàjúdù     olaiya yoruba awada,Normal,65
+test_yoruba_00776,"""@username ati idile yin. ati arodomo e, oloriburuku nigbogbo yin. omo alaileko""",Abuse,80
+test_yoruba_00777,O TI LULE,Abuse,9
+test_yoruba_00778,e rii so gaan ni awon eerin lakatabu niyen,Normal,42
+test_yoruba_00779,"""@username oniranu jati jati 🤦‍♂️""",Abuse,34
+test_yoruba_00780,látònìí lọ kí a yé e pe aṣọẹgbẹ́jọdá ní aṣọẹbí nítorí wọn ò jọ ra wọn gedegbe ni wọ́n wà àjà yàtọ̀ sí ajá,Normal,105
+test_yoruba_00781,"""ṣe o bi ẹlẹsin ti ronu nipa itan ti ole ni ọwọ ọtun jesu nigba ti o wa lori agbelebu? #ojuaroleoodua""",Normal,102
+test_yoruba_00782,àyájọ́ ònìí ọjọ́ kẹ́ta láyé múrítàlá a dá ìpínlẹ̀ ògùn ó pé ogójì ọdún tí a dá a ọmọ mo kíi yín,Normal,95
+test_yoruba_00783,"""@username life of a yeyebrity..... awon role model  isonu jati jati""",Abuse,69
+test_yoruba_00784,"""just when i thought the year was about coming to an end in peace then #endtunde showed up..... olori buruku, omo rada rada ni tunde yi!!!! ##url",Abuse,145
+test_yoruba_00785,"""the kashamu whirlwind has taken over ogun state. alàánu mékùnù. the man of the people!! vote senator buruji kashamu for ogun state governor.  #ogunstate #ijebu… ##url",Normal,167
+test_yoruba_00786,"""omo ale loun fowo osi juwe ile baba re. don’t worry if you think it’s about being uneducated 👍 ##url",Normal,101
+test_yoruba_00787,"""@username eleyi gidi gon o 😲🤤😩""",Normal,32
+test_yoruba_00788,"""@username oloriburuku ni awon ti wan bara wan sùn ti wan fi loyun e.""",Abuse,70
+test_yoruba_00789,"""🎶 o fe shey ika fun mi mo de’n shadura ni bi mo shey n gbadura mi allah n gba adura mi atilo atide eni ori yo odile eni balo lo ba de igba timo pada de shey ni won de mi lade kade ko pe lori, ki bata ko pe lese ki awon ota mi kan lese kawon eleribu aimo na kan lese🎶""",Abuse,268
+test_yoruba_00790,ohun ti o buru gba ni ki won fi eniyan joye awodi ko ma le da adiye gbe,Abuse,71
+test_yoruba_00791,"""some people gbola go dey rise whenever they see that dog video 🤦‍♂️ aye yin ti baje 😂 especially those boys named; daniel, femi, david,etc oloriburuku omo ni yin😂😂 @username #doggy""",Abuse,182
+test_yoruba_00792,"""@username oloriburuku ni omo eran""",Abuse,35
+test_yoruba_00793,ẹní tó bá ṣe ohun tí ẹnìkan ò ṣe ríá á rí ohun tí ẹnìkan ò rí rí whoever does what no one has done will experience what no one has experienced to experience exceptional results take exceptional steps think big aim high,Normal,218
+test_yoruba_00794,kí wá ló dé tí ẹ wò ṣùṣù ẹ ò rí sẹ̀ríà dá fún ẹni jí ata ọjá ata lẹ rọ síi lábẹ̀ ìwà ìkà rèé o,Normal,96
+test_yoruba_00795,"""@username ori eleyi to buru bayi o""",Abuse,36
+test_yoruba_00796,"""@username eranko!!! aja tinubu!!! omo eru tinubu!!! obviously we keep ranting until you get sensible brain to think!!  omo ale !!! everyone of you that knows the man you all are pushing can not do anything, you all shall never know peace of god 🙄😏🤮 oloribu gbogbo""",Abuse,265
+test_yoruba_00797,èlò ó ni wọ́n fẹ́ tí yóò sì ju owó náà láti òkè ilé rẹ̀ sí wọn da rocha jáde láyé ní ọdún tí wọ́n sì siín sí ibi ìsìnkú ní ìkòyí,Normal,128
+test_yoruba_00798,"""@username in what capacity? olodo ni gbogbo yín.""",Abuse,50
+test_yoruba_00799,"""ema wo waray apayan yi . olori buruku jati jati. ##url",Abuse,55
+test_yoruba_00800,a ọba ògbóni àgbáyé ni yín iṣẹ́ wo ni wọ́n gbé lé e yín lọ́wọ́ láti máa ṣe ọoa irú ọdún tó kọjá tí wọ́n ń pariwo pé ogún máa ṣẹl a bẹ̀rẹ̀ sí í ṣàdúrà káàkiri àwọn ìlú ni a lọ sékòó a lọ sí ọ̀yán nípìnlẹ̀ kwara a lọ sékìtì ìpínlẹ̀,Normal,229
+test_yoruba_00801,ẹn ò níbáyìí tọ́mọlúàbí ti fọhùn ọ́ dá padà sórí àga ìṣèlú kí gómìnà tún okùn ṣòkòtò rẹ̀ so ìtẹ̀síwájú n tọ̀pá àṣẹ,Normal,116
+test_yoruba_00802,"""akanbi, olodo ide. ekun oko remilekun. 👏👏👏🔥  the lion of bourdillon. 💪  ijaya gbogbo presidential aspirants.....kaabo. 🤗💪💪💪💪💪💪💪👏👏👏👏  #bathomecoming  #batshet2023 ##url",Normal,168
+test_yoruba_00803,ẹranko wo ló nya dìgbòlugi,Abuse,26
+test_yoruba_00804,ẹni ebi ń pa ò gbọ́ wàásù,Normal,25
+test_yoruba_00805,ẹranko wo ni à ń pè ní olólà ijù kíní fà á tí a fi pè é ní olólà erin tori oun lo tobi ju nigbo erin kọ́,Normal,105
+test_yoruba_00806,mi ò ní mu gaàrí ìjẹ̀bú mọ́n sányẹ̀rì ni sọ di shadrach cdq kọ́,Normal,63
+test_yoruba_00807,"""era ile, era ile won yin baba loke yanrin okun, yanrin okun won yin baba loke eranko ile, eranko igbo won yin baba loke awon alaini, awon tanti ni won yin baba loke thank you lord""",Normal,181
+test_yoruba_00808,"""omo ale ni hushpuppy ##url",Abuse,27
+test_yoruba_00809,"""iro buruku ti baye egbon yi je, if he should continue like this, bandit lo ma gbe wan eventually...afi igboaaa""",Abuse,112
+test_yoruba_00810,"""omo ale jati jati i pray you or someone close become a victim of this brutality  then you will know what it is oniranu oshi ##url",Abuse,130
+test_yoruba_00811,"""weyrey ni gbogbo yin se😂 ##url",Abuse,31
+test_yoruba_00812,ajá gbó ewúrẹ́ àkùkọ kọ àgbébọ̀,Normal,31
+test_yoruba_00813,"""make i watch #bbnaija jeje, oloshi goalkeeper 😏""",Abuse,49
+test_yoruba_00814,"""@username bastard child from ibadan or ilorin 🤣🤣omo ale jatijati ole!!""",Abuse,72
+test_yoruba_00815,hehehe ẹ ríyun sọ o àmọ ẹran ọ̀yà yìí nṣe lo kàn rún gúdúgúdú sólúwarẹ̀ lọ́nàfun,Normal,80
+test_yoruba_00816,"""@username your job is hard. your tribal and ethnic bias is the basis for your stupid justification.   iwo ọmọ àlè, àbíìpàbẹ́, fabẹ́jóná, ọmọ lásán ìkejì ajá, ọmọ langìdí, ìwọ jatijati yìí.   irredeemable lot. ##url",Abuse,215
+test_yoruba_00817,ọ́kù lódò omi aṣièrè ìná àpà ò suwọ̀n kàkà ká bùdànù ẹ jáá bù fẹ́lòmíì jẹ,Abuse,73

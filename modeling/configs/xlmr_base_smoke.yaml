@@ -1,0 +1,19 @@
+run_name: xlm_roberta_base_smoke
+model_name: xlm-roberta-base
+language: igbo
+seed: 42
+max_length: 128
+num_train_epochs: 1
+learning_rate: 2.0e-5
+train_batch_size: 4
+eval_batch_size: 8
+weight_decay: 0.01
+warmup_ratio: 0.1
+weighted_loss: true
+weighted_sampler: false
+focal_loss_gamma:
+augmentation:
+  back_translation: false
+  eda: false
+hyperparameter_search:
+  enabled: false

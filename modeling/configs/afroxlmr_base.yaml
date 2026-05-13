@@ -1,0 +1,24 @@
+run_name: afro_xlmr_base
+model_name: Davlan/afro-xlmr-base
+language: igbo
+seed: 42
+max_length: 256
+num_train_epochs: 5
+learning_rate: 2.0e-5
+train_batch_size: 16
+eval_batch_size: 32
+weight_decay: 0.01
+warmup_ratio: 0.1
+weighted_loss: true
+weighted_sampler: true
+focal_loss_gamma:
+augmentation:
+  back_translation: false
+  eda: false
+hyperparameter_search:
+  enabled: true
+  n_trials: 8
+  learning_rate: [1.0e-5, 2.0e-5, 3.0e-5, 5.0e-5]
+  train_batch_size: [16, 32]
+  num_train_epochs: [3, 5, 8]
+  warmup_ratio: [0.0, 0.1]

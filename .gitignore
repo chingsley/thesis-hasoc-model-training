@@ -1,0 +1,6 @@
+.DS_Store
+.cursor/
+runs/
+reports/*
+!reports/README.md
+Untitled
