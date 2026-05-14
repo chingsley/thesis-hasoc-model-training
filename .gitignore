@@ -4,3 +4,4 @@ runs/
 reports/*
 !reports/README.md
 Untitled
+kc_train_venv/
