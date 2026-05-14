@@ -5,3 +5,14 @@ reports/*
 !reports/README.md
 Untitled
 kc_train_venv/
+
+# Python bytecode
+__pycache__/
+*.pyc
+*.pyo
+
+# Jupyter checkpoints (auto-saved by Jupyter; never meant to be tracked)
+.ipynb_checkpoints/
+
+# Training logs produced by run_all.sh
+logs/

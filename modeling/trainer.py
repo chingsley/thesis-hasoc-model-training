@@ -459,6 +459,7 @@ def maybe_run_optuna(config, trainer_class, tokenizer, train_frame, dev_frame):
             per_device_eval_batch_size=config.eval_batch_size,
             warmup_ratio=trial.suggest_categorical("warmup_ratio", search_space.get("warmup_ratio", [0.0, 0.1])),
             report_to=[],
+            fp16=bool(config.fp16),
             seed=config.seed,
         )
         trainer = trainer_class(
