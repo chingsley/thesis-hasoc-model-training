@@ -27,5 +27,15 @@ python -m modeling.scripts.run_finetune \
     --config modeling/configs/afroxlmr_base.yaml \
     --train-lang yoruba --test-lang igbo
 
-# Rebuild the aggregate markdown report from all runs/ artefacts.
+# Explainability: LIME, SHAP, attention rollout, and Captum integrated gradients
+# on a class-balanced sample of the test set for each single-language run.
+for RUN_NAME in xlm_roberta_base afro_xlmr_base afriberta_large; do
+    for LANG in igbo yoruba; do
+        python -m modeling.scripts.run_explain \
+            --latest --run-name "${RUN_NAME}" --lang "${LANG}" --num-rows 12 \
+            || echo "WARN: explanation step failed for ${RUN_NAME}/${LANG} (continuing)"
+    done
+done
+
+# Rebuild the aggregate markdown report (metrics + explainability) from all runs/ artefacts.
 python -m modeling.scripts.run_eval --aggregate-only

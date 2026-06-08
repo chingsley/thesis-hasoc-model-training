@@ -10,7 +10,7 @@ This package implements the thesis Phase 2 workflow for 3-class `{Normal, Abuse,
 - Class-imbalance handling: class-weighted loss, optional weighted sampling, optional focal loss.
 - Optional augmentation hooks: NLLB back-translation for `Hate` rows and lightweight EDA on code-mixed English tokens.
 - Evaluation artefacts: metrics JSON, predictions CSV, error dumps, confusion matrix PNG, robustness suite.
-- Explainability outputs: LIME, SHAP, attention rollout, plus proxy faithfulness/stability/sparsity metrics.
+- Explainability outputs: LIME, SHAP, attention rollout, and Captum integrated gradients, plus proxy faithfulness/stability/sparsity metrics, per-example HTML visualizations, and an aggregate `reports/explainability_results.md`.
 - Cluster templates: `modeling/slurm/*.sbatch`.
 
 ## Install
@@ -59,8 +59,19 @@ If you see **`cannot import name 'ERR_IGNORE' from numpy.core.umath`**, reinstal
 python -m modeling.scripts.run_baselines --lang igbo
 python -m modeling.scripts.run_finetune --config modeling/configs/xlmr_base.yaml
 python -m modeling.scripts.run_eval --aggregate-only
+# Explain a specific checkpoint:
 python -m modeling.scripts.run_explain --run runs/afro_xlmr_base/igbo/<timestamp> --lang igbo
+# ...or auto-resolve the newest run for a config and explain a class-balanced sample:
+python -m modeling.scripts.run_explain --latest --run-name afro_xlmr_base --lang igbo --num-rows 12
 ```
+
+`run_explain` writes one `explanations/<id>.json` (LIME, SHAP, attention rollout, and Captum
+integrated gradients with proxy faithfulness/sparsity/stability metrics) and an
+`explanations/<id>.html` token-highlight visualization per sampled row, then rebuilds
+`reports/explainability_results.md`. Useful flags: `--methods lime shap` to run a subset,
+`--no-balanced` to use the first N rows, `--no-html` / `--no-report` to skip artefacts.
+Optional explainability dependencies (`lime`, `shap`, `captum`) are imported lazily, so a
+missing one only disables its own method instead of failing the run.
 
 ## Add more data and rerun
 

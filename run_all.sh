@@ -129,5 +129,20 @@ PY
       --train-lang yoruba --test-lang igbo --full
 
   echo
+  echo "=== [explain] XAI artefacts (LIME / SHAP / attention / integrated gradients) ==="
+  for RUN_NAME in xlm_roberta_base afro_xlmr_base afriberta_large; do
+      for LANG in igbo yoruba; do
+          echo "--- explain: ${RUN_NAME} | ${LANG} ---"
+          python -m modeling.scripts.run_explain \
+              --latest --run-name "${RUN_NAME}" --lang "${LANG}" --num-rows 12 \
+              || echo "WARN: explanation step failed for ${RUN_NAME}/${LANG} (continuing)"
+      done
+  done
+
+  echo
+  echo "=== [report] rebuilding aggregate + explainability reports ==="
+  python -m modeling.scripts.run_eval --aggregate-only
+
+  echo
   echo "=== Pipeline finished $(date -u '+%Y-%m-%d %H:%M:%S UTC') ==="
 } 2>&1 | tee "$LOG"

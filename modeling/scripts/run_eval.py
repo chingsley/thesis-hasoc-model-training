@@ -6,7 +6,7 @@ from pathlib import Path
 from modeling.common import RUNS_DIR
 from modeling.data import load_language_bundle
 from modeling.evaluate import save_evaluation_bundle
-from modeling.reports import rebuild_phase2_report
+from modeling.reports import rebuild_explainability_report, rebuild_phase2_report
 from modeling.trainer import predict_texts
 
 
@@ -20,6 +20,7 @@ def main():
 
     if args.aggregate_only:
         rebuild_phase2_report(RUNS_DIR)
+        rebuild_explainability_report(RUNS_DIR)
         return
 
     if not args.run or not args.lang:

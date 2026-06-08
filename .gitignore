@@ -16,3 +16,4 @@ __pycache__/
 
 # Training logs produced by run_all.sh
 logs/
+notes
