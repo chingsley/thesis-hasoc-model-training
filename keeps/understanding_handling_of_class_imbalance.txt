@@ -1,1 +1,0 @@
-the README lists "class-weighted loss, optional weighted sampling, optional focal loss," and compute_class_weights/compute_sample_weights exist in data.py

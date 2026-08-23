@@ -1,0 +1,33 @@
+# Virtual environments
+kc_train_venv/
+.venv/
+venv/
+env/
+
+# Training outputs (checkpoints, metrics — very large)
+runs/
+
+# Training logs
+logs/
+
+# Generated reports (keep README if added later)
+reports/*
+!reports/README.md
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.py[cod]
+
+# OS / editor
+.DS_Store
+.cursor/
+
+# Local notes / scratch (mirrors model_training/.gitignore)
+keeps/
+notes
+reference/
