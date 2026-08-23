@@ -4,18 +4,35 @@ runs/
 reports/*
 !reports/README.md
 Untitled
+Untitled.ipynb
 kc_train_venv/
+.venv/
+venv/
+
+# Large local datasets (keep dataset/*.csv tracked; ignore bulky extras)
+new_dataset/
 
 # Python bytecode
 __pycache__/
 *.pyc
 *.pyo
+*.py[cod]
 
 # Jupyter checkpoints (auto-saved by Jupyter; never meant to be tracked)
 .ipynb_checkpoints/
 
 # Training logs produced by run_all.sh
 logs/
+
+# Model weight artefacts (also covered by runs/, but explicit for safety)
+*.safetensors
+*.bin
+checkpoint-*/
+
+# Hugging Face cache if created inside the project
+hf_cache/
+.cache/
+
 notes
 reference/
 keeps/
