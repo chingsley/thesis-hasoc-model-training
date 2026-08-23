@@ -1,0 +1,24 @@
+INTRO:
+
+1. Name - I am Kingsley Eneja
+2. Where you are from - Nigeria
+3. Program - Master's student in 2nd year
+4. Research Topic: Hate Speech as a Cyber-Threat in Nigerian Languages
+   a. Problem Statement and explain the problem it is causing (how it can solve problem)
+   b. Technology stack
+   c. Methodology
+   d. Outcomes – Impact
+
+**a. Problem Statement**
+Due to the multi-ethnic nature of Nigeria, the online digital space tends to be rife with hate speech, which leads to real-life ethnic and electoral violence.
+Most solutions focus on detecting hate in English, making native languages vulnerable to exploitation.
+
+**b. Technology Stack**
+Fine-tune multilingual transformers (XLM-RoBERTa, AfroXLMR, AfriBERTa), explainable AI (LIME, SHAP).
+
+**c. Methodology**
+To solve the problem, we'll first collect and label native-language corpora; then we'll fine-tune multilingual transformers (XLM-RoBERTa, AfroXLMR, AfriBERTa) to detect hate in those languages; and finally, we'll integrate explainable AI to explain the model's decision to users.
+
+**d. Outcomes – Impact**
+I believe this work will make the Nigerian digital space safer for everyone, and reduce incidents of hate-motivated violence.
+It will also serve as a blueprint for other African or low-resource languages that lack efficient content moderation solutions.
