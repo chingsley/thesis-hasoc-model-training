@@ -25,6 +25,7 @@ Quick reference for returning to this project after a break. Each file covers on
 | Upload a checkpoint to Hugging Face (recommended for deployment) | [upload-model-to-huggingface.md](./upload-model-to-huggingface.md) |
 | Copy checkpoints with `rsync` / `scp` (no Hugging Face) | [copy-checkpoints-between-machines.md](./copy-checkpoints-between-machines.md) |
 | Run the backend API and call the model | [run-backend-inference-api.md](./run-backend-inference-api.md) |
+| Test models in a Gradio UI (paste text → classify) | [run-gradio-model-tester.md](./run-gradio-model-tester.md) |
 
 ## Typical workflows
 
@@ -40,7 +41,14 @@ Quick reference for returning to this project after a break. Each file covers on
    - [copy-checkpoints-between-machines.md](./copy-checkpoints-between-machines.md) — best for quick local-only dev
 2. [run-backend-inference-api.md](./run-backend-inference-api.md) — start API, test with `curl`
 
+**Test a model in a simple browser UI (no backend/dashboard):**
+
+1. [upload-model-to-huggingface.md](./upload-model-to-huggingface.md) — models must be on HF first
+2. [run-gradio-model-tester.md](./run-gradio-model-tester.md) — Gradio on server + port 7860
+
 ## Do not do this
 
 - **Do not** run `source ~/.ssh/config` — that file is for the `ssh` command, not your shell.
 - **Do not** use `persuasive-computing-lab.cs.dal.ca` as the SSH hostname — it does not resolve from outside; use `persuasive.research.cs.dal.ca`.
+- **Do not** run `ssh -L 7860:localhost:7860 enejak@persuasive-computing-lab` from a server terminal — run port forward from your laptop, or use Cursor **Ports** when using Remote SSH.
+- **Do not** expect a paste-and-test box on the Hugging Face **model** repo page without PRO Inference Providers — use [run-gradio-model-tester.md](./run-gradio-model-tester.md) instead.
