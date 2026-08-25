@@ -2,64 +2,88 @@
 
 FastAPI inference service for the fine-tuned hate-speech classifiers.
 
-## Recommended deployment path
+## Deployment options
 
-1. **Upload the best checkpoint to Hugging Face Hub** (private repo) from the lab server.
-2. **Run this API** on your Mac for development, or on the lab server if you need GPU inference.
-3. **Point the frontend** at `http://localhost:8000` (or your server URL).
+| Approach | Best for | Notes |
+|----------|----------|-------|
+| **Hugging Face Hub + this API** (recommended) | Thesis demo, Mac dev, lab GPU | Upload checkpoint once; backend loads via `HF_MODEL_ID`. Private repos supported. Already implemented. |
+| **Local checkpoint only (`MODEL_PATH`)** | Air-gapped lab server | No upload; point `MODEL_PATH` at `runs/.../<timestamp>/`. |
+| **HF Inference Endpoints** | Managed GPU, no server ops | Pay-per-use hosted inference; you'd replace `ModelService` with HTTP calls to HF's endpoint. Overkill unless you need auto-scaling. |
+| **AWS SageMaker / GCP Vertex** | Production at scale | Heavy setup; not needed for a thesis dashboard. |
 
-Start with the **joint Igbo + Yoruba** model (`afro_xlmr_joint`) unless per-language models perform better on your test metrics.
+**Per-language routing (v0.2):** The dashboard language selector (`igbo` / `yoruba`) picks the matching model. Configure `HF_MODEL_ID_IGBO`, `HF_MODEL_ID_YORUBA`, and optionally `HF_MODEL_ID_JOINT` (fallback only).
 
-Checkpoint layout on the server:
+| Repo | Role |
+|------|------|
+| `afro-xlmr-igbo-hate` | Used when dashboard language = **Igbo** |
+| `afro-xlmr-yoruba-hate` | Used when dashboard language = **Yoruba** |
+| `afro-xlmr-joint-igbo-yoruba-hate` | **Fallback** if a language model is missing; not selected from the UI. Also use `GET /metrics?language=joint` to view joint eval metrics. |
 
-```text
-runs/afro_xlmr_joint/joint_igbo_yoruba/<timestamp>/
-  config.json
-  model.safetensors
-  tokenizer.json
-  ...
-```
+**Model choice:** Per-language specialists outperform the joint model on test macro-F1 (Igbo ≈ 0.86, Yoruba ≈ 0.67, joint ≈ 0.73).
 
-Find the newest run:
+## End-to-end workflow
 
-```bash
-ls -td runs/afro_xlmr_joint/joint_igbo_yoruba/* | head -1
-```
-
-## Upload checkpoint to Hugging Face (on the server)
+### 1. Upload checkpoint to Hugging Face (on the lab server)
 
 ```bash
 cd ~/thesis-hasoc-model-training
 source kc_train_venv/bin/activate
 pip install huggingface-hub
 
-export HF_TOKEN=hf_...   # from https://huggingface.co/settings/tokens
-CHECKPOINT=$(ls -td runs/afro_xlmr_joint/joint_igbo_yoruba/* | head -1)
+export HF_TOKEN=hf_...   # https://huggingface.co/settings/tokens
 
+# Best Igbo model (macro-F1 ≈ 0.86)
+CHECKPOINT=$(ls -td runs/afro_xlmr_base/igbo/* | head -1)
 python backend_api_server/scripts/upload_to_hf.py \
   --checkpoint "$CHECKPOINT" \
-  --repo-id yourusername/afro-xlmr-joint-igbo-yoruba-hate \
+  --repo-id yourusername/afro-xlmr-igbo-hate \
+  --private
+
+# Optional: Yoruba model (macro-F1 ≈ 0.64–0.67)
+CHECKPOINT=$(ls -td runs/afro_xlmr_base/yoruba/* | head -1)
+python backend_api_server/scripts/upload_to_hf.py \
+  --checkpoint "$CHECKPOINT" \
+  --repo-id yourusername/afro-xlmr-yoruba-hate \
   --private
 ```
 
-Then set `HF_MODEL_ID=yourusername/afro-xlmr-joint-igbo-yoruba-hate` in `.env`.
+Checkpoint layout:
 
-## Local development (Mac)
+```text
+runs/afro_xlmr_base/igbo/<timestamp>/
+  config.json
+  model.safetensors
+  tokenizer.json
+  test_metrics.json
+  ...
+```
+
+### 2. Run the backend
 
 ```bash
 cd backend_api_server
-python -m venv .venv
-source .venv/bin/activate
+python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-
-# Option A: pull from Hugging Face after upload
 cp .env.example .env
-# edit HF_MODEL_ID=...
+```
 
-# Option B: copy checkpoint from server first
-# rsync -avz pcl:~/thesis-hasoc-model-training/runs/afro_xlmr_joint/joint_igbo_yoruba/ ./models/afro_xlmr_joint/
-# edit MODEL_PATH=./models/afro_xlmr_joint
+Edit `.env`:
 
+```bash
+HF_MODEL_ID_IGBO=yourusername/afro-xlmr-igbo-hate
+HF_MODEL_ID_YORUBA=yourusername/afro-xlmr-yoruba-hate
+HF_MODEL_ID_JOINT=yourusername/afro-xlmr-joint-igbo-yoruba-hate
+
+METRICS_PATH_IGBO=../runs/afro_xlmr_base/igbo/20260515_143652/test_metrics.json
+METRICS_PATH_YORUBA=../runs/afro_xlmr_base/yoruba/20260515_153329/test_metrics.json
+METRICS_PATH_JOINT=../runs/afro_xlmr_joint/joint_igbo_yoruba/20260515_151540/test_metrics.json
+```
+
+Restart the API after changing `.env`. All configured models load at startup (~3× GPU RAM if using CUDA).
+
+Start:
+
+```bash
 uvicorn app.main:app --reload --port 8080
 ```
 
@@ -70,14 +94,33 @@ curl -s http://localhost:8080/health | python -m json.tool
 curl -s http://localhost:8080/predict \
   -H 'Content-Type: application/json' \
   -d '{"text":"example post text","language":"igbo"}' | python -m json.tool
+curl -s http://localhost:8080/metrics | python -m json.tool
 ```
+
+### 3. Run the frontend (connected to backend)
+
+```bash
+cd frontend_dashboard
+npm install
+cp .env.example .env    # VITE_USE_MOCK=false by default
+npm run dev
+```
+
+Vite proxies `/api/*` → `http://localhost:8080/*`. Open **Testing** and **Performance** pages for live predictions and eval metrics.
+
+Set `VITE_USE_MOCK=true` in `.env` to use mock data without a backend.
 
 ## API
 
 | Endpoint | Description |
 |----------|-------------|
-| `GET /health` | Model id and device |
+| `GET /health` | Loaded model ids per language + device |
+| `GET /metrics?language=igbo\|yoruba\|joint` | Test-set metrics for that model |
 | `POST /predict` | Single text classification |
 | `POST /predict/batch` | Up to 256 texts |
 
-`language` is accepted for future per-language routing; the joint model uses the same weights for both.
+`language` in predict requests selects the **Igbo** or **Yoruba** model. Joint is fallback only (not sent from the dashboard dropdown).
+
+## What's still mock-only in the dashboard
+
+Posts, triage queue, drift/volume charts, clusters, alerts, and explainability highlighting require additional backend work (database, analytics, `/explain` endpoint). See `todo.md`.

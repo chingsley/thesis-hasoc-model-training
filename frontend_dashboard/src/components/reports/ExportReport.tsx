@@ -1,9 +1,11 @@
 import { useState } from 'react'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { getMockPosts } from '@/lib/api/mock'
+import { getDataSource } from '@/lib/api/client'
+import { SectionTitle } from '@/components/ui/data-source-badge'
 import { useDashboardStore } from '@/lib/store/dashboard'
 import { Download, FileText as FileTextIcon, Loader2 } from 'lucide-react'
 
@@ -49,10 +51,12 @@ export function ExportReport() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <FileTextIcon className="h-5 w-5" />
-          Export Incident Report
-        </CardTitle>
+        <SectionTitle source={getDataSource('exportReport')}>
+          <span className="flex items-center gap-2">
+            <FileTextIcon className="h-5 w-5" />
+            Export Incident Report
+          </span>
+        </SectionTitle>
         <CardDescription>
           Generate a report of all flagged hate posts within a date range, ready to share with authorities.
         </CardDescription>

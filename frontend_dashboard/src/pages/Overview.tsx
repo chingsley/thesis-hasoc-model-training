@@ -5,9 +5,10 @@ import { StatsCards } from '@/components/dashboard/StatsCards'
 import { ModelThresholdSlider } from '@/components/dashboard/ModelThresholdSlider'
 import { VolumeChart } from '@/components/charts/VolumeChart'
 import { AlertToast } from '@/components/alerts/AlertToast'
-import { fetchVolumeData } from '@/lib/api/client'
+import { fetchVolumeData, getDataSource } from '@/lib/api/client'
 import { useQuery } from '@tanstack/react-query'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { SectionTitle } from '@/components/ui/data-source-badge'
 
 export default function Overview() {
   const { data: posts } = usePosts()
@@ -26,16 +27,19 @@ export default function Overview() {
   return (
     <div className="space-y-6">
       <AlertToast />
-      <StatsCards
-        total={totalCount}
-        normal={normalCount || 2200}
-        abuse={abuseCount || 600}
-        hate={hateCount || 200}
-      />
+      <div className="space-y-2">
+        <SectionTitle source={getDataSource('stats')}>Post Statistics</SectionTitle>
+        <StatsCards
+          total={totalCount}
+          normal={normalCount || 2200}
+          abuse={abuseCount || 600}
+          hate={hateCount || 200}
+        />
+      </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Model Confidence Threshold</CardTitle>
+          <SectionTitle source={getDataSource('posts')}>Model Confidence Threshold</SectionTitle>
         </CardHeader>
         <CardContent>
           <ModelThresholdSlider />
@@ -45,7 +49,7 @@ export default function Overview() {
       {volumeData && (
         <Card>
           <CardHeader>
-            <CardTitle>Post Volume (Last 7 Days)</CardTitle>
+            <SectionTitle source={getDataSource('volume')}>Post Volume (Last 7 Days)</SectionTitle>
           </CardHeader>
           <CardContent>
             <VolumeChart data={volumeData} />
@@ -55,7 +59,7 @@ export default function Overview() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Model Performance Summary</CardTitle>
+          <SectionTitle source={getDataSource('metrics')}>Model Performance Summary</SectionTitle>
         </CardHeader>
         <CardContent>
           {metrics && (

@@ -3,7 +3,9 @@ import { useTriagePosts } from '@/hooks/use-posts'
 import { useExplanation } from '@/hooks/use-explanations'
 import { ExplanationComparison } from '@/components/explainability/ExplanationComparison'
 import { ConfidenceMeter } from '@/components/explainability/ConfidenceMeter'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { SectionTitle } from '@/components/ui/data-source-badge'
+import { getDataSource } from '@/lib/api/client'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Badge } from '@/components/ui/badge'
 import type { Post } from '@/lib/types'
@@ -19,7 +21,7 @@ export default function Explainability() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <Card className="lg:col-span-1">
           <CardHeader>
-            <CardTitle>Select a Post</CardTitle>
+            <SectionTitle source={getDataSource('triage')}>Select a Post</SectionTitle>
           </CardHeader>
           <CardContent>
             {isLoading ? (
@@ -62,9 +64,9 @@ export default function Explainability() {
 
         <Card className="lg:col-span-2">
           <CardHeader>
-            <CardTitle>
+            <SectionTitle source={getDataSource('explanations')}>
               {selectedPost ? `Explanation for ${selectedPost.id}` : 'Side-by-Side Explanation Comparison'}
-            </CardTitle>
+            </SectionTitle>
           </CardHeader>
           <CardContent>
             {expLoading ? (

@@ -23,6 +23,8 @@ class PredictResponse(BaseModel):
     predicted_label: Label
     probabilities: Probabilities
     model_id: str
+    language: Language
+    used_fallback: bool = False
 
 
 class BatchPredictRequest(BaseModel):
@@ -39,9 +41,35 @@ class BatchPredictItem(BaseModel):
 class BatchPredictResponse(BaseModel):
     results: list[BatchPredictItem]
     model_id: str
+    language: Language
+    used_fallback: bool = False
 
 
 class HealthResponse(BaseModel):
     status: str
-    model_id: str
     device: str
+    models: dict[str, str]
+    routing: str = "per_language"
+
+
+class PerClassMetrics(BaseModel):
+    precision: float
+    recall: float
+    f1: float
+    support: float
+
+
+class ModelMetricsResponse(BaseModel):
+    accuracy: float
+    macro_precision: float
+    macro_recall: float
+    macro_f1: float
+    weighted_precision: float
+    weighted_recall: float
+    weighted_f1: float
+    mcc: float
+    support: float
+    per_class: dict[str, PerClassMetrics]
+    confusion_matrix: list[list[int]]
+    classification_report: dict[str, object]
+    roc_auc_ovr: float | None = None

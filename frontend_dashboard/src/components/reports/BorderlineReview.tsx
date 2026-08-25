@@ -1,6 +1,8 @@
 import { useBorderlinePosts } from '@/hooks/use-posts'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { SectionTitle } from '@/components/ui/data-source-badge'
+import { getDataSource } from '@/lib/api/client'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Loader2, AlertTriangle } from 'lucide-react'
 
@@ -16,11 +18,13 @@ export function BorderlineReview() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <AlertTriangle className="h-5 w-5 text-amber-500" />
-          Borderline Post Review Queue
-          {posts && <span className="text-muted-foreground font-normal text-sm ml-2">({posts.length} posts)</span>}
-        </CardTitle>
+        <SectionTitle source={getDataSource('borderline')} className="items-center">
+          <span className="flex items-center gap-2">
+            <AlertTriangle className="h-5 w-5 text-amber-500" />
+            Borderline Post Review Queue
+            {posts && <span className="text-muted-foreground font-normal text-sm">({posts.length} posts)</span>}
+          </span>
+        </SectionTitle>
       </CardHeader>
       <CardContent>
         {isLoading ? (

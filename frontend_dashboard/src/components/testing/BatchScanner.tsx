@@ -3,8 +3,9 @@ import { useMutation } from '@tanstack/react-query'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { useDashboardStore } from '@/lib/store/dashboard'
-import { batchClassify } from '@/lib/api/client'
+import { batchClassify, getDataSource } from '@/lib/api/client'
 import type { BatchResult } from '@/lib/types'
+import { DataSourceBadge } from '@/components/ui/data-source-badge'
 import { Loader2, Upload, Download, FileText } from 'lucide-react'
 
 export function BatchScanner() {
@@ -62,8 +63,16 @@ export function BatchScanner() {
     return 'secondary' as const
   }
 
+  const source = getDataSource('batchClassify')
+
   return (
     <div className="space-y-4">
+      <div className="flex items-center gap-2">
+        <DataSourceBadge source={source} />
+        <span className="text-xs text-muted-foreground">
+          Result IDs prefixed with <code className="font-mono">mock_</code> are simulated; live IDs use <code className="font-mono">batch_</code>.
+        </span>
+      </div>
       <div className="flex items-center gap-4">
         <label className="flex items-center gap-2 cursor-pointer px-4 py-2 rounded-md bg-secondary text-secondary-foreground hover:bg-secondary/80 text-sm font-medium transition-colors">
             <Upload className="h-4 w-4" />
@@ -83,6 +92,12 @@ export function BatchScanner() {
           </Button>
         )}
       </div>
+
+      {mutation.isError && (
+        <p className="text-sm text-destructive">
+          Batch classification failed. Is the backend running on port 8080?
+        </p>
+      )}
 
       {mutation.isPending && (
         <div className="flex items-center justify-center py-8">

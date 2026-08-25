@@ -1,7 +1,9 @@
 import { TextTester } from '@/components/testing/TextTester'
 import { BatchScanner } from '@/components/testing/BatchScanner'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { SectionTitle } from '@/components/ui/data-source-badge'
+import { getDataSource } from '@/lib/api/client'
 
 export default function Testing() {
   return (
@@ -15,7 +17,7 @@ export default function Testing() {
         <TabsContent value="single" className="mt-4">
           <Card>
             <CardHeader>
-              <CardTitle>Test a Single Text</CardTitle>
+              <SectionTitle source={getDataSource('singleClassify')}>Test a Single Text</SectionTitle>
             </CardHeader>
             <CardContent>
               <TextTester />
@@ -26,7 +28,7 @@ export default function Testing() {
         <TabsContent value="batch" className="mt-4">
           <Card>
             <CardHeader>
-              <CardTitle>Batch Text Scanner</CardTitle>
+              <SectionTitle source={getDataSource('batchClassify')}>Batch Text Scanner</SectionTitle>
             </CardHeader>
             <CardContent>
               <BatchScanner />

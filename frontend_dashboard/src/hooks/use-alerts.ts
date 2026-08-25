@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { fetchAlerts, fetchVolumeData } from '@/lib/api/client'
+import { prefixMockId, prefixMockMessage } from '@/lib/api/sources'
 import { useDashboardStore } from '@/lib/store/dashboard'
 import { useEffect, useRef } from 'react'
 
@@ -31,9 +32,11 @@ export function useAlerts() {
       const latest = volumeQuery.data[volumeQuery.data.length - 1]
       if (latest.hate_count > 40) {
         const newAlert = {
-          id: `spike_${Date.now()}`,
+          id: prefixMockId(`spike_${Date.now()}`),
           type: 'volume_spike' as const,
-          message: `Hate post volume spike: ${latest.hate_count} posts detected in the last hour`,
+          message: prefixMockMessage(
+            `Hate post volume spike: ${latest.hate_count} posts detected in the last hour`
+          ),
           severity: latest.hate_count > 60 ? ('high' as const) : ('medium' as const),
           timestamp: new Date().toISOString(),
           read: false,

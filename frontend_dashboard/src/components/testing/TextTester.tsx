@@ -2,11 +2,12 @@ import { useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { useDashboardStore } from '@/lib/store/dashboard'
-import { mockSingleClassify } from '@/lib/api/client'
+import { singleClassify, getDataSource } from '@/lib/api/client'
 import { ToxicTextHighlighter } from '@/components/explainability/ToxicTextHighlighter'
+import { DataSourceBadge, SectionTitle } from '@/components/ui/data-source-badge'
 import { Loader2, Sparkles } from 'lucide-react'
 
 export function TextTester() {
@@ -14,10 +15,15 @@ export function TextTester() {
   const [text, setText] = useState('')
 
   const mutation = useMutation({
-    mutationFn: (input: string) => mockSingleClassify(input, language),
+    mutationFn: (input: string) => singleClassify(input, language),
   })
 
   const result = mutation.data
+  const classifySource = getDataSource('singleClassify')
+  const explanationSource = getDataSource('explanations')
+  const shap = result?.explanation?.methods.shap
+  const hasShapTokens =
+    shap && 'tokens' in shap && 'scores' in shap && Array.isArray(shap.tokens)
 
   const getLabelBadgeVariant = (label: string) => {
     if (label === 'Hate') return 'destructive' as const
@@ -48,14 +54,20 @@ export function TextTester() {
         </Button>
       </div>
 
+      {mutation.isError && (
+        <p className="text-sm text-destructive">
+          Classification failed. Is the backend running on port 8080?
+        </p>
+      )}
+
       {result && (
         <div className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Result</CardTitle>
+              <SectionTitle source={classifySource}>Classification Result</SectionTitle>
             </CardHeader>
             <CardContent>
-              <div className="flex items-center gap-3 mb-4">
+              <div className="flex items-center gap-3 mb-4 flex-wrap">
                 <Badge variant={getLabelBadgeVariant(result.predicted_label)} className="text-base px-3 py-1">
                   {result.predicted_label}
                 </Badge>
@@ -66,14 +78,30 @@ export function TextTester() {
                 </div>
               </div>
 
-              <h4 className="text-sm font-medium text-muted-foreground mb-2">Text Highlighting (Explainability)</h4>
-              <div className="p-4 bg-muted rounded-lg">
-                <ToxicTextHighlighter
-                  tokens={result.explanation.methods.shap && 'tokens' in result.explanation.methods.shap ? result.explanation.methods.shap.tokens : text.split(/\s+/)}
-                  scores={result.explanation.methods.shap && 'scores' in result.explanation.methods.shap
-                    ? result.explanation.methods.shap.scores
-                    : text.split(/\s+/).map((t) => ({ token: t, score: 0 }))}
-                />
+              {result.model_id && (
+                <p className="text-xs font-mono text-muted-foreground mb-4">
+                  model: {result.model_id}
+                  {result.used_fallback ? ' (joint fallback)' : ''}
+                </p>
+              )}
+
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <h4 className="text-sm font-medium text-muted-foreground">Text Highlighting (Explainability)</h4>
+                  <DataSourceBadge source={explanationSource} />
+                </div>
+                {hasShapTokens ? (
+                  <div className="p-4 bg-muted rounded-lg">
+                    <ToxicTextHighlighter
+                      tokens={shap.tokens}
+                      scores={shap.scores}
+                    />
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">
+                    Token-level explainability requires a backend /explain endpoint (currently {explanationSource} only).
+                  </p>
+                )}
               </div>
             </CardContent>
           </Card>

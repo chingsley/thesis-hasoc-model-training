@@ -10,6 +10,7 @@ import type {
   Language,
   Label,
 } from '@/lib/types'
+import { prefixMockId, prefixMockMessage } from './sources'
 
 const igboTexts: Record<Label, string[]> = {
   Normal: [
@@ -202,7 +203,7 @@ function pickLabel(): Label {
 }
 
 function generateId(index: number, language: Language): string {
-  return `${language}_${String(index).padStart(5, '0')}`
+  return prefixMockId(`${language}_${String(index).padStart(5, '0')}`)
 }
 
 function generateProbabilities(label: Label) {
@@ -369,7 +370,7 @@ export function generateMockDriftData(): DriftDataPoint[] {
   for (let i = 30; i >= 0; i--) {
     const date = new Date(Date.now() - i * 86400000).toISOString().split('T')[0]
     data.push({
-      date,
+      date: prefixMockMessage(date),
       normal_avg_confidence: 0.82 + Math.random() * 0.12,
       abuse_avg_confidence: 0.68 + Math.random() * 0.2,
       hate_avg_confidence: 0.72 + Math.random() * 0.18,
@@ -387,7 +388,7 @@ export function generateMockVolumeData(): VolumeDataPoint[] {
     const abuse = Math.floor(2 + Math.random() * 8)
     const hate = Math.floor(Math.random() * 5)
     data.push({
-      hour,
+      hour: prefixMockMessage(hour),
       normal_count: normal,
       abuse_count: abuse,
       hate_count: hate,
@@ -414,7 +415,7 @@ export function generateMockClusters(): PostCluster[] {
     clusters.push({
       cluster_id: c,
       posts: clusterPosts,
-      representative_text: clusterPosts[0].tweet,
+      representative_text: prefixMockMessage(clusterPosts[0].tweet),
       size: clusterPosts.length,
     })
   }
@@ -426,7 +427,7 @@ export function mockBatchClassify(texts: string[], _language: Language): BatchRe
   return texts.map((tweet, i) => {
     const label = pickLabel()
     return {
-      id: `batch_${i}`,
+      id: prefixMockId(`batch_${i}`),
       tweet,
       predicted_label: label,
       probabilities: generateProbabilities(label),
@@ -462,9 +463,9 @@ export function generateMockAlerts(): AlertItem[] {
     const type = alertTypes[Math.floor(Math.random() * alertTypes.length)]
     const msgs = messages[type]
     alerts.push({
-      id: `alert_${i}`,
+      id: prefixMockId(`alert_${i}`),
       type: type as 'hate_threshold' | 'volume_spike' | 'model_drift',
-      message: msgs[Math.floor(Math.random() * msgs.length)],
+      message: prefixMockMessage(msgs[Math.floor(Math.random() * msgs.length)]),
       severity: severities[Math.floor(Math.random() * severities.length)],
       timestamp: new Date(Date.now() - Math.floor(Math.random() * 86400000)).toISOString(),
       read: Math.random() < 0.6,

@@ -1,12 +1,13 @@
 import { useQuery } from '@tanstack/react-query'
-import { fetchClusters, fetchVolumeData } from '@/lib/api/client'
+import { fetchClusters, fetchVolumeData, getDataSource } from '@/lib/api/client'
 import { useDriftData } from '@/hooks/use-metrics'
 import { useDashboardStore } from '@/lib/store/dashboard'
 import { ToxicWordCloud } from '@/components/charts/ToxicWordCloud'
 import { ModelDriftChart } from '@/components/charts/ModelDriftChart'
 import { VolumeChart } from '@/components/charts/VolumeChart'
 import { PostClusters } from '@/components/reports/PostClusters'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { SectionTitle } from '@/components/ui/data-source-badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Loader2 } from 'lucide-react'
 
@@ -35,7 +36,7 @@ export default function Analysis() {
         <TabsContent value="wordcloud" className="mt-4">
           <Card>
             <CardHeader>
-              <CardTitle>Toxic Term Word Cloud</CardTitle>
+              <SectionTitle source={getDataSource('wordCloud')}>Toxic Term Word Cloud</SectionTitle>
             </CardHeader>
             <CardContent>
               <ToxicWordCloud />
@@ -46,7 +47,7 @@ export default function Analysis() {
         <TabsContent value="drift" className="mt-4">
           <Card>
             <CardHeader>
-              <CardTitle>Model Confidence Drift Over Time</CardTitle>
+              <SectionTitle source={getDataSource('drift')}>Model Confidence Drift Over Time</SectionTitle>
             </CardHeader>
             <CardContent>
               {driftLoading ? (
@@ -63,7 +64,7 @@ export default function Analysis() {
         <TabsContent value="volume" className="mt-4">
           <Card>
             <CardHeader>
-              <CardTitle>Post Volume Per Hour</CardTitle>
+              <SectionTitle source={getDataSource('volume')}>Post Volume Per Hour</SectionTitle>
             </CardHeader>
             <CardContent>
               {volumeData && <VolumeChart data={volumeData} />}
@@ -74,7 +75,7 @@ export default function Analysis() {
         <TabsContent value="clusters" className="mt-4">
           <Card>
             <CardHeader>
-              <CardTitle>Similar Post Clusters (Coordinated Attack Detection)</CardTitle>
+              <SectionTitle source={getDataSource('clusters')}>Similar Post Clusters (Coordinated Attack Detection)</SectionTitle>
             </CardHeader>
             <CardContent>
               {clustersLoading ? (
