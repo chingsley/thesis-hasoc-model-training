@@ -1,0 +1,4 @@
+python -m venv kc_train_venv
+source kc_train_venv/bin/activate
+pip install -r backend_api_server/requirements.txt
+pip install -r model_training/requirements-modeling.txt 
