@@ -24,7 +24,7 @@ Quick reference for returning to this project after a break. Each file covers on
 | Open server code in Cursor / VS Code explorer | [open-project-remote-ssh.md](./open-project-remote-ssh.md) |
 | Upload a checkpoint to Hugging Face (recommended for deployment) | [upload-model-to-huggingface.md](./upload-model-to-huggingface.md) |
 | Copy checkpoints with `rsync` / `scp` (no Hugging Face) | [copy-checkpoints-between-machines.md](./copy-checkpoints-between-machines.md) |
-| Run the backend API and call the model | [run-backend-inference-api.md](./run-backend-inference-api.md) |
+| Run backend + frontend dashboard | [run-dashboard.md](./run-dashboard.md) |
 | Test models in a Gradio UI (paste text → classify) | [run-gradio-model-tester.md](./run-gradio-model-tester.md) |
 
 ## Typical workflows
@@ -34,12 +34,10 @@ Quick reference for returning to this project after a break. Each file covers on
 1. [login-ssh-terminal.md](./login-ssh-terminal.md) — optional, if you need terminal first
 2. [open-project-remote-ssh.md](./open-project-remote-ssh.md) — Remote SSH + open folder
 
-**Use a trained model in the local backend + frontend:**
+**Run the dashboard with live model inference:**
 
-1. Pick one model source:
-   - [upload-model-to-huggingface.md](./upload-model-to-huggingface.md) — best for versioning and sharing
-   - [copy-checkpoints-between-machines.md](./copy-checkpoints-between-machines.md) — best for quick local-only dev
-2. [run-backend-inference-api.md](./run-backend-inference-api.md) — start API, test with `curl`
+1. [upload-model-to-huggingface.md](./upload-model-to-huggingface.md) — models on HF (or use local `MODEL_PATH_*` in `.env`)
+2. [run-dashboard.md](./run-dashboard.md) — start backend (8080) + frontend (5173), open in browser
 
 **Test a model in a simple browser UI (no backend/dashboard):**
 
