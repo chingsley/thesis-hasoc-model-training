@@ -1,4 +1,51 @@
 python -m venv kc_train_venv
 source kc_train_venv/bin/activate
 pip install -r backend_api_server/requirements.txt
-pip install -r model_training/requirements-modeling.txt 
+pip install -r model_training/requirements-modeling.txt
+
+[PENDING]
+DOM Path: div#root > div.flex h-.creen overflow-hidden bg-background > div.flex flex-1 flex-col overflow-hidden > main.flex-1 overflow-auto p-4 md:p-6 bg-muted/30 > div.pace-y-6 > div.pace-y-2
+Position: top=88px, left=280px, width=1123px, height=146px
+React Component: Overview
+HTML Element: <div class="space-y-2" data-cursor-element-id="cursor-el-1">Post Statistics MOCK Posts Processed 16 Normal Posts 1 Abusive Posts 2 Hateful Posts 13</div>
+I want to replace these statistics with live data, how do I do that?
+
+[DONE]
+"""
+Issue 2: Model Performance Summary empty
+This is a missing data problem, not a connection problem. The metrics endpoint returns 404:
+"""
+I thought we created the backend_api_server so that tht frontend_dashboard talks the backend_api_server while the backend_api_server talks to the model. Does it mean that if we deploy the backend_api_server to one platform and deploy the frontend_dashboard to another, that these model performance (and perhpas other features on the dashboard) would n't be working? I thought that's why we deployed the model to huggingface, so that dashboard does not have to rely directly on the server. We need to fix it. What happens on deployment and usage. Does it mean all dashboard will have access to the the pc lab server to access the metrics and other functionalities? How can we fix it to work. - the "downloading" from hf, where does it save the downloaded model, and why do we still need access to the server data after downloading the model from hf?
+
+Here is my dilemma:
+I stared by working on the model training code, backend_api_server, and frontend_dashboard on my local. I used mock base model to test that the code was working. When it was time to train the actual model, I ported the code to the server via git - pushed from my local to the git, then pulled from the server. While working on the server, I'll make some changes, and to sync the code with my local, I'll push from the server and pull from my local.
+
+Because I needed to have the actual model trained in the pc lab server for its gpu access. In the server, the trained model is saved. Maybe it saved in "/runs". But this folder is too large it cannot be git tracked. So I'm always trying to ensure the project on my local and the server are in sync. So we implemented deployment to hugging face so that on my local I can download and model when backend server loads and have access to it. Also the intention when the backend server is deployed to "render" or "vercel", etc. With your "copy the '/runs' to your computer" solution, it doesn't seem to be modular and I don't see how deployment and real-life usage will work.
+
+Even I manually copy this "/run" or metrics from server to my local, issues:
+
+- when I retrain the model, which I'm going to do with more dataset, the copied data in local becomes stale, and I've to recopy every time the model updates
+- How do we do that when we deploy to to "render" or "vercel", etc
+
+I need an efficient to solve this problem, and if possible be able to automate the code and model sycing between the server and local, between the server and deployed backend, and ensure frontend gets all data needed from backend for efficient model deployment.
+
+[PENDING]
+"""
+Everything else (/predict, /predict/batch, /health`) works anywhere because it loads from HF.
+"""
+what about the explanability components on the dashboard? Are they also loaded from HF and accessible via backend API?
+
+[KEEP]
+Where HF downloads go: ~/.cache/huggingface/hub/
+
+[PENDING]
+"""
+metrics*service.py — /metrics now: (1) uses METRICS_PATH*_ if the local file exists, (2) otherwise downloads test*metrics.json from the same HF_ID*_ repo (cached in the HF cache, so it's a one-time tiny fetch)
+"""
+You mean with every reload of the dashboard it has to perform this check and download. Why can't it be downloaded once and cached along with the initial HF download on first server run? So that subsequetn load still checks local METRICS_PATH first, but then loads from cache if exists in cache. But ensuring that cache is always up to date with HF-pushed version.
+
+[PENDING]
+"""
+scripts/upload_metrics_to_hf.py — new small script to refresh only metrics (~KB) after retraining, without re-uploading 1.1 GB of weights.
+"""
+So retraining doesn't change the weights? Only metrics should be pushed after retraining? Will the model performance be updated on HF nontheless?

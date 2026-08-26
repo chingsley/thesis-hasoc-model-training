@@ -74,9 +74,11 @@ HF_MODEL_ID_IGBO=yourusername/afro-xlmr-igbo-hate
 HF_MODEL_ID_YORUBA=yourusername/afro-xlmr-yoruba-hate
 HF_MODEL_ID_JOINT=yourusername/afro-xlmr-joint-igbo-yoruba-hate
 
-METRICS_PATH_IGBO=../runs/afro_xlmr_base/igbo/20260515_143652/test_metrics.json
-METRICS_PATH_YORUBA=../runs/afro_xlmr_base/yoruba/20260515_153329/test_metrics.json
-METRICS_PATH_JOINT=../runs/afro_xlmr_joint/joint_igbo_yoruba/20260515_151540/test_metrics.json
+# Optional local overrides; if unset, /metrics downloads test_metrics.json
+# from the same HF repo as the model (upload_to_hf.py pushes it there).
+# METRICS_PATH_IGBO=../runs/afro_xlmr_base/igbo/20260515_143652/test_metrics.json
+# METRICS_PATH_YORUBA=../runs/afro_xlmr_base/yoruba/20260515_153329/test_metrics.json
+# METRICS_PATH_JOINT=../runs/afro_xlmr_joint/joint_igbo_yoruba/20260515_151540/test_metrics.json
 ```
 
 Restart the API after changing `.env`. All configured models load at startup (~3× GPU RAM if using CUDA).

@@ -54,15 +54,13 @@ Required vars (defaults in `.env.example`):
 HF_MODEL_ID_IGBO=chingsley/afro-xlmr-igbo-hate
 HF_MODEL_ID_YORUBA=chingsley/afro-xlmr-yoruba-hate
 HF_MODEL_ID_JOINT=chingsley/afro-xlmr-joint-igbo-yoruba-hate
-METRICS_PATH_IGBO=../runs/afro_xlmr_base/igbo/20260515_143652/test_metrics.json
-METRICS_PATH_YORUBA=../runs/afro_xlmr_base/yoruba/20260515_153329/test_metrics.json
 CORS_ORIGINS=http://localhost:5173
 INFERENCE_DEVICE=auto
 ```
 
 Models must be on Hugging Face: [upload-model-to-huggingface.md](./upload-model-to-huggingface.md).
 
-**Metrics files** — `METRICS_PATH_*` in `.env` point at `runs/.../test_metrics.json`, which is also not in git. Classification still works without them; the **Performance** page needs those files (copy from the lab or adjust paths in `.env`).
+**Metrics files** — the **Performance** page needs `test_metrics.json`. By default the backend downloads it from the model's HF repo (the upload script puts it there), so no local files are needed. Set `METRICS_PATH_*` in `.env` only to override with local `runs/.../test_metrics.json` files (e.g. on the lab server before uploading).
 
 **Frontend** — Node 20 via nvm, then install deps:
 
@@ -160,7 +158,7 @@ Response includes `model_id` and `used_fallback` (should be `false` when per-lan
 | `Set HF_MODEL_ID or MODEL_PATH` | Edit `backend_api_server/.env`; restart backend |
 | `kc_train_venv/bin/activate: No such file` | Run `python3 -m venv kc_train_venv` in repo root (see Prerequisites) |
 | HF 401 / model not found | `export HF_TOKEN=...` or `huggingface-cli login`; need access to private repos |
-| Performance page errors | `runs/` not in git — copy `test_metrics.json` or fix `METRICS_PATH_*` in `.env` |
+| Performance page errors | `test_metrics.json` missing in the HF repo — run `scripts/upload_metrics_to_hf.py` on the server, or set `METRICS_PATH_*` in `.env` to a local file |
 | Frontend Vite / rolldown error | `nvm use 20`, then reinstall `node_modules` |
 | Classification failed in Testing | Backend not running on 8080 |
 | Slow backend startup | Normal — three models loading from HF |

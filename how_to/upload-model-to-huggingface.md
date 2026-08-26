@@ -17,6 +17,8 @@ special_tokens_map.json
 ...
 ```
 
+The script also uploads **`test_metrics.json`** (found next to the checkpoint or in its parent run folder) to the repo root. The backend's `GET /metrics` endpoint reads that file from the Hub, so metrics work on any machine without access to the server's `runs/` folder.
+
 On the server, checkpoints live under timestamped folders:
 
 ```text
@@ -95,7 +97,7 @@ MODEL_PATH=
 
 Then follow [run-backend-inference-api.md](./run-backend-inference-api.md).
 
-First run downloads weights from Hugging Face (~1–2 GB depending on model).
+First run downloads weights from Hugging Face (~1–2 GB depending on model) into the local HF cache (`~/.cache/huggingface/hub`). `/metrics` fetches `test_metrics.json` from the same repo — no `METRICS_PATH_*` needed unless you want to override with a local file.
 
 ## Hugging Face vs copying checkpoints
 
