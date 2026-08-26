@@ -12,7 +12,7 @@ import { SectionTitle } from '@/components/ui/data-source-badge'
 
 export default function Overview() {
   const { data: posts } = usePosts()
-  const { data: metrics } = useModelMetrics()
+  const { data: metrics, isError: metricsError } = useModelMetrics()
   const { data: volumeData } = useQuery({
     queryKey: ['volume'],
     queryFn: fetchVolumeData,
@@ -81,6 +81,13 @@ export default function Overview() {
                 <p className="text-xs text-muted-foreground">Macro Recall</p>
               </div>
             </div>
+          )}
+          {metricsError && (
+            <p className="text-sm text-muted-foreground">
+              Metrics unavailable. Copy <code className="text-xs">test_metrics.json</code> from the server into{' '}
+              <code className="text-xs">runs/</code> and check <code className="text-xs">METRICS_PATH_*</code> in{' '}
+              <code className="text-xs">backend_api_server/.env</code>.
+            </p>
           )}
         </CardContent>
       </Card>

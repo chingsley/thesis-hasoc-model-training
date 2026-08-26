@@ -27,6 +27,10 @@ __pycache__/
 .DS_Store
 .cursor/
 
+# Local environment (keep .env.example tracked)
+**/.env
+!**/.env.example
+
 # Local notes / scratch (mirrors model_training/.gitignore)
 keeps/
 notes

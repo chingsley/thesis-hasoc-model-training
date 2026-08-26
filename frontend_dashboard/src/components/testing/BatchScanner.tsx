@@ -95,7 +95,7 @@ export function BatchScanner() {
 
       {mutation.isError && (
         <p className="text-sm text-destructive">
-          Batch classification failed. Is the backend running on port 8080?
+          Batch classification failed. Is the backend running and reachable via the Vite proxy?
         </p>
       )}
 

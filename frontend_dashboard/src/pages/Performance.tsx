@@ -7,7 +7,7 @@ import { getDataSource } from '@/lib/api/client'
 import { Loader2 } from 'lucide-react'
 
 export default function Performance() {
-  const { data: metrics, isLoading } = useModelMetrics()
+  const { data: metrics, isLoading, isError } = useModelMetrics()
 
   if (isLoading) {
     return (
@@ -17,7 +17,15 @@ export default function Performance() {
     )
   }
 
-  if (!metrics) return null
+  if (isError || !metrics) {
+    return (
+      <p className="text-sm text-muted-foreground py-8">
+        Metrics unavailable. Copy <code className="text-xs">test_metrics.json</code> from the server into{' '}
+        <code className="text-xs">runs/</code> and check <code className="text-xs">METRICS_PATH_*</code> in{' '}
+        <code className="text-xs">backend_api_server/.env</code>.
+      </p>
+    )
+  }
 
   return (
     <div className="space-y-6">

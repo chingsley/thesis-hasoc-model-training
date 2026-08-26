@@ -56,7 +56,7 @@ export function TextTester() {
 
       {mutation.isError && (
         <p className="text-sm text-destructive">
-          Classification failed. Is the backend running on port 8080?
+          Classification failed. Is the backend running and reachable via the Vite proxy?
         </p>
       )}
 
