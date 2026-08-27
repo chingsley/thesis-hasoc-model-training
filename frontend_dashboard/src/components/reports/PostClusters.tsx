@@ -1,6 +1,6 @@
 import type { PostCluster } from '@/lib/types'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
+import { Badge, labelBadgeVariant } from '@/components/ui/badge'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import { useState } from 'react'
 import { ChevronDown, Network } from 'lucide-react'
@@ -14,12 +14,6 @@ export function PostClusters({ clusters }: PostClustersProps) {
 
   const toggleCluster = (id: number) => {
     setOpenClusters((prev) => ({ ...prev, [id]: !prev[id] }))
-  }
-
-  const labelVariant = (label: string) => {
-    if (label === 'Hate') return 'destructive' as const
-    if (label === 'Abuse') return 'default' as const
-    return 'secondary' as const
   }
 
   if (clusters.length === 0) {
@@ -66,7 +60,7 @@ export function PostClusters({ clusters }: PostClustersProps) {
                     {cluster.posts.map((post) => (
                       <div key={post.id} className="p-3 bg-muted rounded-lg">
                         <div className="flex items-center gap-2 mb-1">
-                          <Badge variant={labelVariant(post.label)} className="text-xs">
+                          <Badge variant={labelBadgeVariant(post.label)} className="text-xs">
                             {post.label}
                           </Badge>
                           <Badge variant="outline" className="text-xs">{post.id}</Badge>

@@ -12,9 +12,10 @@ export function useModelMetrics() {
 }
 
 export function useDriftData() {
+  const language = useDashboardStore((s) => s.language)
   return useQuery({
-    queryKey: ['drift'],
-    queryFn: fetchDriftData,
+    queryKey: ['drift', language],
+    queryFn: () => fetchDriftData(language),
     staleTime: 60000,
   })
 }

@@ -9,3 +9,6 @@ numpy>=1.26,<2
 transformers>=4.46
 accelerate>=1.0,<2
 huggingface-hub>=0.26,<1
+# scikit-learn 1.5.x wheels are built against NumPy 1.x — keep <1.6 so pip
+# doesn't drag in NumPy 2 (which breaks torch 2.2.2 on Intel Mac).
+scikit-learn>=1.4,<1.6

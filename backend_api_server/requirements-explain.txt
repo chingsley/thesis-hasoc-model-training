@@ -1,0 +1,15 @@
+# Optional: XAI dependencies for the /explain endpoint (LIME, SHAP, Captum).
+# The backend runs fine without them — affected methods return per-method errors.
+#
+# IMPORTANT: shap>=0.47 requires NumPy 2, which breaks torch 2.2.2 (the newest
+# torch with Intel-Mac wheels). Keep numpy<2 and shap<0.47 together:
+#   pip install "numpy>=1.26,<2" -r requirements-explain.txt
+# If pip tries to compile llvmlite on macOS, install binaries first:
+#   conda install -c conda-forge llvmlite numba -y
+#
+# Install core deps first: pip install -r requirements.txt
+
+lime>=0.2.0.1,<0.3
+shap>=0.44,<0.47
+captum>=0.7,<1.0
+

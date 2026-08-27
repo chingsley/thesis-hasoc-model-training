@@ -31,6 +31,9 @@ __pycache__/
 **/.env
 !**/.env.example
 
+# Local dashboard state (SQLite: triage, prediction logs, alerts)
+backend_api_server/dashboard.db
+
 # Local notes / scratch (mirrors model_training/.gitignore)
 keeps/
 notes

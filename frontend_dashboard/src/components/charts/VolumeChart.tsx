@@ -36,7 +36,7 @@ export function VolumeChart({ data }: VolumeChartProps) {
         <Line
           type="monotone"
           dataKey="total"
-          stroke="hsl(var(--primary))"
+          stroke="var(--primary)"
           strokeWidth={2}
           dot={false}
           name="Total"
@@ -52,7 +52,7 @@ export function VolumeChart({ data }: VolumeChartProps) {
         <Line
           type="monotone"
           dataKey="abuse_count"
-          stroke="#eab308"
+          stroke="var(--color-amber-500)"
           strokeWidth={1.5}
           dot={false}
           name="Abuse"

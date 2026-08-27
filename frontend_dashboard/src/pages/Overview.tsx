@@ -1,55 +1,44 @@
-import { usePosts } from '@/hooks/use-posts'
 import { useModelMetrics } from '@/hooks/use-metrics'
 import { useAlerts } from '@/hooks/use-alerts'
 import { StatsCards } from '@/components/dashboard/StatsCards'
-import { ModelThresholdSlider } from '@/components/dashboard/ModelThresholdSlider'
 import { VolumeChart } from '@/components/charts/VolumeChart'
 import { AlertToast } from '@/components/alerts/AlertToast'
-import { fetchVolumeData, getDataSource } from '@/lib/api/client'
+import { fetchOverviewStats, fetchVolumeData } from '@/lib/api/client'
+import { useDashboardStore } from '@/lib/store/dashboard'
 import { useQuery } from '@tanstack/react-query'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { SectionTitle } from '@/components/ui/data-source-badge'
 
 export default function Overview() {
-  const { data: posts } = usePosts()
+  const language = useDashboardStore((s) => s.language)
+  const { data: stats } = useQuery({
+    queryKey: ['overview-stats', language],
+    queryFn: () => fetchOverviewStats(language),
+  })
   const { data: metrics, isError: metricsError } = useModelMetrics()
   const { data: volumeData } = useQuery({
-    queryKey: ['volume'],
-    queryFn: fetchVolumeData,
+    queryKey: ['volume', language],
+    queryFn: () => fetchVolumeData(language),
   })
   useAlerts()
-
-  const normalCount = posts?.filter((p) => p.predicted_label === 'Normal').length ?? 0
-  const abuseCount = posts?.filter((p) => p.predicted_label === 'Abuse').length ?? 0
-  const hateCount = posts?.filter((p) => p.predicted_label === 'Hate').length ?? 0
-  const totalCount = (normalCount + abuseCount + hateCount) || 3000
 
   return (
     <div className="space-y-6">
       <AlertToast />
       <div className="space-y-2">
-        <SectionTitle source={getDataSource('stats')}>Post Statistics</SectionTitle>
+        <SectionTitle>Post Statistics</SectionTitle>
         <StatsCards
-          total={totalCount}
-          normal={normalCount || 2200}
-          abuse={abuseCount || 600}
-          hate={hateCount || 200}
+          total={stats?.total ?? 0}
+          normal={stats?.normal ?? 0}
+          abuse={stats?.abuse ?? 0}
+          hate={stats?.hate ?? 0}
         />
       </div>
-
-      <Card>
-        <CardHeader>
-          <SectionTitle source={getDataSource('posts')}>Model Confidence Threshold</SectionTitle>
-        </CardHeader>
-        <CardContent>
-          <ModelThresholdSlider />
-        </CardContent>
-      </Card>
 
       {volumeData && (
         <Card>
           <CardHeader>
-            <SectionTitle source={getDataSource('volume')}>Post Volume (Last 7 Days)</SectionTitle>
+            <SectionTitle>Post Volume (Last 7 Days)</SectionTitle>
           </CardHeader>
           <CardContent>
             <VolumeChart data={volumeData} />
@@ -59,7 +48,7 @@ export default function Overview() {
 
       <Card>
         <CardHeader>
-          <SectionTitle source={getDataSource('metrics')}>Model Performance Summary</SectionTitle>
+          <SectionTitle>Model Performance Summary</SectionTitle>
         </CardHeader>
         <CardContent>
           {metrics && (
@@ -84,9 +73,9 @@ export default function Overview() {
           )}
           {metricsError && (
             <p className="text-sm text-muted-foreground">
-              Metrics unavailable. Copy <code className="text-xs">test_metrics.json</code> from the server into{' '}
-              <code className="text-xs">runs/</code> and check <code className="text-xs">METRICS_PATH_*</code> in{' '}
-              <code className="text-xs">backend_api_server/.env</code>.
+              Metrics unavailable. The backend reads <code className="text-xs">test_metrics.json</code> from the
+              model's Hugging Face repo — make sure the backend is running and the repo includes it
+              (see <code className="text-xs">backend_api_server/scripts/upload_metrics_to_hf.py</code>).
             </p>
           )}
         </CardContent>

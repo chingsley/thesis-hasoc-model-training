@@ -1,4 +1,5 @@
 import { API_BASE_URL } from './config'
+import { useAuthStore } from '@/lib/store/auth'
 
 export class ApiError extends Error {
   status: number
@@ -11,15 +12,23 @@ export class ApiError extends Error {
 }
 
 export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
+  const token = useAuthStore.getState().token
   const response = await fetch(`${API_BASE_URL}${path}`, {
     ...init,
     headers: {
       'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...init?.headers,
     },
   })
 
   if (!response.ok) {
+    if (response.status === 401) {
+      useAuthStore.getState().clear()
+      if (window.location.pathname !== '/login') {
+        window.location.assign('/login')
+      }
+    }
     const body = await response.text()
     throw new ApiError(response.status, body || response.statusText)
   }

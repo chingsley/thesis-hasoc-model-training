@@ -20,16 +20,10 @@ export type EndpointKey =
   | 'exportReport'
   | 'stats'
 
-/** Whether an endpoint serves mock or live data (hybrid endpoints follow USE_MOCK). */
-export function getDataSource(key: EndpointKey): DataSource {
-  switch (key) {
-    case 'metrics':
-    case 'batchClassify':
-    case 'singleClassify':
-      return USE_MOCK ? 'mock' : 'live'
-    default:
-      return 'mock'
-  }
+/** Whether an endpoint serves mock or live data. Every endpoint is live-capable;
+ *  mock data is served only when VITE_USE_MOCK=true. */
+export function getDataSource(_key: EndpointKey): DataSource {
+  return USE_MOCK ? 'mock' : 'live'
 }
 
 export const MOCK_PREFIX = 'mock'

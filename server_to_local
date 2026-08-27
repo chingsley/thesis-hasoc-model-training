@@ -4,11 +4,10 @@ pip install -r backend_api_server/requirements.txt
 pip install -r model_training/requirements-modeling.txt
 
 [PENDING]
-DOM Path: div#root > div.flex h-.creen overflow-hidden bg-background > div.flex flex-1 flex-col overflow-hidden > main.flex-1 overflow-auto p-4 md:p-6 bg-muted/30 > div.pace-y-6 > div.pace-y-2
-Position: top=88px, left=280px, width=1123px, height=146px
-React Component: Overview
-HTML Element: <div class="space-y-2" data-cursor-element-id="cursor-el-1">Post Statistics MOCK Posts Processed 16 Normal Posts 1 Abusive Posts 2 Hateful Posts 13</div>
-I want to replace these statistics with live data, how do I do that?
+"""
+app/db.py — SQLite (triage state, prediction logs, alerts)
+"""
+Do I need to run migration? how do I connect to this database. And I'll like to access this database via potico
 
 [DONE]
 """
@@ -29,23 +28,70 @@ Even I manually copy this "/run" or metrics from server to my local, issues:
 
 I need an efficient to solve this problem, and if possible be able to automate the code and model sycing between the server and local, between the server and deployed backend, and ensure frontend gets all data needed from backend for efficient model deployment.
 
-[PENDING]
-"""
-Everything else (/predict, /predict/batch, /health`) works anywhere because it loads from HF.
-"""
-what about the explanability components on the dashboard? Are they also loaded from HF and accessible via backend API?
-
 [KEEP]
 Where HF downloads go: ~/.cache/huggingface/hub/
 
-[PENDING]
+[DONE]
 """
 metrics*service.py — /metrics now: (1) uses METRICS_PATH*_ if the local file exists, (2) otherwise downloads test*metrics.json from the same HF_ID*_ repo (cached in the HF cache, so it's a one-time tiny fetch)
 """
-You mean with every reload of the dashboard it has to perform this check and download. Why can't it be downloaded once and cached along with the initial HF download on first server run? So that subsequetn load still checks local METRICS_PATH first, but then loads from cache if exists in cache. But ensuring that cache is always up to date with HF-pushed version.
+Does this mean that with every reload of the dashboard it has to perform this check and download. Should it be downloaded once and cached along with the initial HF download on first server run for better performance? So that subsequent reloads/refreshes still checks local METRICS_PATH first, but then loads from cache if exists in cache. But ensuring that cache is always up to date with HF-pushed version.
+[ANSWER]
+caching layer already exists. hf_hub_download is the "download once, then reuse" mechanism; my code calls it per request, but it doesn't re-download
 
-[PENDING]
+[DONE]
 """
 scripts/upload_metrics_to_hf.py — new small script to refresh only metrics (~KB) after retraining, without re-uploading 1.1 GB of weights.
 """
-So retraining doesn't change the weights? Only metrics should be pushed after retraining? Will the model performance be updated on HF nontheless?
+Does this mean that retraining doesn't change the weights? that only metrics should be pushed after retraining? Will the model performance be updated on HF nontheless?
+[ANSWER]
+No — retraining produces **new weights**, and those must be uploaded or HF keeps serving the old model. The distinction:
+
+- **After retraining** (new weights): run `upload_to_hf.py` — it uploads the new checkpoint **and** fresh `test_metrics.json` together in one step. This is your normal path. Both model performance and metrics on HF are updated.
+- **`upload_metrics_to_hf.py`** is only for when the weights on HF are already current and _just_ the metrics is missing or changed — e.g. backfilling repos uploaded before `upload_to_hf.py` handled metrics, or re-evaluating an existing model on a new test set.
+
+So the workflow after each training run on the server is unchanged — one command:
+
+```bash
+python backend_api_server/scripts/upload_to_hf.py \
+  --checkpoint "$POINT" \
+  --repo-id chingsley/afro-xlmr-igbo-hate --private
+```
+
+The script only skips the weights upload in the sense that `upload_metrics_to_hf.py` exists as a lightweight option — it's not a replacement. If retrain and only push metrics, HF would show new metrics for old weights: inconsistent, so don't do that.
+
+What we are building is a hate-detection as a service platform. These statistics should be coming from the backend database based on the number and nature of posts/texts processed for specific user. They represent how many posts/texts have been processed via the backend api and their classification counts (n hate, n abusive, n normal).
+Therefore, we need authentication. Social media or text-content-based platforms will take our api, and call the necessary endpoints like "/predict", "/predict/batch", or other endpoint you think they should call. Maybe each "user" (ie. social media or content-based platform) will have soemthing like an API key (you'll know the best authentication means to adopt), and each call they make will carry this key for identifacation. Our backend service will keep track of these calls per "user" per language type. Data from these records will be used in building different parts of the dashboard. So that when the "user" logs into the dashboard, they'll be seing records only specific to them. Every api call from them (via code, postman, or when througuh the dashboard) updates their record on our backend server. The dashboard data, thay are unique to the users will be fethed from the db for each user, and for each language type. Design the implementaion of this system. Include plan to correct current dashboard details that are inaccurate for example the stats on the overview and other related data in other pages of the frontend. Make no mistakes.
+
+- [PENDING]
+  """
+  Dashboard login: admin@hateguard.local / hateguard123 — treat as bootstrap credentials; create real accounts with python scripts/create_user.py --email ... --org ... --key-name ...
+  """
+  Are these included in the documentation in how_to? Ensure they are.For the command: "scripts/create_user.py --email ... --org ... --key-name ..." provide an example in the documentation with made-up values.
+
+- [KEEP]
+  Dashboard login: admin@hateguard.local / hateguard123 — treat as bootstrap credentials;
+  API key for curl/Postman testing: hgk_HnCGTKdlwtX2lqdAOlgy0Yrld_r_Vk-9MBoInoRvCZI (send as X-API- header)
+
+- [PENDING]
+  """
+  Ports 8080/5173 on this machine are currently held by Cursor port-forwards to your lab server, which is still running the old unauthenticated code. To use the new system there, restart the backend on the lab server with the updated code (and the frontend if it's served remotely). The migration runs automatically on first start. I did not commit anything — say the word if you want a commit.
+  """
+  I want to reserve 8080/5173 for running lab server code and use 8082/5174 for running local version. Update the env's accordingly
+
+- [PENDING]
+  """
+  pred_7 is the ID of one saved prediction in your backend database — not part of the tweet text.
+  """
+  pred_7 is bad id convention. Use shortID for prediction ID's.
+
+- [PENDING]
+  <PASTE_COMPONENT> Explain how the data for the rendered data related to this component is generated. Explain the end-to-end flow of what happens when I click <PASTE_COMPONENT>. From request sent (including parameters, body, endpoint, etc) to backend processing logic and database records called, data fetched and how it's processed, to response data sent to the frontend. explain the flow end to end, in clear grade-8 level english in less than 200 words. The description includes the end-to-end flow explanation, what happens when a certain component is clicked, a description of ther request that is sent, the endpoint hit, the pre-response processing logic, the data fetched, the data processed, description of the response data returned, any frontend pre-preprocesssing before render, and any other important information. All explained clearly end-to-end clearly in a grade-8 level english clarity within a 250-word limit. Make no mistakes Make no mistakes.
+
+  <post clusters component in "analysis" module in the dashboard.> Explain how the data rendered data related to this compoenent is generated. Explain the end-to-end flow of what happens when I click <post cluster tab>. From request sent (including parameters, body, endpoint, etc) to backend processing logic and database records called, data fetched and how it's processed, to response data sent to the frontend. explain the flow end to end, in clear grade-8 level english in less than 200 words. The description includes the end-to-end flow explanation, what happens when the component is clicked, a description of the request that is sent, the endpoint hit, the pre-response processing logic, the data fetched, the data processed, description of the response data returned, any frontend pre-preprocesssing before render, and any other important information. All explained clearly end-to-end clearly in a grade-8 level english clarity within a 250-word limit. Make no mistakes Make no mistakes.
+
+- [PENDING] (what if on app integration, multiple users post same texts, like a coordinated attach scenario?)
+  What happens if user posts the same text twice? System should be able to detect the duplicates using an efficient mechanism (hash comparism, regex, etc, use the best method for best result) and avoid saving duplicated posts in the database. It should classify the text and return valid values in response but it should avoid saving duplicate data in the backend. However, it can update the metadata such as createdAt, etc. So only count as duplicate post if it's sennt with the same postID. Yes we need to update /predict and /predict/badge to take postID in request body. This is typical of real life usage where interated social media platforms will send the post along with the post ID, for easy identification, and so that responses to them will be actionalbe because they can use the post ID to trace the user on their platform.
+
+- [LIGHT_BLUE_FOR_LABELS]
+  #e8f0fe

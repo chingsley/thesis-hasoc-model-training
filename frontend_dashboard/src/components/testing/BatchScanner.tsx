@@ -1,21 +1,26 @@
 import { useState } from 'react'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
+import { Badge, labelBadgeVariant } from '@/components/ui/badge'
 import { useDashboardStore } from '@/lib/store/dashboard'
-import { batchClassify, getDataSource } from '@/lib/api/client'
+import { batchClassify } from '@/lib/api/client'
 import type { BatchResult } from '@/lib/types'
-import { DataSourceBadge } from '@/components/ui/data-source-badge'
 import { Loader2, Upload, Download, FileText } from 'lucide-react'
 
 export function BatchScanner() {
   const language = useDashboardStore((s) => s.language)
   const [results, setResults] = useState<BatchResult[] | null>(null)
   const [file, setFile] = useState<File | null>(null)
+  const queryClient = useQueryClient()
 
   const mutation = useMutation({
     mutationFn: (texts: string[]) => batchClassify(texts, language),
-    onSuccess: (data) => setResults(data),
+    onSuccess: (data) => {
+      setResults(data)
+      // the batch was logged server-side — refresh per-user stats immediately
+      queryClient.invalidateQueries({ queryKey: ['overview-stats'] })
+      queryClient.invalidateQueries({ queryKey: ['volume'] })
+    },
   })
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -57,22 +62,8 @@ export function BatchScanner() {
     URL.revokeObjectURL(url)
   }
 
-  const getLabelVariant = (label: string) => {
-    if (label === 'Hate') return 'destructive' as const
-    if (label === 'Abuse') return 'default' as const
-    return 'secondary' as const
-  }
-
-  const source = getDataSource('batchClassify')
-
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2">
-        <DataSourceBadge source={source} />
-        <span className="text-xs text-muted-foreground">
-          Result IDs prefixed with <code className="font-mono">mock_</code> are simulated; live IDs use <code className="font-mono">batch_</code>.
-        </span>
-      </div>
       <div className="flex items-center gap-4">
         <label className="flex items-center gap-2 cursor-pointer px-4 py-2 rounded-md bg-secondary text-secondary-foreground hover:bg-secondary/80 text-sm font-medium transition-colors">
             <Upload className="h-4 w-4" />
@@ -116,7 +107,7 @@ export function BatchScanner() {
               <Badge variant="secondary">
                 Normal: {results.filter((r) => r.predicted_label === 'Normal').length}
               </Badge>
-              <Badge variant="default">
+              <Badge variant="warning">
                 Abuse: {results.filter((r) => r.predicted_label === 'Abuse').length}
               </Badge>
               <Badge variant="destructive">
@@ -127,7 +118,7 @@ export function BatchScanner() {
           <div className="border border-border rounded-lg divide-y divide-border max-h-[400px] overflow-auto">
             {results.map((r) => (
               <div key={r.id} className="p-3 flex items-center gap-3">
-                <Badge variant={getLabelVariant(r.predicted_label)} className="shrink-0">
+                <Badge variant={labelBadgeVariant(r.predicted_label)} className="shrink-0">
                   {r.predicted_label}
                 </Badge>
                 <p className="text-sm line-clamp-1 flex-1">{r.tweet}</p>

@@ -3,7 +3,6 @@ import { ConfusionMatrix } from '@/components/charts/ConfusionMatrix'
 import { PerClassMetrics } from '@/components/charts/PerClassMetrics'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { SectionTitle } from '@/components/ui/data-source-badge'
-import { getDataSource } from '@/lib/api/client'
 import { Loader2 } from 'lucide-react'
 
 export default function Performance() {
@@ -32,7 +31,7 @@ export default function Performance() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
-            <SectionTitle source={getDataSource('metrics')}>Confusion Matrix</SectionTitle>
+            <SectionTitle>Confusion Matrix</SectionTitle>
           </CardHeader>
           <CardContent>
             <ConfusionMatrix matrix={metrics.confusion_matrix} />
@@ -41,7 +40,7 @@ export default function Performance() {
 
         <Card>
           <CardHeader>
-            <SectionTitle source={getDataSource('metrics')}>Per-Class Performance</SectionTitle>
+            <SectionTitle>Per-Class Performance</SectionTitle>
           </CardHeader>
           <CardContent>
             <PerClassMetrics metrics={metrics.per_class} />
@@ -51,7 +50,7 @@ export default function Performance() {
 
       <Card>
         <CardHeader>
-          <SectionTitle source={getDataSource('metrics')}>Overall Metrics</SectionTitle>
+          <SectionTitle>Overall Metrics</SectionTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

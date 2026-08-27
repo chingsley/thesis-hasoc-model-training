@@ -1,27 +1,51 @@
 import { useState } from 'react'
 import { useTriagePosts } from '@/hooks/use-posts'
-import { useExplanation } from '@/hooks/use-explanations'
+import { useExplanationMethods, XAI_METHODS } from '@/hooks/use-explanations'
 import { ExplanationComparison } from '@/components/explainability/ExplanationComparison'
 import { ConfidenceMeter } from '@/components/explainability/ConfidenceMeter'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { SectionTitle } from '@/components/ui/data-source-badge'
-import { getDataSource } from '@/lib/api/client'
+import { crossMethodAgreementMean } from '@/lib/explain-agreement'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { Badge } from '@/components/ui/badge'
-import type { Post } from '@/lib/types'
+import { Badge, labelBadgeVariant } from '@/components/ui/badge'
+import type { ExplanationPayload, Post, XaiMethod } from '@/lib/types'
 import { Loader2, ChevronRight } from 'lucide-react'
 
 export default function Explainability() {
   const { data: posts, isLoading } = useTriagePosts()
   const [selectedPost, setSelectedPost] = useState<Post | null>(null)
-  const { data: explanation, isLoading: expLoading } = useExplanation(selectedPost)
+  const methodQueries = useExplanationMethods(selectedPost)
+
+  // Merge whatever methods have completed into a partial payload.
+  let explanation: ExplanationPayload | null = null
+  let loadingMethods: XaiMethod[] = []
+  if (selectedPost) {
+    const mergedMethods: ExplanationPayload['methods'] = {}
+    const metrics: ExplanationPayload['metrics'] = {}
+    methodQueries.forEach((query) => {
+      if (query.data) {
+        Object.assign(mergedMethods, query.data.methods)
+        Object.assign(metrics, query.data.metrics)
+      }
+    })
+    const agreement = crossMethodAgreementMean(mergedMethods)
+    if (agreement !== undefined) metrics.cross_method_agreement_mean = agreement
+    loadingMethods = XAI_METHODS.filter((_, i) => methodQueries[i].isPending)
+    explanation = {
+      id: selectedPost.id,
+      label: selectedPost.predicted_label,
+      text: selectedPost.tweet,
+      methods: mergedMethods,
+      metrics,
+    }
+  }
 
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <Card className="lg:col-span-1">
           <CardHeader>
-            <SectionTitle source={getDataSource('triage')}>Select a Post</SectionTitle>
+            <SectionTitle>Select a Post</SectionTitle>
           </CardHeader>
           <CardContent>
             {isLoading ? (
@@ -48,7 +72,7 @@ export default function Explainability() {
                       <div className="flex gap-2 mt-2">
                         <Badge variant="outline" className="text-xs">{post.id}</Badge>
                         <Badge
-                          variant={post.label === 'Hate' ? 'destructive' : post.label === 'Abuse' ? 'default' : 'secondary'}
+                          variant={labelBadgeVariant(post.label)}
                           className="text-xs"
                         >
                           {post.label}
@@ -64,19 +88,15 @@ export default function Explainability() {
 
         <Card className="lg:col-span-2">
           <CardHeader>
-            <SectionTitle source={getDataSource('explanations')}>
+            <SectionTitle>
               {selectedPost ? `Explanation for ${selectedPost.id}` : 'Side-by-Side Explanation Comparison'}
             </SectionTitle>
           </CardHeader>
           <CardContent>
-            {expLoading ? (
-              <div className="flex items-center justify-center py-12">
-                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-              </div>
-            ) : explanation ? (
+            {explanation ? (
               <div className="space-y-6">
-                <ConfidenceMeter explanation={explanation} />
-                <ExplanationComparison explanation={explanation} />
+                <ConfidenceMeter metrics={explanation.metrics} />
+                <ExplanationComparison explanation={explanation} loadingMethods={loadingMethods} />
               </div>
             ) : (
               <div className="text-center py-12 text-muted-foreground">

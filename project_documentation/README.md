@@ -1,6 +1,13 @@
-# How-to guides (server & backend)
+# Project documentation
 
-Quick reference for returning to this project after a break. Each file covers one independent task.
+Guides and references for the thesis HateGuard stack.
+
+**Doc categories** (keep them distinct):
+- **[feature_description/](./feature_description/)** — what each dashboard feature does, end-to-end (request → backend → DB → response → render). Kept in sync with code behavior.
+- **[thesis/](./thesis/)** — thesis-writing material: design rationale, methods, measurements, limitations (why the system is built this way, how well it works).
+- Everything else below — operational how-to guides (login, run, deploy).
+
+Quick reference for returning to this project after a break. Each guide file covers one independent task.
 
 ## Server at a glance
 
@@ -25,6 +32,9 @@ Quick reference for returning to this project after a break. Each file covers on
 | Upload a checkpoint to Hugging Face (recommended for deployment) | [upload-model-to-huggingface.md](./upload-model-to-huggingface.md) |
 | Copy checkpoints with `rsync` / `scp` (no Hugging Face) | [copy-checkpoints-between-machines.md](./copy-checkpoints-between-machines.md) |
 | Run backend + frontend dashboard | [run-dashboard.md](./run-dashboard.md) |
+| Backend API reference (endpoints, curl, responses) | [backend-api-reference.md](./backend-api-reference.md) |
+| Dashboard feature flows (sidebar modules) | [feature_description/](./feature_description/) |
+| Thesis-writing docs (design rationale, measurements) | [thesis/](./thesis/) |
 | Test models in a Gradio UI (paste text → classify) | [run-gradio-model-tester.md](./run-gradio-model-tester.md) |
 
 ## Typical workflows

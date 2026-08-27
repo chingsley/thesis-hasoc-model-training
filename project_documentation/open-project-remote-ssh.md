@@ -31,7 +31,7 @@ The explorer shows the live server tree: `modeling/`, `runs/`, `notebooks/`, etc
 |-----------|---------------------------|
 | `~/thesis-hasoc-model-training/` | `model_training/` |
 | `backend_api_server/` (if synced) | `backend_api_server/` |
-| Full dashboard / monorepo | `frontend_dashboard/`, root `how_to/` |
+| Full dashboard / monorepo | `frontend_dashboard/`, root `project_documentation/` |
 
 The server copy is the **training bundle**; your Mac repo is the **full thesis monorepo**.
 

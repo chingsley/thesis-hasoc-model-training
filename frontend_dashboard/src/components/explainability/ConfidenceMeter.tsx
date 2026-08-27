@@ -2,42 +2,42 @@ import type { ExplanationPayload } from '@/lib/types'
 import { AlertCircle, CheckCircle2, AlertTriangle } from 'lucide-react'
 
 interface ConfidenceMeterProps {
-  explanation: ExplanationPayload
+  /** Partial metrics are fine — missing values render as loading skeletons. */
+  metrics: ExplanationPayload['metrics']
 }
 
-export function ConfidenceMeter({ explanation }: ConfidenceMeterProps) {
-  const metrics = explanation.metrics
-
-  const agreement = metrics.cross_method_agreement_mean ?? 0
-  const fidelity = metrics.lime_faithfulness_aopc_proxy ?? 0
-  const stability = metrics.lime_stability_jaccard ?? 0
-
+export function ConfidenceMeter({ metrics }: ConfidenceMeterProps) {
   const items = [
     {
       label: 'Cross-Method Agreement',
-      value: agreement,
+      value: metrics.cross_method_agreement_mean,
       format: (v: number) => `${Math.round(v * 100)}%`,
       threshold: 0.5,
     },
     {
       label: 'LIME Fidelity (AOPC)',
-      value: fidelity,
+      value: metrics.lime_faithfulness_aopc_proxy,
       format: (v: number) => v.toFixed(3),
       threshold: 0.4,
     },
     {
       label: 'LIME Stability (Jaccard)',
-      value: stability,
+      value: metrics.lime_stability_jaccard,
       format: (v: number) => `${Math.round(v * 100)}%`,
       threshold: 0.7,
     },
   ]
 
+  const agreement = metrics.cross_method_agreement_mean
+  const fidelity = metrics.lime_faithfulness_aopc_proxy
+  const headerGood =
+    agreement !== undefined && fidelity !== undefined && agreement >= 0.5 && fidelity >= 0.4
+
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-2">
         <h3 className="text-sm font-medium">Explanation Confidence</h3>
-        {agreement >= 0.5 && fidelity >= 0.4 ? (
+        {headerGood ? (
           <CheckCircle2 className="h-4 w-4 text-green-500" />
         ) : (
           <AlertCircle className="h-4 w-4 text-amber-500" />
@@ -45,6 +45,15 @@ export function ConfidenceMeter({ explanation }: ConfidenceMeterProps) {
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {items.map((item) => {
+          if (item.value === undefined) {
+            return (
+              <div key={item.label} className="p-3 bg-muted rounded-lg animate-pulse">
+                <span className="text-xs text-muted-foreground">{item.label}</span>
+                <div className="h-7 bg-border rounded mt-1 w-1/2" />
+                <div className="w-full h-1.5 bg-border rounded-full mt-2" />
+              </div>
+            )
+          }
           const isGood = item.value >= item.threshold
           return (
             <div key={item.label} className="p-3 bg-muted rounded-lg">

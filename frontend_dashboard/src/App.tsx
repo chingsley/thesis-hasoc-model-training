@@ -2,9 +2,11 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { DashboardLayout } from '@/components/layout/DashboardLayout'
+import { RequireAuth } from '@/components/auth/RequireAuth'
 import { lazy, Suspense } from 'react'
 import { Loader2 } from 'lucide-react'
 
+const Login = lazy(() => import('@/pages/Login'))
 const Overview = lazy(() => import('@/pages/Overview'))
 const Triage = lazy(() => import('@/pages/Triage'))
 const Explainability = lazy(() => import('@/pages/Explainability'))
@@ -36,14 +38,17 @@ export default function App() {
       <TooltipProvider>
         <BrowserRouter>
           <Routes>
-            <Route element={<DashboardLayout />}>
-              <Route index element={<Suspense fallback={<PageLoader />}><Overview /></Suspense>} />
-              <Route path="triage" element={<Suspense fallback={<PageLoader />}><Triage /></Suspense>} />
-              <Route path="explainability" element={<Suspense fallback={<PageLoader />}><Explainability /></Suspense>} />
-              <Route path="analysis" element={<Suspense fallback={<PageLoader />}><Analysis /></Suspense>} />
-              <Route path="testing" element={<Suspense fallback={<PageLoader />}><Testing /></Suspense>} />
-              <Route path="performance" element={<Suspense fallback={<PageLoader />}><Performance /></Suspense>} />
-              <Route path="reports" element={<Suspense fallback={<PageLoader />}><Reports /></Suspense>} />
+            <Route path="/login" element={<Suspense fallback={<PageLoader />}><Login /></Suspense>} />
+            <Route element={<RequireAuth />}>
+              <Route element={<DashboardLayout />}>
+                <Route index element={<Suspense fallback={<PageLoader />}><Overview /></Suspense>} />
+                <Route path="triage" element={<Suspense fallback={<PageLoader />}><Triage /></Suspense>} />
+                <Route path="explainability" element={<Suspense fallback={<PageLoader />}><Explainability /></Suspense>} />
+                <Route path="analysis" element={<Suspense fallback={<PageLoader />}><Analysis /></Suspense>} />
+                <Route path="testing" element={<Suspense fallback={<PageLoader />}><Testing /></Suspense>} />
+                <Route path="performance" element={<Suspense fallback={<PageLoader />}><Performance /></Suspense>} />
+                <Route path="reports" element={<Suspense fallback={<PageLoader />}><Reports /></Suspense>} />
+              </Route>
             </Route>
           </Routes>
         </BrowserRouter>

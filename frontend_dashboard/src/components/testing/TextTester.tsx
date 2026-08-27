@@ -1,35 +1,33 @@
 import { useState } from 'react'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
+import { Badge, labelBadgeVariant } from '@/components/ui/badge'
 import { useDashboardStore } from '@/lib/store/dashboard'
-import { singleClassify, getDataSource } from '@/lib/api/client'
+import { singleClassify } from '@/lib/api/client'
 import { ToxicTextHighlighter } from '@/components/explainability/ToxicTextHighlighter'
-import { DataSourceBadge, SectionTitle } from '@/components/ui/data-source-badge'
+import { SectionTitle } from '@/components/ui/data-source-badge'
 import { Loader2, Sparkles } from 'lucide-react'
 
 export function TextTester() {
   const language = useDashboardStore((s) => s.language)
   const [text, setText] = useState('')
+  const queryClient = useQueryClient()
 
   const mutation = useMutation({
     mutationFn: (input: string) => singleClassify(input, language),
+    onSuccess: () => {
+      // the prediction was logged server-side — refresh per-user stats immediately
+      queryClient.invalidateQueries({ queryKey: ['overview-stats'] })
+      queryClient.invalidateQueries({ queryKey: ['volume'] })
+    },
   })
 
   const result = mutation.data
-  const classifySource = getDataSource('singleClassify')
-  const explanationSource = getDataSource('explanations')
   const shap = result?.explanation?.methods.shap
   const hasShapTokens =
     shap && 'tokens' in shap && 'scores' in shap && Array.isArray(shap.tokens)
-
-  const getLabelBadgeVariant = (label: string) => {
-    if (label === 'Hate') return 'destructive' as const
-    if (label === 'Abuse') return 'default' as const
-    return 'secondary' as const
-  }
 
   return (
     <div className="space-y-4">
@@ -64,11 +62,11 @@ export function TextTester() {
         <div className="space-y-4">
           <Card>
             <CardHeader>
-              <SectionTitle source={classifySource}>Classification Result</SectionTitle>
+              <SectionTitle>Classification Result</SectionTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center gap-3 mb-4 flex-wrap">
-                <Badge variant={getLabelBadgeVariant(result.predicted_label)} className="text-base px-3 py-1">
+                <Badge variant={labelBadgeVariant(result.predicted_label)} className="text-base px-3 py-1">
                   {result.predicted_label}
                 </Badge>
                 <div className="flex items-center gap-4 text-sm">
@@ -86,10 +84,7 @@ export function TextTester() {
               )}
 
               <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <h4 className="text-sm font-medium text-muted-foreground">Text Highlighting (Explainability)</h4>
-                  <DataSourceBadge source={explanationSource} />
-                </div>
+                <h4 className="text-sm font-medium text-muted-foreground">Text Highlighting (Explainability)</h4>
                 {hasShapTokens ? (
                   <div className="p-4 bg-muted rounded-lg">
                     <ToxicTextHighlighter
@@ -99,7 +94,7 @@ export function TextTester() {
                   </div>
                 ) : (
                   <p className="text-sm text-muted-foreground">
-                    Token-level explainability requires a backend /explain endpoint (currently {explanationSource} only).
+                    Token-level explainability requires a backend /explain endpoint.
                   </p>
                 )}
               </div>

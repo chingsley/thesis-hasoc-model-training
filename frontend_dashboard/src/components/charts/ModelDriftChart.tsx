@@ -43,7 +43,7 @@ export function ModelDriftChart({ data }: ModelDriftChartProps) {
           <Line
             type="monotone"
             dataKey="abuse_avg_confidence"
-            stroke="#eab308"
+            stroke="var(--color-amber-500)"
             strokeWidth={2}
             dot={false}
             name="Abuse Avg Confidence"

@@ -4,11 +4,9 @@ import { fetchPosts, fetchTriagePosts, fetchBorderlinePosts, flagPost, updateTri
 
 export function usePosts() {
   const language = useDashboardStore((s) => s.language)
-  const hateThreshold = useDashboardStore((s) => s.hateThreshold)
   return useQuery({
     queryKey: ['posts', language],
     queryFn: () => fetchPosts(language),
-    select: (posts) => posts.filter((p) => p.probabilities.hate >= hateThreshold),
   })
 }
 
@@ -36,6 +34,7 @@ export function useFlagPost() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['posts', language] })
       queryClient.invalidateQueries({ queryKey: ['triage', language] })
+      queryClient.invalidateQueries({ queryKey: ['reported-posts', language] })
     },
   })
 }
@@ -47,7 +46,9 @@ export function useUpdateTriageStatus() {
     mutationFn: ({ postId, status }: { postId: string; status: 'new' | 'reviewed' | 'reported' }) =>
       updateTriageStatus(postId, status),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['posts', language] })
       queryClient.invalidateQueries({ queryKey: ['triage', language] })
+      queryClient.invalidateQueries({ queryKey: ['reported-posts', language] })
     },
   })
 }

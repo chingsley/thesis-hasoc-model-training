@@ -27,10 +27,16 @@ def resolve_checkpoint(path: Path) -> Path:
   raise FileNotFoundError(f"No HuggingFace checkpoint found under {path}")
 
 
-def find_metrics_file(checkpoint: Path) -> Path | None:
-  """Locate test_metrics.json next to the checkpoint or in its parent run dir."""
+ARTIFACTS = {
+  "test_metrics.json": "the backend /metrics endpoint",
+  "predictions_test.csv": "the backend /posts and analytics endpoints",
+}
+
+
+def find_artifact(checkpoint: Path, filename: str) -> Path | None:
+  """Locate an artifact next to the checkpoint or in its parent run dir."""
   for folder in (checkpoint, checkpoint.parent):
-    candidate = folder / "test_metrics.json"
+    candidate = folder / filename
     if candidate.is_file():
       return candidate
   return None
@@ -70,19 +76,19 @@ def main() -> None:
   )
   print(f"Uploaded {checkpoint} -> https://huggingface.co/{args.repo_id}")
 
-  metrics_file = find_metrics_file(checkpoint)
-  if metrics_file is None:
-    print("WARNING: no test_metrics.json found next to the checkpoint; "
-          "the backend /metrics endpoint will 404 for this model.")
-  else:
-    api.upload_file(
-      path_or_fileobj=str(metrics_file),
-      path_in_repo="test_metrics.json",
-      repo_id=args.repo_id,
-      repo_type="model",
-      commit_message="Upload test-set metrics for the /metrics endpoint",
-    )
-    print(f"Uploaded metrics {metrics_file} -> https://huggingface.co/{args.repo_id}/blob/main/test_metrics.json")
+  for filename, used_by in ARTIFACTS.items():
+    artifact = find_artifact(checkpoint, filename)
+    if artifact is None:
+      print(f"WARNING: no {filename} found next to the checkpoint; {used_by} will 404 for this model.")
+    else:
+      api.upload_file(
+        path_or_fileobj=str(artifact),
+        path_in_repo=filename,
+        repo_id=args.repo_id,
+        repo_type="model",
+        commit_message=f"Upload {filename} for the backend API",
+      )
+      print(f"Uploaded {artifact} -> https://huggingface.co/{args.repo_id}/blob/main/{filename}")
 
 
 if __name__ == "__main__":

@@ -137,6 +137,34 @@ export interface BatchResult {
   }
 }
 
+export interface User {
+  id: number
+  email: string
+  org_name: string
+}
+
+export interface LoginResponse {
+  token: string
+  user: User
+}
+
+export interface OverviewStats {
+  language: Language
+  total: number
+  normal: number
+  abuse: number
+  hate: number
+}
+
+export interface ApiKeyInfo {
+  id: number
+  name: string
+  prefix: string
+  created_at: string
+  last_used_at: string | null
+  revoked_at: string | null
+}
+
 export interface AlertItem {
   id: string
   type: 'hate_threshold' | 'volume_spike' | 'model_drift'

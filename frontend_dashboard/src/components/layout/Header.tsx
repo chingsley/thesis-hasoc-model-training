@@ -1,9 +1,12 @@
-import { Bell, Menu, Globe } from 'lucide-react'
+import { Bell, Menu, Globe, LogOut } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { DataSourceBadge } from '@/components/ui/data-source-badge'
 import { useActiveModel } from '@/hooks/use-active-model'
 import { useDashboardStore } from '@/lib/store/dashboard'
+import { useAuthStore } from '@/lib/store/auth'
+import { logout } from '@/lib/api/client'
 import type { Language } from '@/lib/types'
 
 interface HeaderProps {
@@ -15,6 +18,15 @@ export function Header({ onMenuClick }: HeaderProps) {
   const setLanguage = useDashboardStore((s) => s.setLanguage)
   const unreadAlertCount = useDashboardStore((s) => s.unreadAlertCount)
   const { activeModelId, isLive } = useActiveModel()
+  const user = useAuthStore((s) => s.user)
+  const clearAuth = useAuthStore((s) => s.clear)
+  const navigate = useNavigate()
+
+  const handleLogout = async () => {
+    await logout()
+    clearAuth()
+    navigate('/login')
+  }
 
   const languages: { value: Language; label: string }[] = [
     { value: 'igbo', label: 'Igbo' },
@@ -28,11 +40,7 @@ export function Header({ onMenuClick }: HeaderProps) {
           <Menu className="h-5 w-5" />
         </Button>
         <h2 className="text-lg font-semibold hidden sm:block">Dashboard</h2>
-        <div className="hidden md:flex items-center gap-1.5">
-          <DataSourceBadge source="mock" />
-          <DataSourceBadge source="live" />
-          <span className="text-[10px] text-muted-foreground ml-1">= data source</span>
-        </div>
+        <DataSourceBadge />
       </div>
 
       <div className="flex items-center gap-2">
@@ -67,6 +75,20 @@ export function Header({ onMenuClick }: HeaderProps) {
             </Badge>
           )}
         </Button>
+
+        {user && (
+          <>
+            <span
+              className="hidden sm:inline text-xs text-muted-foreground max-w-[180px] truncate"
+              title={user.email}
+            >
+              {user.org_name || user.email}
+            </span>
+            <Button variant="ghost" size="icon" onClick={handleLogout} title="Sign out">
+              <LogOut className="h-4 w-4" />
+            </Button>
+          </>
+        )}
       </div>
     </header>
   )
