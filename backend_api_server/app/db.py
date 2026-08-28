@@ -89,6 +89,16 @@ def _migrate(conn: sqlite3.Connection) -> None:
     conn.execute(
         "CREATE INDEX IF NOT EXISTS idx_predictions_user_lang ON predictions(user_id, language)"
     )
+    triage_cols = {row[1] for row in conn.execute("PRAGMA table_info(triage)")}
+    if "manual_label" not in triage_cols:
+        conn.execute("ALTER TABLE triage ADD COLUMN manual_label TEXT")
+    # The triage-history feature was removed; drop its table where it exists.
+    conn.execute("DROP TABLE IF EXISTS triage_events")
+    # Status vocabulary: new->pending, reviewed->cleared, reported->flagged
+    conn.execute("UPDATE triage SET status = 'pending' WHERE status = 'new'")
+    conn.execute("UPDATE triage SET status = 'cleared' WHERE status = 'reviewed'")
+    conn.execute("UPDATE triage SET status = 'flagged' WHERE status = 'reported'")
+    conn.execute("UPDATE triage SET flagged = CASE WHEN status = 'flagged' THEN 1 ELSE 0 END")
 
 
 def utc_now() -> str:
@@ -142,44 +152,55 @@ def get_triage_state(post_ids: list[str]) -> dict[str, dict[str, Any]]:
     placeholders = ",".join("?" for _ in post_ids)
     with _lock:
         rows = conn.execute(
-            f"SELECT post_id, flagged, status, updated_at FROM triage WHERE post_id IN ({placeholders})",
+            f"SELECT post_id, flagged, status, manual_label, updated_at FROM triage WHERE post_id IN ({placeholders})",
             post_ids,
         ).fetchall()
     return {row["post_id"]: dict(row) for row in rows}
 
 
-def upsert_triage(post_id: str, *, flagged: bool | None = None, status: str | None = None) -> dict[str, Any]:
+def upsert_triage(
+    post_id: str,
+    *,
+    flagged: bool | None = None,
+    status: str | None = None,
+    manual_label: str | None = None,
+) -> dict[str, Any]:
     conn = get_conn()
     now = utc_now()
     with _lock, conn:
         existing = conn.execute(
-            "SELECT post_id, flagged, status, updated_at FROM triage WHERE post_id = ?", (post_id,)
+            "SELECT post_id, flagged, status, manual_label, updated_at FROM triage WHERE post_id = ?",
+            (post_id,),
         ).fetchone()
         if existing is None:
             conn.execute(
-                "INSERT INTO triage (post_id, flagged, status, updated_at) VALUES (?, ?, ?, ?)",
-                (post_id, int(flagged or False), status or "new", now),
+                "INSERT INTO triage (post_id, flagged, status, manual_label, updated_at)"
+                " VALUES (?, ?, ?, ?, ?)",
+                (post_id, int(flagged or False), status or "pending", manual_label, now),
             )
         else:
             conn.execute(
-                "UPDATE triage SET flagged = ?, status = ?, updated_at = ? WHERE post_id = ?",
+                "UPDATE triage SET flagged = ?, status = ?, manual_label = ?, updated_at = ?"
+                " WHERE post_id = ?",
                 (
                     int(flagged if flagged is not None else bool(existing["flagged"])),
                     status if status is not None else existing["status"],
+                    manual_label if manual_label is not None else existing["manual_label"],
                     now,
                     post_id,
                 ),
             )
         row = conn.execute(
-            "SELECT post_id, flagged, status, updated_at FROM triage WHERE post_id = ?", (post_id,)
+            "SELECT post_id, flagged, status, manual_label, updated_at FROM triage WHERE post_id = ?",
+            (post_id,),
         ).fetchone()
     return dict(row)
 
 
-def list_reported_post_ids() -> list[str]:
+def list_flagged_post_ids() -> list[str]:
     conn = get_conn()
     with _lock:
-        rows = conn.execute("SELECT post_id, updated_at FROM triage WHERE status = 'reported'").fetchall()
+        rows = conn.execute("SELECT post_id, updated_at FROM triage WHERE status = 'flagged'").fetchall()
     return [row["post_id"] for row in rows]
 
 

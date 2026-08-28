@@ -104,7 +104,7 @@ export function BatchScanner() {
               Results ({results.length} texts)
             </h4>
             <div className="flex gap-2 text-xs">
-              <Badge variant="secondary">
+              <Badge variant="success">
                 Normal: {results.filter((r) => r.predicted_label === 'Normal').length}
               </Badge>
               <Badge variant="warning">

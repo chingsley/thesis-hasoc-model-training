@@ -41,6 +41,7 @@ from .schemas import (
     PredictRequest,
     PredictResponse,
     Probabilities,
+    RelabelRequest,
     TriageUpdateRequest,
     UserInfo,
 )
@@ -291,8 +292,24 @@ def flag_user_prediction(post_ref: str, user: dict = Depends(get_caller_user)) -
     pred_id = user_posts_service.parse_pred_ref(post_ref)
     post = None
     if pred_id is not None:
+        # Idempotent "move to flagged bucket" — other transitions use /triage or /relabel.
         post = user_posts_service.apply_user_triage(
-            user["id"], pred_id, flagged=True, status="reported"
+            user["id"], pred_id, flagged=True, status="flagged"
+        )
+    if post is None:
+        raise HTTPException(status_code=404, detail=f"Unknown post_id={post_ref}")
+    return post
+
+
+@app.post("/predictions/{post_ref}/relabel", response_model=PostResponse)
+def relabel_user_prediction(
+    post_ref: str, payload: RelabelRequest, user: dict = Depends(get_caller_user)
+) -> dict:
+    pred_id = user_posts_service.parse_pred_ref(post_ref)
+    post = None
+    if pred_id is not None:
+        post = user_posts_service.relabel_user_post(
+            user["id"], pred_id, payload.manual_label, payload.bucket
         )
     if post is None:
         raise HTTPException(status_code=404, detail=f"Unknown post_id={post_ref}")
@@ -307,7 +324,7 @@ def triage_user_prediction(
     post = None
     if pred_id is not None:
         post = user_posts_service.apply_user_triage(
-            user["id"], pred_id, flagged=payload.status == "reported", status=payload.status
+            user["id"], pred_id, flagged=payload.status == "flagged", status=payload.status
         )
     if post is None:
         raise HTTPException(status_code=404, detail=f"Unknown post_id={post_ref}")
@@ -368,7 +385,7 @@ def list_posts(
 
 @app.post("/posts/{post_id}/flag", response_model=PostResponse)
 def flag_post(post_id: str, user: dict = Depends(get_caller_user)) -> dict:
-    post = posts_service.apply_triage(post_id, flagged=True, status="reported")
+    post = posts_service.apply_triage(post_id, flagged=True, status="flagged")
     if post is None:
         raise HTTPException(status_code=404, detail=f"Unknown post_id={post_id}")
     return post
@@ -379,7 +396,9 @@ def update_triage(
     post_id: str, payload: TriageUpdateRequest, user: dict = Depends(get_caller_user)
 ) -> dict:
     post = posts_service.apply_triage(
-        post_id, flagged=payload.status == "reported", status=payload.status
+        post_id,
+        flagged=payload.status == "flagged",
+        status=payload.status,
     )
     if post is None:
         raise HTTPException(status_code=404, detail=f"Unknown post_id={post_id}")

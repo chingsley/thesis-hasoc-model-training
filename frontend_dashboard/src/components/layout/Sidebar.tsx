@@ -37,7 +37,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
     <>
       {open && (
         <div
-          className="fixed inset-0 z-40 bg-black/50 lg:hidden"
+          className="fixed inset-0 z-40 bg-black/50 lg:hidden cursor-pointer"
           onClick={onClose}
         />
       )}
@@ -66,7 +66,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
                   to={item.to}
                   onClick={onClose}
                   className={cn(
-                    'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors',
+                    'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors cursor-pointer',
                     active
                       ? 'bg-primary text-primary-foreground'
                       : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'

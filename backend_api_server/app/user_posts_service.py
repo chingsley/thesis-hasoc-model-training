@@ -50,7 +50,8 @@ def _row_to_post(row: dict[str, Any], triage: dict[str, dict[str, Any]], user_id
             "hate": row["prob_hate"],
         },
         "flagged": bool(state["flagged"]) if state else False,
-        "triage_status": state["status"] if state else "new",
+        "triage_status": state["status"] if state else "pending",
+        "manual_label": state["manual_label"] if state else None,
         "timestamp": row["ts"],
     }
 
@@ -89,12 +90,42 @@ def apply_user_triage(
     post = get_user_post(user_id, prediction_id)
     if post is None:
         return None
-    state = db.upsert_triage(_triage_key(user_id, prediction_id), flagged=flagged, status=status)
+    state = db.upsert_triage(
+        _triage_key(user_id, prediction_id), flagged=flagged, status=status
+    )
     post["flagged"] = bool(state["flagged"])
     post["triage_status"] = state["status"]
+    post["manual_label"] = state["manual_label"]
+    return post
+
+
+def relabel_user_post(
+    user_id: int,
+    prediction_id: int,
+    manual_label: str,
+    bucket: str | None = None,
+) -> dict[str, Any] | None:
+    """Record a manual label correction; optionally move to the cleared/flagged bucket.
+
+    The post joins the relabelled view while manual_label != the model's predicted label;
+    it keeps its bucket (cleared/flagged) regardless. Machine label is always recoverable
+    from the immutable predictions row, so retraining pairs survive.
+    """
+    post = get_user_post(user_id, prediction_id)
+    if post is None:
+        return None
+    state = db.upsert_triage(
+        _triage_key(user_id, prediction_id),
+        flagged=(bucket == "flagged") if bucket else None,
+        status=bucket,
+        manual_label=manual_label,
+    )
+    post["flagged"] = bool(state["flagged"])
+    post["triage_status"] = state["status"]
+    post["manual_label"] = state["manual_label"]
     return post
 
 
 def user_reported_posts(user_id: int, language: str) -> list[dict[str, Any]]:
     posts = list_user_posts(user_id, language, limit=5000)
-    return [post for post in posts if post["triage_status"] == "reported"]
+    return [post for post in posts if post["triage_status"] == "flagged"]
