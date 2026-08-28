@@ -75,7 +75,7 @@ class ModelMetricsResponse(BaseModel):
     roc_auc_ovr: float | None = None
 
 
-TriageStatus = Literal["new", "reviewed", "reported"]
+TriageStatus = Literal["pending", "cleared", "flagged"]
 
 
 class PostResponse(BaseModel):
@@ -91,11 +91,17 @@ class PostResponse(BaseModel):
     probabilities: Probabilities
     flagged: bool
     triage_status: TriageStatus
+    manual_label: Label | None = None
     timestamp: str
 
 
 class TriageUpdateRequest(BaseModel):
     status: TriageStatus
+
+
+class RelabelRequest(BaseModel):
+    manual_label: Label
+    bucket: Literal["cleared", "flagged"] | None = None
 
 
 class ExplainRequest(BaseModel):

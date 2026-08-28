@@ -101,7 +101,8 @@ def _load_posts(language: str) -> list[dict[str, Any]]:
     for post in posts:
         state = triage.get(post["id"])
         post["flagged"] = bool(state["flagged"]) if state else False
-        post["triage_status"] = state["status"] if state else "new"
+        post["triage_status"] = state["status"] if state else "pending"
+        post["manual_label"] = state["manual_label"] if state else None
         post["timestamp"] = state["updated_at"] if state else ""
 
     _cache[lang] = posts
@@ -124,13 +125,19 @@ def get_post(post_id: str) -> dict[str, Any] | None:
     return None
 
 
-def apply_triage(post_id: str, *, flagged: bool | None = None, status: str | None = None) -> dict[str, Any] | None:
+def apply_triage(
+    post_id: str,
+    *,
+    flagged: bool | None = None,
+    status: str | None = None,
+) -> dict[str, Any] | None:
     post = get_post(post_id)
     if post is None:
         return None
     state = db.upsert_triage(post_id, flagged=flagged, status=status)
     post["flagged"] = bool(state["flagged"])
     post["triage_status"] = state["status"]
+    post["manual_label"] = state["manual_label"]
     post["timestamp"] = state["updated_at"]
     for lang_posts in _cache.values():
         for cached in lang_posts:
@@ -140,8 +147,8 @@ def apply_triage(post_id: str, *, flagged: bool | None = None, status: str | Non
 
 
 def reported_posts(language: str) -> list[dict[str, Any]]:
-    reported_ids = set(db.list_reported_post_ids())
-    return [post for post in get_posts(language) if post["id"] in reported_ids]
+    flagged_ids = set(db.list_flagged_post_ids())
+    return [post for post in get_posts(language) if post["id"] in flagged_ids]
 
 
 def refresh_posts() -> None:

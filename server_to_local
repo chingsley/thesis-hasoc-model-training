@@ -95,3 +95,21 @@ Therefore, we need authentication. Social media or text-content-based platforms 
 
 - [LIGHT_BLUE_FOR_LABELS]
   #e8f0fe
+- [RED]
+  #e11d48
+
+- [TRIAGE DESIGN]
+- 4 buckets (4 tables): Pending, cleared, flagged, relabelled
+- pending is the default table containing new posts that have not been attended to at all
+- cleared, posts checked and not considered hateful (ususally normal or abusive posts). Not worth reporting. Goes into the "cleared" bucket
+- flagged: posts checked and is worth reporting (usually abusive or hate posts). Goes into into the flagged bucket.
+- cleared and flagged buckes are mutually exclusive.
+- relabelled: posts that the reviewer thinks is mislabelled by the model. Reviewer performs 2 actions: 1. corrects the label (normal/abusive/hate) 2. decides whether it should be flagged or cleared. If flagged, it goes into the flagged bucked, if cleared, it goes into the 'cleared' bucket. It is also added into the relabelled bucket. So the relabelled bucket is not mutually exclusive with 'cleared' or 'flagged' buckets. Changes must be persisted, a refresh should not affect the udpates made.
+- FYI (for future implementation): data from the relabelled bucket will be used to retrain the model in a feedback loop. So we need to keep track of the model-prediction and the manual re-label, saved for future use.
+- Records in the "cleared" bucket should have same status - "cleared", and action button "reopen" (secondary button)
+- Records in the "flagged" bucket should have same status - "flagged", and action button "unflag" (secondary button).
+- relabelled records, will also exist in one of either "cleared" or "flagged" bucket, taking the corresponding status and button. But while in the relabelled bucket (table) it will also contain old/machine and new/manual label columns (this column will not exist in "cleared" and "flagged" buckets), does not need to have the status in this bucket, action button will include "edit" to update the label, if manual label is changed to match machine prediction then it will leave this bucket, but will not leave the "cleared" or "flagged" bucket unless manually removed either by clicking "reopen" or "unflag" correspodingly. The "edit" button will open a right sidebar window as shown in the screenshot sliding into view, containing controls for edit, buttons for cancel and save. On close, cancel or save, the window will slide out in the oopposite direction, with smooth transition animations.
+- pending records: will all have status "pending" and action buttons "flag" and "clear". Clicking on either removes the record from the pending bucket and adds it to the corresonding cleared/flagged bucket.
+- In Reports -> export Report, the talbe should contain same records as in the 'flagged' buccket. Removing an item from either buckets relfects in the other in real time.
+- "buckets" are tables. The 4 buckets will exist the Triage module, tabs or a better user-freindly design, 4 tabs corresponding to the 4 buckets.
+- Update the triage design accordingly, make no mistakes.

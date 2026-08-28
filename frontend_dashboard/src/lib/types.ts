@@ -4,7 +4,7 @@ export type Label = 'Normal' | 'Abuse' | 'Hate'
 
 export type LabelId = 0 | 1 | 2
 
-export type TriageStatus = 'new' | 'reviewed' | 'reported'
+export type TriageStatus = 'pending' | 'cleared' | 'flagged'
 
 export type XaiMethod = 'lime' | 'shap' | 'attention_rollout' | 'integrated_gradients'
 
@@ -25,6 +25,9 @@ export interface Post {
   }
   flagged: boolean
   triage_status: TriageStatus
+  /** Reviewer's corrected label; null until relabelled. Relabelled bucket membership:
+   *  manual_label !== null && manual_label !== predicted_label. */
+  manual_label: Label | null
   timestamp: string
 }
 

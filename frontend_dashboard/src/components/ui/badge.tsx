@@ -16,6 +16,8 @@ const badgeVariants = cva(
           "bg-destructive/10 text-destructive focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:focus-visible:ring-destructive/40 [a]:hover:bg-destructive/20",
         warning:
           "bg-warning text-warning-foreground focus-visible:ring-warning/40 [a]:hover:bg-warning/80",
+        success:
+          "border-emerald-500/50 bg-emerald-500/10 text-emerald-700 focus-visible:ring-emerald-500/30 dark:text-emerald-400 [a]:hover:bg-emerald-500/20",
         outline:
           "border-border text-foreground [a]:hover:bg-muted [a]:hover:text-muted-foreground",
         ghost:
@@ -54,7 +56,7 @@ function Badge({
 export function labelBadgeVariant(label: string) {
   if (label === 'Hate') return 'destructive' as const
   if (label === 'Abuse') return 'warning' as const
-  return 'secondary' as const
+  return 'success' as const
 }
 
 export { Badge, badgeVariants }

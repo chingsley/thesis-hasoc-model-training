@@ -53,7 +53,7 @@ export function DataTable<T>({
               </TableHead>
             ))}
             {actions ? (
-              <TableHead className="text-right">{actionsHeader}</TableHead>
+              <TableHead>{actionsHeader}</TableHead>
             ) : null}
           </TableRow>
         </TableHeader>
@@ -67,7 +67,7 @@ export function DataTable<T>({
               ))}
               {actions ? (
                 <TableCell>
-                  <div className="flex items-center justify-end gap-0.5">{actions(row)}</div>
+                  <div className="flex items-center gap-0.5">{actions(row)}</div>
                 </TableCell>
               ) : null}
             </TableRow>

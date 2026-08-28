@@ -4,40 +4,56 @@
 
 **Route:** `/triage` · **Page:** `frontend_dashboard/src/pages/Triage.tsx`
 
----
+The queue shows **your own** Hate/Abuse predictions (from Testing Tools / API calls), sorted into **four bucket tabs**: Pending · Cleared · Flagged · Relabelled. Each tab label shows its count.
 
 ## End-to-end flow (plain English)
 
 Opening the page sends `GET /predictions?language=<selected>&label=Hate,Abuse` with your
 `Authorization: Bearer` token (no body). The backend checks the token, then reads the SQLite
-`predictions` table — **your** rows only, in the chosen language, keeping only Hate/Abuse,
-newest first (up to 500 matches; the label filter happens in SQL, so older toxic posts are not
-cut off by the limit). Each row is joined with its triage state (your personal
-`u<you>_pred_<id>` keys in the `triage` table) and returned as post objects with text, label,
-probabilities, `flagged`, and `triage_status`. The page then lets you search/filter that list
-locally (search box matches text or id; the dropdown filters by New/Reviewed/Reported).
+`predictions` table — your rows only, chosen language, Hate/Abuse machine labels, newest first
+(up to 500 matches; the label filter runs in SQL, so older toxic posts are not cut off). Each
+row is joined with your triage state (per-user `u<you>_pred_<id>` keys in the `triage` table,
+which also stores your `manual_label` when you relabel) and returned as post objects.
 
-Each row is a table row (shared `DataTable`): Post ID, Post, Prediction, hate-probability bar,
-status, date, and a **Flag** action. Clicking **Flag** sends `POST /predictions/pred_N/flag`. The backend verifies
-the post is yours (otherwise 404), writes `flagged = true`, `status = "reported"` to your
-triage record, and returns the updated post. The list refetches: the status becomes
-**Reported** and the button disables. Flagged posts are exactly what **Reports → Export Report**
-exports as CSV — the header text on this page says so.
+The four tabs filter that list in the browser. Each tab's table has a left-aligned title
+(**Pending Reviews** / **Cleared Posts** / **Flagged Posts** / **Relabelled Posts**), three
+summary cards (filtered total, Abusive, Hateful — same style as Export Report), and the same
+filter row as the Export Report tab: search-with-icon (text or post id, left), **Start Date**,
+**End Date** (processing date, empty = unbounded), **Hate Probability range** (Min–Max % ÷ 100
+vs `probabilities.hate`), and the **All / Hate / Abuse** label pills (right end, counts computed
+before filtering) — all client-side, each bucket table keeping its own filter state.
+Every table also has an **Export CSV (N rows)** button below it: generates the CSV client-side
+from exactly the displayed (filtered) rows — columns `id,tweet,label,predicted_label,
+hate_probability,flagged,manual_label,reported_date` — downloaded as
+`triage_<bucket>_<language>_<today>.csv`. Disabled when the table is empty.
+The Status column is dropped (the bucket tab already says it):
+
+- **Pending** — status `pending` (default for new predictions). Actions: **Flag**, **Clear**, **Relabel**.
+- **Cleared** — status `cleared` (checked, not worth reporting). Action: **Reopen** (→ pending).
+- **Flagged** — status `flagged` (worth reporting; this is the incident report). Action: **Unflag** (→ pending).
+
+All three status buckets share one column set: Post ID · Post · Prediction · **Manual label** (`--` when not relabelled) · Hate probability · Date.
+- **Relabelled** — posts where your `manual_label` differs from the model's `predicted_label`. Extra column: **Manual label** next to the shared **Prediction** column (no status column). Action: **Edit** (slide-over).
+
+Pending/cleared/flagged are mutually exclusive (one status each). Relabelled overlaps: a
+relabelled post also lives in cleared or flagged. Editing its manual label to match the model's
+label removes it from Relabelled only — it keeps its bucket until you Reopen/Unflag it.
+
+Actions hit the backend: `POST /predictions/pred_N/flag` (idempotent → flagged),
+`POST /predictions/pred_N/triage` (`{"status": "pending"|"cleared"|"flagged"}`), and
+`POST /predictions/pred_N/relabel` (`{"manual_label": "Normal"|"Abuse"|"Hate", "bucket": "cleared"|"flagged"?}`).
+All verify ownership (404 for other users' posts) and persist to SQLite (refresh-safe).
 
 ---
 
-## Flagging / Triage Queue table
+## Buckets (technical)
 
-**When it loads:** Opening the Triage page. React Query key `['triage', language]`; changing the language selector refetches. Header shows `(N posts)`, plus a hint line: “Flagging a post marks it as reported and adds it to your incident report (Reports → Export Report).”
+**Data fetch:** `useTriagePosts()` → `fetchTriagePosts` (`client.ts`) → `GET /predictions?language=…&label=Hate,Abuse`. React Query key `['triage', language]`; language switch refetches. After any action, the updated post is patched into the cached lists and `reported-posts` is invalidated, so Triage, Reports, and Borderline views update in place.
 
-**Request:** `GET /predictions?language=igbo|yoruba&label=Hate,Abuse` — no body. Header: `Authorization: Bearer <token>` (`fetchTriagePosts` in `client.ts`).
+**Backend:** `main.py` → `user_posts_service` → `db.user_prediction_rows` + `db.get_triage_state` / `db.upsert_triage`.
 
-**Backend:** `main.py` → `user_posts_service.list_user_posts` → `db.user_prediction_rows` with the label filter applied **in SQL** (`WHERE user_id = ? AND language = ? AND predicted_label IN ('Hate','Abuse')`, newest first, limit 500). Server-side filtering matters: toxic posts older than the overall newest-500 window still appear, because the limit applies to *matches*, not to all rows. Triage state per row comes from per-user keys `u<user_id>_pred_<id>` in the shared `triage` table.
+**Relabel slide-over (`RelabelSheet.tsx`):** right-side panel, slides in on open and out on Cancel/Save/✕/backdrop (state-driven `translate-x` + `opacity` transitions, 300ms). Create mode (from Pending) asks for the correct label **and** the destination bucket (Flagged/Cleared); edit mode (from Relabelled) changes the label only. The form remounts per post (`key`), so state always initializes from the selected post.
 
-**Frontend processing (`TriageTable.tsx`):** Two client-side filters on the returned list — a search box (substring match on text or post id) and a status dropdown (All / New / Reviewed / Reported). Empty result → “No posts match your filters”.
+**Status badge:** none — bucket tabs/titles carry the status (the shared `TriageStatusBadge` component was removed with the Status column).
 
-**Render (`TriageTable.tsx` + shared `DataTable`):** Columns Post ID, Post (2-line clamp), Prediction (Abuse amber `#fbe08a`, Hate red; a `True:` badge only when `label` differs from `predicted_label`), hate-probability bar (red >70%, `amber-500` >40%, green otherwise), Status, Date, and Actions (**Flag**, disabled + labelled “Reported” once flagged). Empty result → “No posts match your filters”.
-
-**Flag action:** Click **Flag** → `POST /predictions/pred_N/flag` (Bearer, no body) → backend verifies the prediction belongs to you (404 for unknown ids or another user's row), sets `flagged = true` and `triage_status = "reported"` → frontend invalidates the `posts` and `triage` queries so the row updates in place.
-
-**Data note:** This queue is **your own processed texts** (Testing Tools / API calls), per user per language. Rows flagged here show up in **Reports → Export Report** (`/predictions/incidents.csv`).
+**Data note (retraining):** the model's label is immutable in `predictions`; the reviewer's correction lives in `triage.manual_label`. A future retraining export = join predictions ⋈ triage on `u<user_id>_pred_<id>` where `manual_label IS NOT NULL`. Old statuses (`new`/`reviewed`/`reported`) are migrated to `pending`/`cleared`/`flagged` at backend startup.
