@@ -13,7 +13,6 @@ const Explainability = lazy(() => import('@/pages/Explainability'))
 const Analysis = lazy(() => import('@/pages/Analysis'))
 const Testing = lazy(() => import('@/pages/Testing'))
 const Performance = lazy(() => import('@/pages/Performance'))
-const Reports = lazy(() => import('@/pages/Reports'))
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -47,7 +46,6 @@ export default function App() {
                 <Route path="analysis" element={<Suspense fallback={<PageLoader />}><Analysis /></Suspense>} />
                 <Route path="testing" element={<Suspense fallback={<PageLoader />}><Testing /></Suspense>} />
                 <Route path="performance" element={<Suspense fallback={<PageLoader />}><Performance /></Suspense>} />
-                <Route path="reports" element={<Suspense fallback={<PageLoader />}><Reports /></Suspense>} />
               </Route>
             </Route>
           </Routes>

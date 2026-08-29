@@ -1,10 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useDashboardStore } from '@/lib/store/dashboard'
-import { fetchPosts, fetchTriagePosts, fetchBorderlinePosts, flagPost, relabelPost, updateTriageStatus } from '@/lib/api/client'
+import { fetchPosts, fetchTriagePosts, flagPost, relabelPost, updateTriageStatus } from '@/lib/api/client'
 import type { Label, Post, TriageStatus } from '@/lib/types'
 
 function patchPostInLists(queryClient: ReturnType<typeof useQueryClient>, language: string, updatedPost: Post) {
-  for (const queryKey of [['triage', language], ['posts', language], ['borderline', language]] as const) {
+  for (const queryKey of [['triage', language], ['posts', language]] as const) {
     queryClient.setQueryData<Post[]>(queryKey, (old) =>
       old?.map((post) => (post.id === updatedPost.id ? updatedPost : post))
     )
@@ -27,14 +27,6 @@ export function useTriagePosts() {
   })
 }
 
-export function useBorderlinePosts() {
-  const language = useDashboardStore((s) => s.language)
-  return useQuery({
-    queryKey: ['borderline', language],
-    queryFn: () => fetchBorderlinePosts(language),
-  })
-}
-
 export function useFlagPost() {
   const queryClient = useQueryClient()
   const language = useDashboardStore((s) => s.language)
@@ -42,7 +34,6 @@ export function useFlagPost() {
     mutationFn: (postId: string) => flagPost(postId),
     onSuccess: (updatedPost) => {
       patchPostInLists(queryClient, language, updatedPost)
-      queryClient.invalidateQueries({ queryKey: ['reported-posts', language] })
     },
   })
 }
@@ -55,7 +46,6 @@ export function useUpdateTriageStatus() {
       updateTriageStatus(postId, status),
     onSuccess: (updatedPost) => {
       patchPostInLists(queryClient, language, updatedPost)
-      queryClient.invalidateQueries({ queryKey: ['reported-posts', language] })
     },
   })
 }
@@ -75,7 +65,6 @@ export function useRelabelPost() {
     }) => relabelPost(postId, manualLabel, bucket),
     onSuccess: (updatedPost) => {
       patchPostInLists(queryClient, language, updatedPost)
-      queryClient.invalidateQueries({ queryKey: ['reported-posts', language] })
     },
   })
 }

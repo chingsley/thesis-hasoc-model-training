@@ -192,7 +192,7 @@ Counts only rows logged with the caller's `user_id`; pre-auth rows (user_id NULL
 ### `GET /predictions`
 
 The authenticated user's own processed texts (from the prediction log) in the same shape as
-`GET /posts`. Powers the dashboard's Triage Queue, Explainability picker, and Reports.
+`GET /posts`. Powers the dashboard's Triage Queue and Explainability picker.
 
 **Query:**
 

@@ -49,7 +49,7 @@ export default function Triage() {
           <SectionTitle>Triage Queue</SectionTitle>
           <CardDescription>
             Your Hate/Abuse predictions, sorted into buckets. <strong>Flag</strong> sends a post to
-            the incident report (Reports → Export Report); <strong>Clear</strong> marks it reviewed;
+            the Flagged bucket (your incident report); <strong>Clear</strong> marks it reviewed;
             <strong> Relabel</strong> corrects the model’s label (saved for future retraining).
             Reopen/Unflag return a post to Pending.
           </CardDescription>

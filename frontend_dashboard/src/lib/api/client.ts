@@ -129,18 +129,6 @@ export async function fetchClusters(language: Language): Promise<PostCluster[]> 
   return apiFetch<PostCluster[]>(`/predictions/clusters?language=${language}`);
 }
 
-export async function fetchBorderlinePosts(language: Language): Promise<Post[]> {
-  if (USE_MOCK) {
-    const posts = await fetchPosts(language);
-    return posts.filter((p) => {
-      const hateProb = p.probabilities.hate;
-      return hateProb >= 0.4 && hateProb <= 0.6;
-    });
-  }
-  // Server-side probability filter: matches beyond the newest-500 window still show up.
-  return apiFetch<Post[]>(`/predictions?language=${language}&hate_min=0.4&hate_max=0.6`);
-}
-
 export async function flagPost(postId: string): Promise<Post> {
   if (USE_MOCK) {
     const all = getMockPosts();

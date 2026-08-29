@@ -137,11 +137,28 @@ python scripts/create_user.py --email ops@platform.com --org "Platform X" --key-
 Every `/predict` and `/predict/batch` call is logged to SQLite **with the caller's user_id and language**.
 Per-user dashboards are built from those rows: `GET /stats/overview`, `/analytics/volume`,
 `/analytics/drift`, `/alerts`, and the `/predictions*` endpoints each return data for the
-authenticated user only (pass `language=` to filter). Triage Queue, Explainability, Analysis,
-and Reports in the dashboard are all driven by `/predictions*` — the user's own processed texts.
+authenticated user only (pass `language=` to filter). Triage Queue, Explainability, and Analysis
+in the dashboard are all driven by `/predictions*` — the user's own processed texts.
 Dashboard Testing Tools calls are attributed to the logged-in user the same way.
 The older `/posts*` endpoints serve the shared model test set (evaluation view) and remain
 available, but the dashboard no longer uses them.
+
+## Demo seed data
+
+On a fresh machine, generate test data covering every dashboard feature:
+
+```bash
+cd backend_api_server
+python scripts/seed_demo_data.py            # one command; refuses to wipe existing data
+python scripts/seed_demo_data.py --reset    # wipe the demo users' rows, then reseed
+```
+
+Creates `admin@hateguard.local` / `hateguard123` (+ an API key printed once), a second
+user (`demo@partner.local` / `partner123`, proves per-user isolation), ~57 predictions
+across both languages and all labels (timestamps spread over 7 days for volume/drift,
+two recent high-confidence hate posts for alerts), and triage rows covering all four
+buckets (pending / cleared / flagged / relabelled, including one post edited back to the
+model's label to show it leaving the relabelled bucket).
 
 ## API
 

@@ -7,7 +7,6 @@ import {
   BarChart3,
   Beaker,
   Gauge,
-  FileText,
   X,
 } from 'lucide-react'
 import { useDashboardStore } from '@/lib/store/dashboard'
@@ -21,7 +20,6 @@ const navItems = [
   { to: '/analysis', label: 'Analysis', icon: BarChart3 },
   { to: '/testing', label: 'Testing Tools', icon: Beaker },
   { to: '/performance', label: 'Performance', icon: Gauge },
-  { to: '/reports', label: 'Reports', icon: FileText },
 ]
 
 interface SidebarProps {

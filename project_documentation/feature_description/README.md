@@ -12,6 +12,5 @@ End-to-end documentation for each HateGuard sidebar module: what the user clicks
 | Analysis | [analysis.md](./analysis.md) |
 | Testing Tools | [testing-tools.md](./testing-tools.md) |
 | Performance | [performance.md](./performance.md) |
-| Reports | [reports.md](./reports.md) |
 
 Each component section is limited to ~300 words and written for clear, non-technical reading.

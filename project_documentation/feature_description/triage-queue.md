@@ -48,7 +48,7 @@ All verify ownership (404 for other users' posts) and persist to SQLite (refresh
 
 ## Buckets (technical)
 
-**Data fetch:** `useTriagePosts()` → `fetchTriagePosts` (`client.ts`) → `GET /predictions?language=…&label=Hate,Abuse`. React Query key `['triage', language]`; language switch refetches. After any action, the updated post is patched into the cached lists and `reported-posts` is invalidated, so Triage, Reports, and Borderline views update in place.
+**Data fetch:** `useTriagePosts()` → `fetchTriagePosts` (`client.ts`) → `GET /predictions?language=…&label=Hate,Abuse`. React Query key `['triage', language]`; language switch refetches. After any action, the updated post is patched into the cached `triage`/`posts` lists, so all bucket views update in place.
 
 **Backend:** `main.py` → `user_posts_service` → `db.user_prediction_rows` + `db.get_triage_state` / `db.upsert_triage`.
 
