@@ -16,7 +16,10 @@ export function DashboardLayout() {
       <Sidebar mobileOpen={sidebarOpen} onMobileClose={() => setSidebarOpen(false)} />
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
         <Header onMenuClick={() => setSidebarOpen(true)} scrollRootRef={mainRef} />
-        <main ref={mainRef} className="flex-1 overflow-auto">
+        <main
+          ref={mainRef}
+          className="flex-1 overflow-auto [container-type:inline-size]"
+        >
           <div className="mx-auto w-full max-w-7xl px-4 py-6 md:px-6 md:py-8 lg:px-8">
             <Outlet />
           </div>

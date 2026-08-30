@@ -150,7 +150,7 @@ export function StatsCards({ volume, periodLabel }: StatsCardsProps) {
   ] as const
 
   return (
-    <div className="-mx-4 bg-white md:-mx-6 lg:-mx-8">
+    <div className="ml-[calc(50%-50cqi)] w-[100cqi] max-w-[100cqi] bg-white">
       <div className="grid grid-cols-1 divide-y divide-[var(--hg-border)] pl-4 sm:grid-cols-2 sm:divide-y-0 md:pl-6 lg:grid-cols-4 lg:pl-8">
         {items.map((item, index) => (
           <div

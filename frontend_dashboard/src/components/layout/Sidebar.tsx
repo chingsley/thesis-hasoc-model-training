@@ -10,7 +10,6 @@ import {
   Gauge,
   FileText,
   LogOut,
-  PanelLeft,
   PanelLeftClose,
   X,
   type LucideIcon,
@@ -198,24 +197,35 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
             </h1>
           </div>
 
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            className={cn(
-              'hidden text-[#6b7c93] lg:inline-flex',
-              collapsed && 'lg:size-10',
-            )}
-            onClick={toggleCollapsed}
-            aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-            title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-          >
-            {collapsed ? (
-              <PanelLeft className="h-4 w-4" />
-            ) : (
+          {collapsed ? (
+            <button
+              type="button"
+              className="hidden size-10 items-center justify-center rounded-[4px] transition-colors hover:bg-[var(--hg-soft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--hg-brand)]/30 lg:inline-flex"
+              onClick={toggleCollapsed}
+              aria-label="Expand sidebar"
+              title="Expand sidebar"
+            >
+              <img
+                src="/favicon.svg"
+                alt=""
+                width={32}
+                height={32}
+                className="h-8 w-8"
+              />
+            </button>
+          ) : (
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="hidden text-[#6b7c93] lg:inline-flex"
+              onClick={toggleCollapsed}
+              aria-label="Collapse sidebar"
+              title="Collapse sidebar"
+            >
               <PanelLeftClose className="h-4 w-4" />
-            )}
-          </Button>
+            </Button>
+          )}
 
           <Button
             type="button"
