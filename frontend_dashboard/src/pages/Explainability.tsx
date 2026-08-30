@@ -16,7 +16,6 @@ export default function Explainability() {
   const [selectedPost, setSelectedPost] = useState<Post | null>(null)
   const methodQueries = useExplanationMethods(selectedPost)
 
-  // Merge whatever methods have completed into a partial payload.
   let explanation: ExplanationPayload | null = null
   let loadingMethods: XaiMethod[] = []
   if (selectedPost) {
@@ -41,11 +40,17 @@ export default function Explainability() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div className="space-y-8">
+      <SectionTitle description="Inspect model decisions token by token with LIME, SHAP, Attention Rollout, and Integrated Gradients.">
+        Explainability
+      </SectionTitle>
+
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <Card className="lg:col-span-1">
           <CardHeader>
-            <SectionTitle>Select a Post</SectionTitle>
+            <SectionTitle size="md" description="Toxic posts from your triage queue.">
+              Select a Post
+            </SectionTitle>
           </CardHeader>
           <CardContent>
             {isLoading ? (
@@ -59,22 +64,21 @@ export default function Explainability() {
                     <button
                       key={post.id}
                       onClick={() => setSelectedPost(post)}
-                      className={`w-full text-left p-3 rounded-[8px] border transition-colors ${
+                      className={`w-full rounded-[8px] border p-3 text-left transition-colors ${
                         selectedPost?.id === post.id
                           ? 'border-primary bg-primary/5'
                           : 'border-border hover:bg-accent'
                       }`}
                     >
                       <div className="flex items-center justify-between gap-2">
-                        <p className="text-sm line-clamp-2 flex-1">{post.tweet}</p>
+                        <p className="line-clamp-2 flex-1 text-sm">{post.tweet}</p>
                         <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" />
                       </div>
-                      <div className="flex gap-2 mt-2">
-                        <Badge variant="outline" className="text-xs">{post.id}</Badge>
-                        <Badge
-                          variant={labelBadgeVariant(post.label)}
-                          className="text-xs"
-                        >
+                      <div className="mt-2 flex gap-2">
+                        <Badge variant="outline" className="text-xs">
+                          {post.id}
+                        </Badge>
+                        <Badge variant={labelBadgeVariant(post.label)} className="text-xs">
                           {post.label}
                         </Badge>
                       </div>
@@ -88,8 +92,15 @@ export default function Explainability() {
 
         <Card className="lg:col-span-2">
           <CardHeader>
-            <SectionTitle>
-              {selectedPost ? `Explanation for ${selectedPost.id}` : 'Side-by-Side Explanation Comparison'}
+            <SectionTitle
+              size="md"
+              description={
+                selectedPost
+                  ? 'Side-by-side XAI methods for the selected post.'
+                  : 'Pick a post to compare explanation methods.'
+              }
+            >
+              {selectedPost ? `Explanation for ${selectedPost.id}` : 'Explanation Comparison'}
             </SectionTitle>
           </CardHeader>
           <CardContent>
@@ -99,9 +110,9 @@ export default function Explainability() {
                 <ExplanationComparison explanation={explanation} loadingMethods={loadingMethods} />
               </div>
             ) : (
-              <div className="text-center py-12 text-muted-foreground">
+              <div className="py-12 text-center text-muted-foreground">
                 <p>Select a post from the list to see its explanations</p>
-                <p className="text-sm mt-1">LIME, SHAP, Attention Rollout, and Integrated Gradients</p>
+                <p className="mt-1 text-sm">LIME, SHAP, Attention Rollout, and Integrated Gradients</p>
               </div>
             )}
           </CardContent>

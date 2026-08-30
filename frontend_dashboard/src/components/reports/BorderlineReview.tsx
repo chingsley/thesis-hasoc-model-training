@@ -1,5 +1,5 @@
 import { useBorderlinePosts } from '@/hooks/use-posts'
-import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { SectionTitle } from '@/components/ui/data-source-badge'
 import { DataTable, type DataTableColumn } from '@/components/ui/data-table'
 import { DateCell, HateProbCell, PostIdCell, PostTextCell, PredictionCell } from '@/components/dashboard/post-cells'
@@ -35,17 +35,19 @@ export function BorderlineReview() {
   return (
     <Card>
       <CardHeader>
-        <SectionTitle className="items-center">
+        <SectionTitle
+          size="md"
+          className="items-center"
+          description="Posts with 40–60% hate confidence — the model is uncertain. Review these in Triage if you want to flag them."
+        >
           <span className="flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 text-amber-500" />
             Borderline Post Review Queue
-            {posts && <span className="text-muted-foreground font-normal text-sm">({posts.length} posts)</span>}
+            {posts && (
+              <span className="text-sm font-normal text-muted-foreground">({posts.length} posts)</span>
+            )}
           </span>
         </SectionTitle>
-        <CardDescription>
-          Posts with 40–60% hate confidence — the model is uncertain. Review these in the Triage
-          Queue if you want to flag them.
-        </CardDescription>
       </CardHeader>
       <CardContent>
         {isLoading ? (

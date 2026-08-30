@@ -31,7 +31,7 @@ export function Header({ onMenuClick }: HeaderProps) {
   const unreadAlertCount = useDashboardStore((s) => s.unreadAlertCount)
 
   return (
-    <header className="sticky top-0 z-30 bg-[var(--hg-canvas)]">
+    <header className="sticky top-0 z-30 bg-[#eaebf4]">
       <div className="relative h-16 w-full">
         <svg width={0} height={0} className="absolute" aria-hidden>
           <defs>
@@ -86,8 +86,8 @@ export function Header({ onMenuClick }: HeaderProps) {
                   'w-36 rounded-[4px] border-[var(--hg-border)] bg-white text-xs font-medium text-black',
                   'data-[size=sm]:h-8 data-[size=sm]:rounded-[4px]',
                   'hover:border-[var(--hg-muted)] hover:bg-[var(--hg-soft)]',
-                  'focus-visible:border-[var(--hg-border)] focus-visible:ring-[var(--hg-border)]',
-                  'data-popup-open:border-[var(--hg-border)] data-popup-open:bg-[var(--hg-soft)]',
+                  'focus-visible:border-[#625885] focus-visible:ring-[#625885]/25',
+                  'data-popup-open:border-[#625885] data-popup-open:bg-[var(--hg-soft)]',
                   '[&_svg]:text-[var(--hg-muted)]',
                 )}
               >

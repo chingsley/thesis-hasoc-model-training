@@ -75,7 +75,7 @@ export function VolumePanel({ onVolumeChange }: VolumePanelProps) {
               aria-hidden
               className="mx-4 inline-block h-[0.85em] w-[3px] shrink-0 rounded-full bg-[var(--hg-border)]"
             />
-            <span className="text-base font-normal tracking-wide text-[#950000] uppercase">
+            <span className="text-base font-normal tracking-wide text-[#625885] uppercase">
               {language.charAt(0).toUpperCase()}
               {language.slice(1)}
             </span>
@@ -97,7 +97,7 @@ export function VolumePanel({ onVolumeChange }: VolumePanelProps) {
                     'inline-flex items-center gap-1 rounded-[6px] px-2.5 py-1.5 text-xs font-medium transition-colors',
                     chartStyle === 'line'
                       ? 'bg-white text-[var(--hg-ink)] shadow-sm'
-                      : 'text-[var(--hg-muted)] hover:text-[var(--hg-ink)]',
+                      : 'text-[var(--hg-muted)] hover:bg-[var(--hg-soft)] hover:text-black',
                   )}
                   title="Line chart"
                 >
@@ -112,7 +112,7 @@ export function VolumePanel({ onVolumeChange }: VolumePanelProps) {
                     'inline-flex items-center gap-1 rounded-[6px] px-2.5 py-1.5 text-xs font-medium transition-colors',
                     chartStyle === 'stacked'
                       ? 'bg-white text-[var(--hg-ink)] shadow-sm'
-                      : 'text-[var(--hg-muted)] hover:text-[var(--hg-ink)]',
+                      : 'text-[var(--hg-muted)] hover:bg-[var(--hg-soft)] hover:text-black',
                   )}
                   title="Stacked area"
                 >
@@ -124,7 +124,7 @@ export function VolumePanel({ onVolumeChange }: VolumePanelProps) {
                 type="button"
                 variant="outline"
                 size="sm"
-                className="h-8 gap-1.5 rounded-[8px] border-[var(--hg-border)] text-xs"
+                className="h-8 gap-1.5 rounded-[8px] border-[var(--hg-border)] text-xs hover:bg-[var(--hg-soft)] hover:text-black"
                 onClick={handleDownload}
                 disabled={!volumeData?.length}
                 title="Download CSV"
@@ -146,11 +146,11 @@ export function VolumePanel({ onVolumeChange }: VolumePanelProps) {
       </CardHeader>
       <CardContent className="pt-5">
         {isLoading && !volumeData ? (
-          <div className="flex h-[300px] items-center justify-center">
+          <div className="flex h-[360px] items-center justify-center">
             <Loader2 className="h-6 w-6 animate-spin text-[var(--hg-subtle)]" />
           </div>
         ) : !hasData ? (
-          <div className="flex h-[300px] flex-col items-center justify-center gap-1 rounded-[8px] border border-dashed border-[var(--hg-border)] bg-[var(--hg-canvas)] text-center">
+          <div className="flex h-[360px] flex-col items-center justify-center gap-1 rounded-[4px] border border-dashed border-[var(--hg-border)] bg-[var(--hg-canvas)] text-center">
             <p className="text-sm font-medium text-[var(--hg-ink)]">No posts in this window</p>
             <p className="max-w-sm text-xs text-[var(--hg-muted)]">
               Try a wider range, switch language, or classify posts in Testing Tools.

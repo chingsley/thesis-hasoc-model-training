@@ -6,7 +6,7 @@ import { ToxicWordCloud } from '@/components/charts/ToxicWordCloud'
 import { ModelDriftChart } from '@/components/charts/ModelDriftChart'
 import { VolumePanel } from '@/components/charts/VolumePanel'
 import { PostClusters } from '@/components/reports/PostClusters'
-import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { SectionTitle } from '@/components/ui/data-source-badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Loader2 } from 'lucide-react'
@@ -20,19 +20,35 @@ export default function Analysis() {
   })
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
+      <SectionTitle description="Explore toxic language patterns, confidence drift, volume trends, and coordinated clusters.">
+        Analysis
+      </SectionTitle>
+
       <Tabs defaultValue="wordcloud" className="w-full">
-        <TabsList className="h-auto w-full justify-start gap-1 rounded-[8px] border border-[var(--hg-border)] bg-white p-1 shadow-[var(--hg-shadow)]">
-          <TabsTrigger value="wordcloud" className="rounded-[6px] data-active:bg-[var(--hg-canvas)] data-active:text-[var(--hg-ink)] data-active:shadow-none">
+        <TabsList className="h-auto w-full justify-start gap-1 rounded-[4px] border border-[var(--hg-border)] bg-white p-1 shadow-[var(--hg-shadow)]">
+          <TabsTrigger
+            value="wordcloud"
+            className="rounded-[4px] data-active:bg-[var(--hg-soft)] data-active:text-black data-active:shadow-none"
+          >
             Toxic Word Cloud
           </TabsTrigger>
-          <TabsTrigger value="drift" className="rounded-[6px] data-active:bg-[var(--hg-canvas)] data-active:text-[var(--hg-ink)] data-active:shadow-none">
+          <TabsTrigger
+            value="drift"
+            className="rounded-[4px] data-active:bg-[var(--hg-soft)] data-active:text-black data-active:shadow-none"
+          >
             Model Drift
           </TabsTrigger>
-          <TabsTrigger value="volume" className="rounded-[6px] data-active:bg-[var(--hg-canvas)] data-active:text-[var(--hg-ink)] data-active:shadow-none">
+          <TabsTrigger
+            value="volume"
+            className="rounded-[4px] data-active:bg-[var(--hg-soft)] data-active:text-black data-active:shadow-none"
+          >
             Post Volume
           </TabsTrigger>
-          <TabsTrigger value="clusters" className="rounded-[6px] data-active:bg-[var(--hg-canvas)] data-active:text-[var(--hg-ink)] data-active:shadow-none">
+          <TabsTrigger
+            value="clusters"
+            className="rounded-[4px] data-active:bg-[var(--hg-soft)] data-active:text-black data-active:shadow-none"
+          >
             Post Clusters
           </TabsTrigger>
         </TabsList>
@@ -41,11 +57,12 @@ export default function Analysis() {
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             <Card>
               <CardHeader>
-                <SectionTitle>Frequent Terms in Toxic Posts</SectionTitle>
-                <CardDescription>
-                  Most common words in your Hate/Abuse predictions — surfaces the frequent targets
-                  (e.g. a group or place name), whether or not the word itself is toxic.
-                </CardDescription>
+                <SectionTitle
+                  size="md"
+                  description="Most common words in your Hate and Abuse predictions."
+                >
+                  Frequent Terms in Toxic Posts
+                </SectionTitle>
               </CardHeader>
               <CardContent>
                 <ToxicWordCloud source="frequent" />
@@ -53,11 +70,12 @@ export default function Analysis() {
             </Card>
             <Card>
               <CardHeader>
-                <SectionTitle>Most Toxic Terms</SectionTitle>
-                <CardDescription>
-                  Words that measurably raise the model&apos;s toxicity score, measured by
-                  re-classifying each post with the word removed (leave-one-out).
-                </CardDescription>
+                <SectionTitle
+                  size="md"
+                  description="Words that raise toxicity when present (leave-one-out)."
+                >
+                  Most Toxic Terms
+                </SectionTitle>
               </CardHeader>
               <CardContent>
                 <ToxicWordCloud source="toxic" />
@@ -69,7 +87,9 @@ export default function Analysis() {
         <TabsContent value="drift" className="mt-4">
           <Card>
             <CardHeader>
-              <SectionTitle>Model Confidence Drift Over Time</SectionTitle>
+              <SectionTitle size="md" description="How prediction confidence shifts over time.">
+                Model Confidence Drift
+              </SectionTitle>
             </CardHeader>
             <CardContent>
               {driftLoading ? (
@@ -90,7 +110,12 @@ export default function Analysis() {
         <TabsContent value="clusters" className="mt-4">
           <Card>
             <CardHeader>
-              <SectionTitle>Similar Post Clusters (Coordinated Attack Detection)</SectionTitle>
+              <SectionTitle
+                size="md"
+                description="Near-duplicate posts that may indicate coordinated attacks."
+              >
+                Similar Post Clusters
+              </SectionTitle>
             </CardHeader>
             <CardContent>
               {clustersLoading ? (

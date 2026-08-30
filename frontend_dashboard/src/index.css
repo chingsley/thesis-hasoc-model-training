@@ -145,7 +145,7 @@
 }
 
 :root {
-  --background: oklch(1 0 0);
+  --background: #f2f3f8;
   --foreground: #0f1c33;
   --card: oklch(1 0 0);
   --card-foreground: #0f1c33;
@@ -164,8 +164,8 @@
   --destructive: #e11d48;
   --border: #e8edf5;
   --input: #e8edf5;
-  --ring: #c1002c;
-  --chart-1: #c1002c;
+  --ring: #625885;
+  --chart-1: #625885;
   --chart-2: #22c55e;
   --chart-3: #f59e0b;
   --chart-4: #ef4444;
@@ -178,19 +178,19 @@
   --sidebar-accent: #eef1f6;
   --sidebar-accent-foreground: #0f1c33;
   --sidebar-border: #e8edf5;
-  --sidebar-ring: #c1002c;
+  --sidebar-ring: #625885;
 
   /* Dashboard surfaces */
-  --hg-canvas: #eaebf4;
+  --hg-canvas: #f2f3f8;
   --hg-border: #e8edf5;
   --hg-muted: #6b7c93;
   --hg-subtle: #9aa8bd;
   --hg-ink: #0f1c33;
-  /* Secondary brand accent (replaces former blue #2c64f1) */
+  --hg-brand: #625885;
   --hg-secondary: #c1002c;
-  --hg-accent: var(--hg-secondary);
-  --hg-soft: #ffe6e6b1;
-  --hg-soft-selected: #ffd0d0;
+  --hg-accent: var(--hg-brand);
+  --hg-soft: #d9d6f7;
+  --hg-soft-selected: #c4bff0;
   --hg-shadow: 0 1px 2px rgba(15, 28, 51, 0.04), 0 4px 16px rgba(15, 28, 51, 0.04);
 }
 

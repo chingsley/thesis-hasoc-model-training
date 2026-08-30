@@ -1,36 +1,31 @@
-import { useState } from 'react';
-import type { Post, TriageStatus } from '@/lib/types';
-import { DataTable, type DataTableColumn } from '@/components/ui/data-table';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import type { RelabelMode } from './RelabelSheet';
-import { DateCell, HateProbCell, PostIdCell, PostTextCell, PredictionCell } from './post-cells';
-import { useFlagPost, useUpdateTriageStatus } from '@/hooks/use-posts';
-import { CheckCircle, Flag, FlagOff, Pencil, RotateCcw, Search, Tags } from 'lucide-react';
+import { useState } from 'react'
+import type { Post, TriageStatus } from '@/lib/types'
+import { DataTable, type DataTableColumn } from '@/components/ui/data-table'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { DatePickerField } from '@/components/ui/date-picker'
+import type { RelabelMode } from './RelabelSheet'
+import { DateCell, HateProbCell, PostIdCell, PostTextCell, PredictionCell } from './post-cells'
+import { useFlagPost, useUpdateTriageStatus } from '@/hooks/use-posts'
+import { CheckCircle, Flag, FlagOff, Pencil, RotateCcw, Search, Tags, X } from 'lucide-react'
 
-export type TriageBucket = 'pending' | 'cleared' | 'flagged' | 'relabelled';
+export type TriageBucket = 'pending' | 'cleared' | 'flagged' | 'relabelled'
+export type TriageLabelFilter = 'all' | 'Hate' | 'Abuse'
 
 interface TriageTableProps {
-  bucket: TriageBucket;
-  posts: Post[];
-  onRelabel: (post: Post, mode: RelabelMode) => void;
+  bucket: TriageBucket
+  posts: Post[]
+  labelFilter: TriageLabelFilter
+  onRelabel: (post: Post, mode: RelabelMode) => void
 }
-
-const BUCKET_TITLES: Record<TriageBucket, string> = {
-  pending: 'Pending Reviews',
-  cleared: 'Cleared Posts',
-  flagged: 'Flagged Posts',
-  relabelled: 'Relabelled Posts',
-};
 
 const manualLabelCell = (p: Post) =>
   p.manual_label ? (
     <PredictionCell label={p.manual_label} />
   ) : (
     <span className="text-muted-foreground">--</span>
-  );
+  )
 
 const BASE_COLUMNS: DataTableColumn<Post>[] = [
   { id: 'id', header: 'Post ID', cell: (p) => <PostIdCell id={p.id} /> },
@@ -47,7 +42,7 @@ const BASE_COLUMNS: DataTableColumn<Post>[] = [
       <div className="flex items-center gap-1.5">
         <PredictionCell label={p.predicted_label} />
         {p.predicted_label !== p.label && (
-          <Badge variant="outline" className="text-xs border-destructive text-destructive">
+          <Badge variant="outline" className="border-destructive text-xs text-destructive">
             True: {p.label}
           </Badge>
         )}
@@ -56,16 +51,14 @@ const BASE_COLUMNS: DataTableColumn<Post>[] = [
   },
   { id: 'hate', header: 'Hate probability', cell: (p) => <HateProbCell value={p.probabilities.hate} /> },
   { id: 'date', header: 'Date', cell: (p) => <DateCell timestamp={p.timestamp} /> },
-];
+]
 
-// Pending/cleared/flagged share one column set, with the reviewer's manual label (if any).
 const MAIN_COLUMNS: DataTableColumn<Post>[] = [
   ...BASE_COLUMNS.slice(0, 3),
   { id: 'manual', header: 'Manual label', cell: manualLabelCell },
   ...BASE_COLUMNS.slice(3),
-];
+]
 
-// Relabelled bucket: prediction vs manual label columns (no status).
 const RELABEL_COLUMNS: DataTableColumn<Post>[] = [
   { id: 'id', header: 'Post ID', cell: (p) => <PostIdCell id={p.id} /> },
   {
@@ -78,66 +71,71 @@ const RELABEL_COLUMNS: DataTableColumn<Post>[] = [
   { id: 'manual', header: 'Manual label', cell: manualLabelCell },
   { id: 'hate', header: 'Hate probability', cell: (p) => <HateProbCell value={p.probabilities.hate} /> },
   { id: 'date', header: 'Date', cell: (p) => <DateCell timestamp={p.timestamp} /> },
-];
+]
 
 const COLUMNS_BY_BUCKET: Record<TriageBucket, DataTableColumn<Post>[]> = {
   pending: MAIN_COLUMNS,
   cleared: MAIN_COLUMNS,
   flagged: MAIN_COLUMNS,
   relabelled: RELABEL_COLUMNS,
-};
+}
 
 const EMPTY_TEXT: Record<TriageBucket, string> = {
   pending: 'No pending posts — all caught up',
   cleared: 'No cleared posts yet',
   flagged: 'No flagged posts yet',
   relabelled: 'No relabelled posts — use Relabel on a pending post you disagree with',
-};
+}
 
-export function TriageTable({ bucket, posts, onRelabel }: TriageTableProps) {
-  const [search, setSearch] = useState('');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [minHate, setMinHate] = useState('');
-  const [maxHate, setMaxHate] = useState('');
-  const [labelFilter, setLabelFilter] = useState<'all' | 'Hate' | 'Abuse'>('all');
-  const flagMutation = useFlagPost();
-  const statusMutation = useUpdateTriageStatus();
+export function TriageTable({ bucket, posts, labelFilter, onRelabel }: TriageTableProps) {
+  const [search, setSearch] = useState('')
+  const [startDate, setStartDate] = useState('')
+  const [endDate, setEndDate] = useState('')
+  const [minHate, setMinHate] = useState('')
+  const [maxHate, setMaxHate] = useState('')
+  const flagMutation = useFlagPost()
+  const statusMutation = useUpdateTriageStatus()
 
-  const minProb = minHate === '' ? null : Number(minHate) / 100;
-  const maxProb = maxHate === '' ? null : Number(maxHate) / 100;
-
-  const pillCounts = {
-    all: posts.length,
-    Hate: posts.filter((p) => p.predicted_label === 'Hate').length,
-    Abuse: posts.filter((p) => p.predicted_label === 'Abuse').length,
-  };
+  const minProb = minHate === '' ? null : Number(minHate) / 100
+  const maxProb = maxHate === '' ? null : Number(maxHate) / 100
 
   const filtered = posts.filter((p) => {
-    if (labelFilter !== 'all' && p.predicted_label !== labelFilter) return false;
+    if (labelFilter !== 'all' && p.predicted_label !== labelFilter) return false
     if (search && !p.tweet.toLowerCase().includes(search.toLowerCase()) && !p.id.includes(search))
-      return false;
-    const day = (p.timestamp || '').split('T')[0];
-    if (startDate && day && day < startDate) return false;
-    if (endDate && day && day > endDate) return false;
-    if (minProb !== null && !Number.isNaN(minProb) && p.probabilities.hate < minProb) return false;
-    if (maxProb !== null && !Number.isNaN(maxProb) && p.probabilities.hate > maxProb) return false;
-    return true;
-  });
+      return false
+    const day = (p.timestamp || '').split('T')[0]
+    if (startDate && day && day < startDate) return false
+    if (endDate && day && day > endDate) return false
+    if (minProb !== null && !Number.isNaN(minProb) && p.probabilities.hate < minProb) return false
+    if (maxProb !== null && !Number.isNaN(maxProb) && p.probabilities.hate > maxProb) return false
+    return true
+  })
 
-  const hateCount = filtered.filter((p) => p.predicted_label === 'Hate').length;
-  const abuseCount = filtered.filter((p) => p.predicted_label === 'Abuse').length;
+  const hasFilters =
+    Boolean(search) ||
+    Boolean(startDate) ||
+    Boolean(endDate) ||
+    Boolean(minHate) ||
+    Boolean(maxHate)
+
+  const clearFilters = () => {
+    setSearch('')
+    setStartDate('')
+    setEndDate('')
+    setMinHate('')
+    setMaxHate('')
+  }
 
   const busy =
     (flagMutation.isPending && flagMutation.variables) ||
     (statusMutation.isPending && statusMutation.variables?.postId) ||
-    null;
+    null
 
   const setStatus = (postId: string, status: TriageStatus) =>
-    statusMutation.mutate({ postId, status });
+    statusMutation.mutate({ postId, status })
 
   const rowActions = (post: Post) => {
-    const disabled = busy === post.id;
+    const disabled = busy === post.id
     switch (bucket) {
       case 'pending':
         return (
@@ -168,7 +166,7 @@ export function TriageTable({ bucket, posts, onRelabel }: TriageTableProps) {
               <Tags className="h-3 w-3" /> Relabel
             </Button>
           </>
-        );
+        )
       case 'cleared':
         return (
           <>
@@ -181,7 +179,7 @@ export function TriageTable({ bucket, posts, onRelabel }: TriageTableProps) {
               <RotateCcw className="h-3 w-3" /> Reopen
             </Button>
           </>
-        );
+        )
       case 'flagged':
         return (
           <>
@@ -194,7 +192,7 @@ export function TriageTable({ bucket, posts, onRelabel }: TriageTableProps) {
               <FlagOff className="h-3 w-3" /> Unflag
             </Button>
           </>
-        );
+        )
       case 'relabelled':
         return (
           <>
@@ -207,96 +205,96 @@ export function TriageTable({ bucket, posts, onRelabel }: TriageTableProps) {
               <Pencil className="h-3 w-3" /> Edit
             </Button>
           </>
-        );
+        )
     }
-  };
+  }
 
   return (
     <div className="space-y-4">
-      <h3 className="text-base font-semibold">{BUCKET_TITLES[bucket]}</h3>
-
-      <div className="grid grid-cols-3 gap-4">
-        <div className="p-3 bg-muted rounded-lg text-center">
-          <p className="text-2xl font-bold text-[var(--hg-secondary)]">{filtered.length}</p>
-          <p className="text-xs text-muted-foreground">{BUCKET_TITLES[bucket]}</p>
-        </div>
-        <div className="p-3 bg-muted rounded-lg text-center">
-          <p className="text-2xl font-bold text-amber-600">{abuseCount}</p>
-          <p className="text-xs text-muted-foreground">Abusive</p>
-        </div>
-        <div className="p-3 bg-muted rounded-lg text-center">
-          <p className="text-2xl font-bold text-destructive">{hateCount}</p>
-          <p className="text-xs text-muted-foreground">Hateful</p>
-        </div>
-      </div>
-
-      <div className="flex flex-wrap items-end gap-3 mt-16">
-        <div className="relative w-52">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+      <div className="space-y-3">
+        <div className="relative min-w-0 sm:max-w-sm">
+          <Search className="pointer-events-none absolute top-1/2 left-3 h-3.5 w-3.5 -translate-y-1/2 text-[var(--hg-subtle)]" />
           <Input
-            placeholder="Search text or post id…"
+            placeholder="Search posts or IDs…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-9"
+            className="h-9 rounded-[4px] border-[var(--hg-border)] bg-[var(--hg-canvas)] pl-9 text-sm shadow-none focus-visible:border-[var(--hg-brand)] focus-visible:bg-white"
+            aria-label="Search posts"
           />
         </div>
-        <div className="space-y-2 w-fit">
-          <Label>Start Date</Label>
-          <Input
-            type="date"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-            className="w-[11rem]"
-          />
-        </div>
-        <div className="space-y-2 w-fit">
-          <Label>End Date</Label>
-          <Input
-            type="date"
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
-            className="w-[11rem]"
-          />
-        </div>
-        <div className="space-y-2 w-fit">
-          <Label>Hate Probability range</Label>
-          <div className="flex items-center gap-1.5">
-            <Input
-              type="number"
-              min={0}
-              max={100}
-              step={5}
-              placeholder="Min"
-              value={minHate}
-              onChange={(e) => setMinHate(e.target.value)}
-              className="w-20"
-              aria-label="Minimum hate probability percent"
+
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2.5 border-t border-[var(--hg-border)] pt-3">
+          <div className="flex flex-wrap items-center gap-3">
+            <DatePickerField
+              label="From"
+              value={startDate}
+              max={endDate || undefined}
+              rangeMate={endDate}
+              rangeRole="start"
+              clearable
+              onChange={setStartDate}
             />
-            <span className="text-muted-foreground text-sm">–</span>
-            <Input
-              type="number"
-              min={0}
-              max={100}
-              step={5}
-              placeholder="Max"
-              value={maxHate}
-              onChange={(e) => setMaxHate(e.target.value)}
-              className="w-20"
-              aria-label="Maximum hate probability percent"
+            <DatePickerField
+              label="To"
+              value={endDate}
+              min={startDate || undefined}
+              rangeMate={startDate}
+              rangeRole="end"
+              clearable
+              onChange={setEndDate}
             />
           </div>
-        </div>
-        <div className="flex gap-1 ml-auto">
-          {(['all', 'Hate', 'Abuse'] as const).map((f) => (
-            <Button
-              key={f}
-              size="sm"
-              variant={labelFilter === f ? 'default' : 'outline'}
-              onClick={() => setLabelFilter(f)}
-            >
-              {f === 'all' ? 'All' : f} ({pillCounts[f]})
-            </Button>
-          ))}
+
+          <span aria-hidden className="hidden h-4 w-px bg-[var(--hg-border)] sm:block" />
+
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] font-medium tracking-wide text-[var(--hg-muted)] uppercase">
+              Hate %
+            </span>
+            <div className="inline-flex items-center gap-1.5 rounded-[4px] border border-[var(--hg-border)] bg-white px-2 py-1">
+              <Input
+                type="number"
+                min={0}
+                max={100}
+                step={5}
+                placeholder="0"
+                value={minHate}
+                onChange={(e) => setMinHate(e.target.value)}
+                className="h-6 w-12 border-0 bg-transparent p-0 text-xs shadow-none focus-visible:ring-0"
+                aria-label="Minimum hate probability percent"
+              />
+              <span className="text-[var(--hg-subtle)]">–</span>
+              <Input
+                type="number"
+                min={0}
+                max={100}
+                step={5}
+                placeholder="100"
+                value={maxHate}
+                onChange={(e) => setMaxHate(e.target.value)}
+                className="h-6 w-12 border-0 bg-transparent p-0 text-xs shadow-none focus-visible:ring-0"
+                aria-label="Maximum hate probability percent"
+              />
+            </div>
+          </div>
+
+          <div className="ml-auto flex items-center gap-3">
+            <p className="text-xs tabular-nums text-[var(--hg-muted)]">
+              {filtered.length === posts.length
+                ? `${filtered.length.toLocaleString()} posts`
+                : `${filtered.length.toLocaleString()} of ${posts.length.toLocaleString()}`}
+            </p>
+            {hasFilters && (
+              <button
+                type="button"
+                onClick={clearFilters}
+                className="inline-flex items-center gap-1 text-xs font-medium text-[var(--hg-muted)] transition-colors hover:text-[var(--hg-ink)]"
+              >
+                <X className="size-3" />
+                Clear
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
@@ -306,12 +304,12 @@ export function TriageTable({ bucket, posts, onRelabel }: TriageTableProps) {
         getRowId={(p) => p.id}
         maxHeight="520px"
         empty={
-          <div className="text-center py-12 text-muted-foreground">
+          <div className="py-12 text-center text-muted-foreground">
             <p>{EMPTY_TEXT[bucket]}</p>
           </div>
         }
         actions={rowActions}
       />
     </div>
-  );
+  )
 }

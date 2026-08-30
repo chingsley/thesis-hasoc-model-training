@@ -15,7 +15,7 @@ const METRIC_TILES = [
     label: 'Accuracy',
     subtitle: 'Overall',
     format: (m: { accuracy: number }) => `${(m.accuracy * 100).toFixed(1)}%`,
-    accent: true,
+    accent: false,
   },
   {
     key: 'macro_f1',
@@ -65,7 +65,7 @@ export default function Overview() {
       <VolumePanel onVolumeChange={handleVolumeChange} />
 
       <Card className="pt-0">
-        <CardHeader className="rounded-t-[4px] border-b-2 border-[var(--hg-secondary)] bg-[var(--hg-soft)] pt-(--card-spacing) pb-4">
+        <CardHeader className="rounded-t-[4px] border-b-2 border-[var(--hg-soft-selected)] bg-[var(--hg-soft)] pt-(--card-spacing) pb-4">
           <SectionTitle size="md" description="Held-out test metrics for the active language model.">
             Model Performance Summary
           </SectionTitle>

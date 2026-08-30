@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -114,17 +114,15 @@ export function ExportReport() {
   return (
     <Card>
       <CardHeader>
-        <SectionTitle>
+        <SectionTitle
+          size="md"
+          description="Mirrors the Flagged bucket in Triage — filtered by processing date. Unflag a row to send it back to Pending. Export downloads the rows shown below."
+        >
           <span className="flex items-center gap-2">
             <FileTextIcon className="h-5 w-5" />
             Incident Report
           </span>
         </SectionTitle>
-        <CardDescription>
-          Mirrors the Flagged bucket in Triage — posts you flagged, filtered by processing date.
-          Unflag a row to send it back to Pending; both views stay in sync. Export downloads
-          exactly the rows shown below.
-        </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid grid-cols-3 gap-4">

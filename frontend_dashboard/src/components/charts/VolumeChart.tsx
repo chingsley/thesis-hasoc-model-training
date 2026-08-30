@@ -1,5 +1,7 @@
+import { useEffect, useMemo, useState } from 'react'
 import type { VolumeDataPoint } from '@/lib/types'
 import type { ChartStyle, ResolvedVolumeRange } from '@/lib/volume-range'
+import { cn } from '@/lib/utils'
 import {
   LineChart,
   Line,
@@ -10,8 +12,17 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  Legend,
 } from 'recharts'
+
+/** Brand series — Normal vs Hate kept clearly distinct */
+export const VOLUME_SERIES = {
+  total: { key: 'total', label: 'Total', color: '#625885' },
+  normal_count: { key: 'normal_count', label: 'Normal', color: '#2f9e6b' },
+  abuse_count: { key: 'abuse_count', label: 'Abuse', color: '#d4a017' },
+  hate_count: { key: 'hate_count', label: 'Hate', color: '#c1002c' },
+} as const
+
+type SeriesKey = keyof typeof VOLUME_SERIES
 
 interface VolumeChartProps {
   data: VolumeDataPoint[]
@@ -102,6 +113,26 @@ export function toChartPoints(data: VolumeDataPoint[], range: ResolvedVolumeRang
   })
 }
 
+export function volumeKpis(points: ChartPoint[]) {
+  if (!points.length) {
+    return { peakLabel: '—', peakTotal: 0, hateShare: 0, avgPerBucket: 0 }
+  }
+  let peak = points[0]
+  let sum = 0
+  let hate = 0
+  for (const p of points) {
+    sum += p.total
+    hate += p.hate_count
+    if (p.total > peak.total) peak = p
+  }
+  return {
+    peakLabel: peak.tooltip,
+    peakTotal: peak.total,
+    hateShare: sum > 0 ? Math.round((hate / sum) * 100) : 0,
+    avgPerBucket: Math.round(sum / points.length),
+  }
+}
+
 function tickInterval(pointCount: number, range: ResolvedVolumeRange): number {
   if (range.aggregate === 'day') {
     if (range.hours >= 2160) return Math.max(0, Math.floor(pointCount / 8) - 1)
@@ -116,111 +147,308 @@ function pct(part: number, total: number): string {
   return `${Math.round((part / total) * 100)}%`
 }
 
+const LINE_KEYS: SeriesKey[] = ['total', 'normal_count', 'abuse_count', 'hate_count']
+const STACK_KEYS: SeriesKey[] = ['normal_count', 'abuse_count', 'hate_count']
+
 function VolumeTooltip({
   active,
   payload,
+  visible,
 }: {
   active?: boolean
   payload?: Array<{ payload: ChartPoint }>
+  visible: Set<SeriesKey>
 }) {
   if (!active || !payload?.length) return null
   const row = payload[0].payload
   const total = row.total || 1
-  const rows = [
-    { name: 'Normal', value: row.normal_count, color: '#22c55e' },
-    { name: 'Abuse', value: row.abuse_count, color: '#f59e0b' },
-    { name: 'Hate', value: row.hate_count, color: '#ef4444' },
-    { name: 'Total', value: row.total, color: 'var(--primary)' },
-  ]
+  const rows = (
+    [
+      ['normal_count', row.normal_count],
+      ['abuse_count', row.abuse_count],
+      ['hate_count', row.hate_count],
+      ['total', row.total],
+    ] as const
+  ).filter(([key]) => visible.has(key))
+
   return (
-    <div className="rounded-[8px] border border-border bg-card px-3 py-2 text-xs shadow-sm">
-      <p className="mb-1.5 font-medium text-foreground">{row.tooltip}</p>
-      <div className="space-y-1">
-        {rows.map((item) => (
-          <div key={item.name} className="flex items-center justify-between gap-6">
-            <span className="flex items-center gap-1.5 text-muted-foreground">
-              <span className="inline-block size-2 rounded-full" style={{ background: item.color }} />
-              {item.name}
-            </span>
-            <span className="tabular-nums text-foreground">
-              {item.value.toLocaleString()}
-              {item.name !== 'Total' && (
-                <span className="ml-1 text-muted-foreground">({pct(item.value, total)})</span>
-              )}
-            </span>
-          </div>
-        ))}
+    <div className="min-w-[180px] rounded-[4px] border border-[var(--hg-border)] bg-white px-3.5 py-2.5 shadow-[var(--hg-shadow)]">
+      <p className="mb-2 text-[11px] font-semibold tracking-wide text-[var(--hg-ink)]">{row.tooltip}</p>
+      <div className="space-y-1.5">
+        {rows.map(([key, value]) => {
+          const series = VOLUME_SERIES[key]
+          const isTotal = key === 'total'
+          return (
+            <div key={key} className="flex items-center justify-between gap-8">
+              <span className="flex items-center gap-2 text-[11px] text-[var(--hg-muted)]">
+                <span
+                  className="inline-block size-2 rounded-full"
+                  style={{ background: series.color }}
+                />
+                {series.label}
+              </span>
+              <span
+                className={cn(
+                  'tabular-nums text-[11px]',
+                  isTotal ? 'font-semibold text-[var(--hg-ink)]' : 'text-[var(--hg-ink)]',
+                )}
+              >
+                {value.toLocaleString()}
+                {!isTotal && (
+                  <span className="ml-1 text-[var(--hg-subtle)]">({pct(value, total)})</span>
+                )}
+              </span>
+            </div>
+          )
+        })}
       </div>
     </div>
   )
 }
 
-export function VolumeChart({ data, range, chartStyle = 'line' }: VolumeChartProps) {
-  const formatted = toChartPoints(data, range)
-  const interval = tickInterval(formatted.length, range)
+function SeriesLegend({
+  keys,
+  visible,
+  onToggle,
+}: {
+  keys: SeriesKey[]
+  visible: Set<SeriesKey>
+  onToggle: (key: SeriesKey) => void
+}) {
+  return (
+    <div className="flex flex-wrap items-center gap-1.5" role="group" aria-label="Series">
+      {keys.map((key) => {
+        const series = VOLUME_SERIES[key]
+        const on = visible.has(key)
+        return (
+          <button
+            key={key}
+            type="button"
+            aria-pressed={on}
+            onClick={() => onToggle(key)}
+            className={cn(
+              'inline-flex items-center gap-1.5 rounded-[4px] border px-2 py-1 text-[11px] font-medium transition-colors',
+              on
+                ? 'border-[var(--hg-border)] bg-white text-black'
+                : 'border-transparent bg-transparent text-[var(--hg-subtle)] line-through opacity-60',
+            )}
+          >
+            <span
+              className="size-2 rounded-full"
+              style={{ background: on ? series.color : 'var(--hg-border)' }}
+            />
+            {series.label}
+          </button>
+        )
+      })}
+    </div>
+  )
+}
 
-  const axis = (
+export function VolumeKpiStrip({ points }: { points: ChartPoint[] }) {
+  const kpis = volumeKpis(points)
+  const items = [
+    { label: 'Peak', value: kpis.peakTotal.toLocaleString(), hint: kpis.peakLabel },
+    { label: 'Hate share', value: `${kpis.hateShare}%`, hint: 'of posts in range' },
+    { label: 'Avg / bucket', value: kpis.avgPerBucket.toLocaleString(), hint: 'mean volume' },
+  ]
+  return (
+    <div className="mb-4 flex flex-wrap gap-x-6 gap-y-2 border-b border-[var(--hg-border)] pb-3">
+      {items.map((item) => (
+        <div key={item.label} className="min-w-0">
+          <p className="text-[10px] font-medium tracking-wide text-[var(--hg-subtle)] uppercase">
+            {item.label}
+          </p>
+          <p className="text-sm font-semibold tabular-nums text-[var(--hg-ink)]">{item.value}</p>
+          <p className="truncate text-[10px] text-[var(--hg-muted)]">{item.hint}</p>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+export function VolumeChart({ data, range, chartStyle = 'line' }: VolumeChartProps) {
+  const formatted = useMemo(() => toChartPoints(data, range), [data, range])
+  const interval = tickInterval(formatted.length, range)
+  const legendKeys = chartStyle === 'stacked' ? STACK_KEYS : LINE_KEYS
+
+  const [visible, setVisible] = useState<Set<SeriesKey>>(() => new Set(legendKeys))
+
+  useEffect(() => {
+    setVisible(new Set(chartStyle === 'stacked' ? STACK_KEYS : LINE_KEYS))
+  }, [chartStyle])
+
+  const toggle = (key: SeriesKey) => {
+    setVisible((prev) => {
+      const next = new Set(prev)
+      if (next.has(key)) {
+        if (next.size === 1) return prev
+        next.delete(key)
+      } else {
+        next.add(key)
+      }
+      return next
+    })
+  }
+
+  const tickStyle = { fontSize: 11, fill: '#9aa8bd' }
+
+  const shared = (
     <>
-      <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+      <CartesianGrid
+        strokeDasharray="0"
+        stroke="#e8edf5"
+        strokeOpacity={0.7}
+        vertical={false}
+      />
       <XAxis
         dataKey="label"
-        tick={{ fontSize: 10 }}
+        tick={tickStyle}
         interval={interval}
-        minTickGap={8}
-        className="text-muted-foreground"
+        minTickGap={12}
+        axisLine={false}
+        tickLine={false}
+        dy={6}
       />
-      <YAxis tick={{ fontSize: 10 }} className="text-muted-foreground" allowDecimals={false} />
-      <Tooltip content={<VolumeTooltip />} />
-      <Legend />
+      <YAxis
+        tick={tickStyle}
+        axisLine={false}
+        tickLine={false}
+        allowDecimals={false}
+        width={36}
+        dx={-4}
+      />
+      <Tooltip
+        cursor={{ stroke: '#c4bff0', strokeWidth: 1, strokeDasharray: '4 4' }}
+        content={<VolumeTooltip visible={visible} />}
+      />
     </>
   )
 
-  if (chartStyle === 'stacked') {
-    return (
-      <ResponsiveContainer width="100%" height={300}>
-        <AreaChart data={formatted}>
-          {axis}
-          <Area
-            type="monotone"
-            dataKey="normal_count"
-            stackId="1"
-            stroke="#22c55e"
-            fill="#22c55e"
-            fillOpacity={0.35}
-            name="Normal"
-          />
-          <Area
-            type="monotone"
-            dataKey="abuse_count"
-            stackId="1"
-            stroke="#f59e0b"
-            fill="#f59e0b"
-            fillOpacity={0.35}
-            name="Abuse"
-          />
-          <Area
-            type="monotone"
-            dataKey="hate_count"
-            stackId="1"
-            stroke="#ef4444"
-            fill="#ef4444"
-            fillOpacity={0.4}
-            name="Hate"
-          />
-        </AreaChart>
-      </ResponsiveContainer>
-    )
-  }
-
   return (
-    <ResponsiveContainer width="100%" height={300}>
-      <LineChart data={formatted}>
-        {axis}
-        <Line type="monotone" dataKey="total" stroke="var(--primary)" strokeWidth={2} dot={false} name="Total" />
-        <Line type="monotone" dataKey="normal_count" stroke="#22c55e" strokeWidth={1.5} dot={false} name="Normal" />
-        <Line type="monotone" dataKey="abuse_count" stroke="#f59e0b" strokeWidth={1.5} dot={false} name="Abuse" />
-        <Line type="monotone" dataKey="hate_count" stroke="#ef4444" strokeWidth={1.5} dot={false} name="Hate" />
-      </LineChart>
-    </ResponsiveContainer>
+    <div className="animate-in fade-in duration-300">
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <SeriesLegend keys={legendKeys} visible={visible} onToggle={toggle} />
+      </div>
+      <VolumeKpiStrip points={formatted} />
+      <ResponsiveContainer width="100%" height={320}>
+        {chartStyle === 'stacked' ? (
+          <AreaChart data={formatted} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+            <defs>
+              <linearGradient id="vol-normal" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor={VOLUME_SERIES.normal_count.color} stopOpacity={0.45} />
+                <stop offset="100%" stopColor={VOLUME_SERIES.normal_count.color} stopOpacity={0.05} />
+              </linearGradient>
+              <linearGradient id="vol-abuse" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor={VOLUME_SERIES.abuse_count.color} stopOpacity={0.5} />
+                <stop offset="100%" stopColor={VOLUME_SERIES.abuse_count.color} stopOpacity={0.06} />
+              </linearGradient>
+              <linearGradient id="vol-hate" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor={VOLUME_SERIES.hate_count.color} stopOpacity={0.55} />
+                <stop offset="100%" stopColor={VOLUME_SERIES.hate_count.color} stopOpacity={0.08} />
+              </linearGradient>
+            </defs>
+            {shared}
+            {visible.has('normal_count') && (
+              <Area
+                type="monotone"
+                dataKey="normal_count"
+                stackId="1"
+                stroke={VOLUME_SERIES.normal_count.color}
+                strokeWidth={1.5}
+                fill="url(#vol-normal)"
+                name="Normal"
+                isAnimationActive
+                animationDuration={280}
+              />
+            )}
+            {visible.has('abuse_count') && (
+              <Area
+                type="monotone"
+                dataKey="abuse_count"
+                stackId="1"
+                stroke={VOLUME_SERIES.abuse_count.color}
+                strokeWidth={1.5}
+                fill="url(#vol-abuse)"
+                name="Abuse"
+                isAnimationActive
+                animationDuration={280}
+              />
+            )}
+            {visible.has('hate_count') && (
+              <Area
+                type="monotone"
+                dataKey="hate_count"
+                stackId="1"
+                stroke={VOLUME_SERIES.hate_count.color}
+                strokeWidth={1.5}
+                fill="url(#vol-hate)"
+                name="Hate"
+                isAnimationActive
+                animationDuration={280}
+              />
+            )}
+          </AreaChart>
+        ) : (
+          <LineChart data={formatted} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+            {shared}
+            {visible.has('normal_count') && (
+              <Line
+                type="monotone"
+                dataKey="normal_count"
+                stroke={VOLUME_SERIES.normal_count.color}
+                strokeWidth={1.5}
+                strokeOpacity={0.85}
+                dot={false}
+                activeDot={{ r: 3.5, strokeWidth: 0 }}
+                name="Normal"
+                isAnimationActive
+                animationDuration={280}
+              />
+            )}
+            {visible.has('abuse_count') && (
+              <Line
+                type="monotone"
+                dataKey="abuse_count"
+                stroke={VOLUME_SERIES.abuse_count.color}
+                strokeWidth={1.5}
+                strokeOpacity={0.9}
+                dot={false}
+                activeDot={{ r: 3.5, strokeWidth: 0 }}
+                name="Abuse"
+                isAnimationActive
+                animationDuration={280}
+              />
+            )}
+            {visible.has('hate_count') && (
+              <Line
+                type="monotone"
+                dataKey="hate_count"
+                stroke={VOLUME_SERIES.hate_count.color}
+                strokeWidth={1.75}
+                dot={false}
+                activeDot={{ r: 3.5, strokeWidth: 0 }}
+                name="Hate"
+                isAnimationActive
+                animationDuration={280}
+              />
+            )}
+            {visible.has('total') && (
+              <Line
+                type="monotone"
+                dataKey="total"
+                stroke={VOLUME_SERIES.total.color}
+                strokeWidth={2.5}
+                dot={false}
+                activeDot={{ r: 4, strokeWidth: 0, fill: VOLUME_SERIES.total.color }}
+                name="Total"
+                isAnimationActive
+                animationDuration={280}
+              />
+            )}
+          </LineChart>
+        )}
+      </ResponsiveContainer>
+    </div>
   )
 }

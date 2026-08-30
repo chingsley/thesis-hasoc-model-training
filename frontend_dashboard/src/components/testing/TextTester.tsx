@@ -62,7 +62,7 @@ export function TextTester() {
         <div className="space-y-4">
           <Card>
             <CardHeader>
-              <SectionTitle>Classification Result</SectionTitle>
+              <SectionTitle size="md">Classification Result</SectionTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center gap-3 mb-4 flex-wrap">

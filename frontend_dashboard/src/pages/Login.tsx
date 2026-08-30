@@ -56,6 +56,7 @@ export default function Login() {
       style={
         {
           // Keep login on the original navy/blue palette
+          '--background': '#ffffff',
           '--ring': '#2c64f1',
           '--hg-secondary': '#2c64f1',
           '--hg-accent': '#2c64f1',
