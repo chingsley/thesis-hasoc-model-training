@@ -88,17 +88,15 @@ export function DataTable<T>({
             ) : null}
           </TableRow>
         </TableHeader>
-        <TableBody className="[&_tr:nth-child(even)]:bg-transparent">
+        <TableBody>
           {data.map((row) => (
-            <TableRow
-              key={getRowId(row)}
-              className="border-0 transition-colors hover:bg-[var(--hg-soft)]/35"
-            >
+            <TableRow key={getRowId(row)} className="border-0">
               {columns.map((col) => (
                 <TableCell
                   key={col.id}
                   className={cn(
-                    'border-b border-[var(--hg-border)] px-4 py-3.5 align-middle text-[var(--hg-ink)]',
+                    'border-b border-[var(--hg-border)] bg-white px-4 py-3.5 align-middle text-[var(--hg-ink)] transition-colors',
+                    'group-hover/row:bg-[color-mix(in_srgb,var(--hg-soft)_35%,white)]',
                     col.className,
                   )}
                 >
@@ -106,7 +104,7 @@ export function DataTable<T>({
                 </TableCell>
               ))}
               {actions ? (
-                <TableCell className="sticky right-0 border-b border-[var(--hg-border)] bg-white px-3 py-3 align-middle shadow-[-6px_0_8px_-6px_rgba(15,28,51,0.06)] group-hover/row:bg-[color-mix(in_srgb,var(--hg-soft)_35%,white)]">
+                <TableCell className="sticky right-0 border-b border-[var(--hg-border)] bg-white px-3 py-3 align-middle shadow-[-6px_0_8px_-6px_rgba(15,28,51,0.06)] transition-colors group-hover/row:bg-[color-mix(in_srgb,var(--hg-soft)_35%,white)]">
                   <div className="flex items-center justify-end gap-1">{actions(row)}</div>
                 </TableCell>
               ) : null}

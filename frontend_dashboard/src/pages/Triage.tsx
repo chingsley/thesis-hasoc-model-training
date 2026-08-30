@@ -12,6 +12,7 @@ import { SectionTitle } from '@/components/ui/data-source-badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import type { Label, Post } from '@/lib/types'
 import { Loader2 } from 'lucide-react'
+import { toast } from 'sonner'
 
 const TABS: { value: TriageBucket; label: string }[] = [
   { value: 'pending', label: 'Pending' },
@@ -39,11 +40,30 @@ export default function Triage() {
 
   const handleRelabelSave = async (label: Label, bucket?: 'cleared' | 'flagged') => {
     if (!relabelState) return
-    await relabelMutation.mutateAsync({
-      postId: relabelState.post.id,
-      manualLabel: label,
-      bucket,
-    })
+    const { mode, post } = relabelState
+    try {
+      await relabelMutation.mutateAsync({
+        postId: post.id,
+        manualLabel: label,
+        bucket,
+      })
+      if (mode === 'create') {
+        const destination =
+          bucket === 'flagged'
+            ? 'Sent to Flagged'
+            : bucket === 'cleared'
+              ? 'Sent to Cleared'
+              : 'Left in Pending'
+        toast.success(`Saved as ${label}`, { description: destination })
+      } else {
+        toast.success(`Manual label updated to ${label}`)
+      }
+    } catch (error) {
+      toast.error('Couldn’t save changes', {
+        description: error instanceof Error ? error.message : 'Please try again.',
+      })
+      throw error
+    }
   }
 
   return (
