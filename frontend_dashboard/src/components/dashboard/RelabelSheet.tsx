@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button'
 import { PredictionCell } from '@/components/dashboard/post-cells'
 import type { Label, Post } from '@/lib/types'
 import { cn } from '@/lib/utils'
-import { CheckCircle, Flag, Loader2, X } from 'lucide-react'
+import { Check, CheckCircle, Flag, Loader2, X } from 'lucide-react'
 
 const LABELS: Label[] = ['Normal', 'Abuse', 'Hate']
 
@@ -19,19 +19,25 @@ interface RelabelSheetProps {
   onClose: () => void
 }
 
-const labelStyles: Record<Label, { idle: string; selected: string }> = {
+const labelStyles: Record<
+  Label,
+  { idle: string; selected: string; check: string }
+> = {
   Normal: {
     idle: 'border-emerald-200 bg-emerald-50/40 text-[var(--hg-ink)] hover:border-emerald-300 hover:bg-emerald-50',
     selected:
       'border-emerald-500 bg-emerald-50 text-emerald-900 ring-2 ring-emerald-500/20',
+    check: 'bg-emerald-600 text-white',
   },
   Abuse: {
     idle: 'border-amber-200 bg-amber-50/40 text-[var(--hg-ink)] hover:border-amber-300 hover:bg-amber-50',
     selected: 'border-amber-500 bg-amber-50 text-amber-950 ring-2 ring-amber-500/20',
+    check: 'bg-amber-600 text-white',
   },
   Hate: {
     idle: 'border-rose-200 bg-rose-50/40 text-[var(--hg-ink)] hover:border-rose-300 hover:bg-rose-50',
     selected: 'border-[var(--hg-secondary)] bg-rose-50 text-rose-950 ring-2 ring-[var(--hg-secondary)]/20',
+    check: 'bg-[var(--hg-secondary)] text-white',
   },
 }
 
@@ -90,11 +96,22 @@ function RelabelForm({
                   aria-checked={selected}
                   onClick={() => setLabel(l)}
                   className={cn(
-                    'flex items-center justify-center rounded-[4px] border px-3 py-3 text-sm font-semibold transition-all',
+                    'relative flex items-center justify-center gap-1.5 rounded-[4px] border px-3 py-3 text-sm font-semibold transition-all',
                     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--hg-brand)]/30',
                     selected ? styles.selected : styles.idle,
                   )}
                 >
+                  {selected && (
+                    <span
+                      className={cn(
+                        'inline-flex size-4 shrink-0 items-center justify-center rounded-full',
+                        styles.check,
+                      )}
+                      aria-hidden
+                    >
+                      <Check className="size-2.5" strokeWidth={3} />
+                    </span>
+                  )}
                   {l}
                 </button>
               )
