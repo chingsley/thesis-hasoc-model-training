@@ -17,8 +17,8 @@ const methodLabels: Record<XaiMethod, string> = {
 
 const methodColors: Record<XaiMethod, string> = {
   lime: 'bg-green-100 text-green-800 border-green-300',
-  shap: 'bg-blue-100 text-blue-800 border-blue-300',
-  attention_rollout: 'bg-purple-100 text-purple-800 border-purple-300',
+  shap: 'bg-[#c1002c]/10 text-[#c1002c] border-[#c1002c]/30',
+  attention_rollout: 'bg-[#19305a]/10 text-[#19305a] border-[#19305a]/25',
   integrated_gradients: 'bg-orange-100 text-orange-800 border-orange-300',
 }
 

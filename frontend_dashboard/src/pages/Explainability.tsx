@@ -59,7 +59,7 @@ export default function Explainability() {
                     <button
                       key={post.id}
                       onClick={() => setSelectedPost(post)}
-                      className={`w-full text-left p-3 rounded-lg border transition-colors ${
+                      className={`w-full text-left p-3 rounded-[8px] border transition-colors ${
                         selectedPost?.id === post.id
                           ? 'border-primary bg-primary/5'
                           : 'border-border hover:bg-accent'

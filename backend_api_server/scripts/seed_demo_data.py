@@ -8,8 +8,8 @@ Usage (from backend_api_server/, venv active):
 Creates:
   - admin@hateguard.local / hateguard123  (+ prints an API key once)
   - demo@partner.local / partner123       (second user, proves per-user isolation)
-  - ~70 predictions across labels/languages with timestamps spread over the
-    last 7 days (feeds Overview stats, volume, drift, word clouds, toxic terms,
+  - Curated predictions for triage/explainability, plus bulk volume across the
+    last ~90 days (feeds Overview 24h / 7d / 1m / 3m charts, drift, clouds,
     clusters, alerts, Testing history)
   - triage rows covering every bucket: pending / cleared / flagged / relabelled
 """
@@ -33,10 +33,12 @@ ADMIN_PASSWORD = "hateguard123"
 DEMO_EMAIL = "demo@partner.local"
 DEMO_PASSWORD = "partner123"
 
+# How far back bulk volume goes (matches the 3m chart window).
+HISTORY_DAYS = 90
+
 rng = random.Random(42)
 
 # ---------------------------------------------------------------- seed texts
-# (text, language, predicted_label, probability profile, age bucket)
 IGBO_TOXIC = [
     "Ndi biafra ndi teroristi, ha kwesiri ihapu obodo anyi",
     "biafra people are nothing but terrorists, they should be wiped out",
@@ -91,7 +93,7 @@ NORMAL_TEXTS = [
     ("yoruba", "kalenda, wishing you all a productive week"),
     ("yoruba", "the new school is finally open, the children are happy"),
 ]
-BORDERLINE_TEXTS = [  # hate prob 0.40–0.60 (borderline review band)
+BORDERLINE_TEXTS = [
     ("igbo", "biafra supporters and their endless wahala, I tire"),
     ("igbo", "these people and their wahala every single day"),
     ("yoruba", "awon were ni, those people act like madmen"),
@@ -125,12 +127,10 @@ def probs_for(label: str, borderline: bool = False) -> dict[str, float]:
 
 
 def label_for_toxic(i: int) -> str:
-    # ~45% Hate, ~55% Abuse across the toxic seed texts
     return "Hate" if i % 9 in (0, 2, 4, 6) else "Abuse"
 
 
 def ensure_user(email: str, password: str, org: str, key_name: str) -> tuple[int, str | None]:
-    """Create the user if missing (printing a fresh API key); else return existing id."""
     existing = db.get_user_by_email(email)
     if existing is not None:
         print(f"  user exists: {email} (id={existing['id']})")
@@ -145,91 +145,149 @@ def ensure_user(email: str, password: str, org: str, key_name: str) -> tuple[int
 
 def wipe_user_rows(user_id: int) -> None:
     conn = db.get_conn()
-    with db._lock, conn:  # noqa: SLF001 - seed script, same-process lock is fine
+    with db._lock, conn:  # noqa: SLF001
         conn.execute("DELETE FROM predictions WHERE user_id = ?", (user_id,))
         conn.execute("DELETE FROM triage WHERE post_id LIKE ?", (f"u{user_id}_pred_%",))
 
 
+def _append_row(
+    rows: list[dict],
+    *,
+    user_id: int,
+    ts: datetime,
+    language: str,
+    text: str,
+    label: str,
+    probs: dict[str, float],
+    source: str,
+) -> None:
+    rows.append(
+        {
+            "ts": ts.isoformat(),
+            "language": language,
+            "text": text,
+            "predicted_label": label,
+            "prob_normal": probs["normal"],
+            "prob_abuse": probs["abuse"],
+            "prob_hate": probs["hate"],
+            "source": source,
+            "user_id": user_id,
+        }
+    )
+
+
+def seed_historical_volume(user_id: int, now: datetime, rows: list[dict]) -> int:
+    """Fill ~HISTORY_DAYS so 1m / 3m charts have signal. Unique text suffixes."""
+    templates = TOXIC + NORMAL_TEXTS + BORDERLINE_TEXTS
+    added = 0
+    for day_offset in range(HISTORY_DAYS):
+        day = now - timedelta(days=day_offset)
+        if day_offset < 7:
+            n_posts = rng.randint(14, 26)
+        elif day_offset < 30:
+            n_posts = rng.randint(8, 18)
+        else:
+            n_posts = rng.randint(5, 14)
+        if day.weekday() >= 5:
+            n_posts += rng.randint(2, 6)
+
+        for j in range(n_posts):
+            language, base = templates[(day_offset * 17 + j) % len(templates)]
+            roll = rng.random()
+            if roll < 0.55:
+                label = "Normal"
+            elif roll < 0.78:
+                label = "Abuse"
+            else:
+                label = "Hate"
+            if day_offset % 11 == 3 and j < 4:
+                label = "Hate"
+            probs = probs_for(label)
+            ts = day.replace(hour=0, minute=0, second=0, microsecond=0) + timedelta(
+                hours=rng.uniform(0, 23.5),
+                minutes=rng.randint(0, 59),
+            )
+            text = f"{base} · hist d{day_offset}#{j}"
+            _append_row(
+                rows,
+                user_id=user_id,
+                ts=ts,
+                language=language,
+                text=text,
+                label=label,
+                probs=probs,
+                source="batch" if j % 4 == 0 else "single",
+            )
+            added += 1
+    return added
+
+
 def seed_predictions(user_id: int) -> dict[str, int]:
-    """Insert the prediction log; returns {text: prediction_id} for triage seeding."""
     now = datetime.now(timezone.utc)
     rows: list[dict] = []
 
-    # Toxic posts spread over the last 7 days (drift) with extra weight today (volume).
     for i, (language, text) in enumerate(TOXIC):
         label = label_for_toxic(i)
         probs = probs_for(label)
-        if i < 8:  # today, spread over recent hours
+        if i < 8:
             ts = now - timedelta(hours=rng.uniform(0.2, 12), minutes=rng.randint(0, 59))
         else:
             ts = now - timedelta(days=rng.uniform(0.5, 7), hours=rng.uniform(0, 12))
-        rows.append(
-            {
-                "ts": ts.isoformat(),
-                "language": language,
-                "text": text,
-                "predicted_label": label,
-                "prob_normal": probs["normal"],
-                "prob_abuse": probs["abuse"],
-                "prob_hate": probs["hate"],
-                "source": "batch" if i % 3 == 0 else "single",
-                "user_id": user_id,
-            }
+        _append_row(
+            rows,
+            user_id=user_id,
+            ts=ts,
+            language=language,
+            text=text,
+            label=label,
+            probs=probs,
+            source="batch" if i % 3 == 0 else "single",
         )
 
-    # Two very recent, very high-confidence hate posts -> hate_threshold alerts.
     for text in (
         "ndi biafra ndi mgbu, death to every single one of them",
         "awon terrorist, they all deserve to perish in fire",
     ):
-        rows.append(
-            {
-                "ts": (now - timedelta(minutes=rng.randint(5, 45))).isoformat(),
-                "language": "igbo" if "biafra" in text else "yoruba",
-                "text": text,
-                "predicted_label": "Hate",
-                "prob_normal": 0.01,
-                "prob_abuse": 0.03,
-                "prob_hate": round(rng.uniform(0.93, 0.98), 4),
-                "source": "single",
-                "user_id": user_id,
-            }
+        _append_row(
+            rows,
+            user_id=user_id,
+            ts=now - timedelta(minutes=rng.randint(5, 45)),
+            language="igbo" if "biafra" in text else "yoruba",
+            text=text,
+            label="Hate",
+            probs={"normal": 0.01, "abuse": 0.03, "hate": round(rng.uniform(0.93, 0.98), 4)},
+            source="single",
         )
 
-    # Borderline posts (hate 40–60%).
     for language, text in BORDERLINE_TEXTS:
         probs = probs_for("Hate", borderline=True)
         label = "Hate" if probs["hate"] >= 0.5 else "Abuse"
-        rows.append(
-            {
-                "ts": (now - timedelta(days=rng.uniform(0.2, 3))).isoformat(),
-                "language": language,
-                "text": text,
-                "predicted_label": label,
-                "prob_normal": probs["normal"],
-                "prob_abuse": probs["abuse"],
-                "prob_hate": probs["hate"],
-                "source": "single",
-                "user_id": user_id,
-            }
+        _append_row(
+            rows,
+            user_id=user_id,
+            ts=now - timedelta(days=rng.uniform(0.2, 3)),
+            language=language,
+            text=text,
+            label=label,
+            probs=probs,
+            source="single",
         )
 
-    # Normal posts across both languages and the whole week.
     for i, (language, text) in enumerate(NORMAL_TEXTS):
         probs = probs_for("Normal")
-        rows.append(
-            {
-                "ts": (now - timedelta(days=rng.uniform(0.1, 7))).isoformat(),
-                "language": language,
-                "text": text,
-                "predicted_label": "Normal",
-                "prob_normal": probs["normal"],
-                "prob_abuse": probs["abuse"],
-                "prob_hate": probs["hate"],
-                "source": "single" if i % 2 else "batch",
-                "user_id": user_id,
-            }
+        _append_row(
+            rows,
+            user_id=user_id,
+            ts=now - timedelta(days=rng.uniform(0.1, 7)),
+            language=language,
+            text=text,
+            label="Normal",
+            probs=probs,
+            source="single" if i % 2 else "batch",
         )
+
+    hist = seed_historical_volume(user_id, now, rows)
+    print(f"  curated rows: {len(rows) - hist}, historical volume rows ({HISTORY_DAYS}d): {hist}")
 
     db.log_predictions(rows)
 
@@ -247,28 +305,22 @@ def seed_triage(user_id: int, id_map: dict[str, int]) -> None:
     def key(text: str) -> str:
         return f"u{user_id}_pred_{id_map[text]}"
 
-    # Pending: leave the first 10 toxic rows untouched (default pending).
     toxic_texts = [t for _, t in TOXIC]
 
-    # Cleared (6): checked, not worth reporting.
     for text in toxic_texts[10:16]:
         db.upsert_triage(key(text), flagged=False, status="cleared")
 
-    # Flagged (6): in the incident report.
     for text in toxic_texts[16:22]:
         db.upsert_triage(key(text), flagged=True, status="flagged")
 
-    # Relabelled (4): manual correction + bucket. 3 stay in relabelled view;
-    # 1 is edited back to the model's label (leaves relabelled, keeps bucket).
     relabels = [
-        (toxic_texts[22], "Abuse", "flagged"),   # model said Hate -> reviewer says Abuse
-        (toxic_texts[23], "Normal", "cleared"),  # model said Abuse -> reviewer says Normal
-        (toxic_texts[24], "Normal", "cleared"),  # model said Hate -> reviewer says Normal
-        (toxic_texts[25], None, "flagged"),      # None = set manual == predicted (leaves relabelled)
+        (toxic_texts[22], "Abuse", "flagged"),
+        (toxic_texts[23], "Normal", "cleared"),
+        (toxic_texts[24], "Normal", "cleared"),
+        (toxic_texts[25], None, "flagged"),
     ]
     for text, manual, bucket in relabels:
         if manual is None:
-            # look up the model's label from the seed list
             idx = [t for _, t in TOXIC].index(text)
             manual = label_for_toxic(idx)
         db.upsert_triage(key(text), flagged=(bucket == "flagged"), status=bucket, manual_label=manual)
@@ -305,7 +357,6 @@ def main() -> int:
     id_map = seed_predictions(admin_id)
     seed_triage(admin_id, id_map)
 
-    # A couple of rows for the second user -> proves per-user isolation in the UI.
     db.log_predictions(
         [
             {
@@ -323,10 +374,19 @@ def main() -> int:
     )
 
     stats = db.overview_stats(admin_id, "igbo")
-    print(f"\nDone. admin igbo stats: {stats}")
+    conn = db.get_conn()
+    with db._lock:  # noqa: SLF001
+        total = conn.execute(
+            "SELECT COUNT(*) AS n FROM predictions WHERE user_id = ?", (admin_id,)
+        ).fetchone()["n"]
+        oldest = conn.execute(
+            "SELECT MIN(ts) AS ts FROM predictions WHERE user_id = ?", (admin_id,)
+        ).fetchone()["ts"]
+    print(f"\nDone. admin predictions: {total} (oldest {oldest})")
+    print(f"admin igbo stats: {stats}")
     print("\nLogin:  admin@hateguard.local / hateguard123")
-    print("What to check: Overview stats+volume, Triage (4 buckets), Relabelled edit,")
-    print("Explainability picker, Analysis (clouds, drift, clusters), Alerts, Reports export.")
+    print("What to check: Overview stats+volume (24h/7d/1m/3m), Triage (4 buckets),")
+    print("Relabelled edit, Explainability, Analysis, Alerts, Reports export.")
     return 0
 
 

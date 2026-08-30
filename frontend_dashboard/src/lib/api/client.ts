@@ -110,11 +110,18 @@ export async function fetchDriftData(language: Language): Promise<DriftDataPoint
   return apiFetch<DriftDataPoint[]>(`/analytics/drift?language=${language}`);
 }
 
-export async function fetchVolumeData(language: Language): Promise<VolumeDataPoint[]> {
+export async function fetchVolumeData(
+  language: Language,
+  options: { hours?: number; since?: string; until?: string } = {},
+): Promise<VolumeDataPoint[]> {
+  const hours = options.hours ?? 24
   if (USE_MOCK) {
-    return delay(generateMockVolumeData(), 250);
+    return delay(generateMockVolumeData(hours, options.since, options.until), 250);
   }
-  return apiFetch<VolumeDataPoint[]>(`/analytics/volume?language=${language}`);
+  const params = new URLSearchParams({ language, hours: String(hours) });
+  if (options.since) params.set('since', options.since);
+  if (options.until) params.set('until', options.until);
+  return apiFetch<VolumeDataPoint[]>(`/analytics/volume?${params.toString()}`);
 }
 
 export async function fetchClusters(language: Language): Promise<PostCluster[]> {

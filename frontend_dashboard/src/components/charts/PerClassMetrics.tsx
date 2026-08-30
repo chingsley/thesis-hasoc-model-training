@@ -28,9 +28,9 @@ export function PerClassMetrics({ metrics }: PerClassMetricsProps) {
           }}
         />
         <Legend />
-        <Bar dataKey="Precision" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+        <Bar dataKey="Precision" fill="#c1002c" radius={[4, 4, 0, 0]} />
         <Bar dataKey="Recall" fill="#22c55e" radius={[4, 4, 0, 0]} />
-        <Bar dataKey="F1" fill="#a855f7" radius={[4, 4, 0, 0]} />
+        <Bar dataKey="F1" fill="#19305a" radius={[4, 4, 0, 0]} />
       </BarChart>
     </ResponsiveContainer>
   )

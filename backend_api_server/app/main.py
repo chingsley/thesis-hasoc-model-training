@@ -417,11 +417,19 @@ def wordcloud(
 
 @app.get("/analytics/volume")
 def analytics_volume(
-    hours: int = Query(default=24, ge=1, le=168),
+    hours: int = Query(default=24, ge=1, le=2160),
+    since: str | None = Query(default=None, description="ISO date or datetime (UTC)"),
+    until: str | None = Query(default=None, description="ISO date or datetime (UTC)"),
     language: Language | None = Query(default=None),
     user: dict = Depends(get_caller_user),
 ) -> list[dict]:
-    return analytics_service.volume_by_hour(hours, user_id=user["id"], language=language)
+    return analytics_service.volume_by_hour(
+        hours,
+        user_id=user["id"],
+        language=language,
+        since=since,
+        until=until,
+    )
 
 
 @app.get("/analytics/drift")

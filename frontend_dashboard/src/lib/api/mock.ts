@@ -380,10 +380,23 @@ export function generateMockDriftData(): DriftDataPoint[] {
   return data
 }
 
-export function generateMockVolumeData(): VolumeDataPoint[] {
+export function generateMockVolumeData(
+  hours: number = 168,
+  since?: string,
+  until?: string,
+): VolumeDataPoint[] {
   const data: VolumeDataPoint[] = []
-  for (let i = 168; i >= 0; i -= 1) {
-    const date = new Date(Date.now() - i * 3600000)
+  let end = Date.now()
+  let start = end - hours * 3600000
+  if (since) {
+    start = new Date(`${since}T00:00:00Z`).getTime()
+  }
+  if (until) {
+    end = new Date(`${until}T23:00:00Z`).getTime()
+  }
+  const spanHours = Math.max(1, Math.round((end - start) / 3600000) + 1)
+  for (let i = 0; i < spanHours; i += 1) {
+    const date = new Date(start + i * 3600000)
     const hour = date.toISOString().slice(0, 13) + ':00'
     const normal = Math.floor(8 + Math.random() * 25)
     const abuse = Math.floor(2 + Math.random() * 8)

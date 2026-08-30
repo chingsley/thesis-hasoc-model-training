@@ -53,38 +53,38 @@ export default function Performance() {
           <SectionTitle>Overall Metrics</SectionTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="p-4 bg-muted rounded-lg">
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
+            <div className="rounded-[8px] bg-white border border-[#e8edf5] p-4">
               <p className="text-sm text-muted-foreground">Accuracy</p>
-              <p className="text-3xl font-bold">{(metrics.accuracy * 100).toFixed(1)}%</p>
+              <p className="mt-1 text-3xl font-semibold tracking-tight">{(metrics.accuracy * 100).toFixed(1)}%</p>
             </div>
-            <div className="p-4 bg-muted rounded-lg">
+            <div className="rounded-[8px] bg-white border border-[#e8edf5] p-4">
               <p className="text-sm text-muted-foreground">Macro F1</p>
-              <p className="text-3xl font-bold">{(metrics.macro_f1 * 100).toFixed(1)}%</p>
+              <p className="mt-1 text-3xl font-semibold tracking-tight">{(metrics.macro_f1 * 100).toFixed(1)}%</p>
             </div>
-            <div className="p-4 bg-muted rounded-lg">
+            <div className="rounded-[8px] bg-white border border-[#e8edf5] p-4">
               <p className="text-sm text-muted-foreground">Weighted F1</p>
-              <p className="text-3xl font-bold">{(metrics.weighted_f1 * 100).toFixed(1)}%</p>
+              <p className="mt-1 text-3xl font-semibold tracking-tight">{(metrics.weighted_f1 * 100).toFixed(1)}%</p>
             </div>
-            <div className="p-4 bg-muted rounded-lg">
+            <div className="rounded-[8px] bg-white border border-[#e8edf5] p-4">
               <p className="text-sm text-muted-foreground">MCC</p>
-              <p className="text-3xl font-bold">{metrics.mcc.toFixed(3)}</p>
+              <p className="mt-1 text-3xl font-semibold tracking-tight">{metrics.mcc.toFixed(3)}</p>
             </div>
-            <div className="p-4 bg-muted rounded-lg">
+            <div className="rounded-[8px] bg-white border border-[#e8edf5] p-4">
               <p className="text-sm text-muted-foreground">Macro Precision</p>
-              <p className="text-3xl font-bold">{(metrics.macro_precision * 100).toFixed(1)}%</p>
+              <p className="mt-1 text-3xl font-semibold tracking-tight">{(metrics.macro_precision * 100).toFixed(1)}%</p>
             </div>
-            <div className="p-4 bg-muted rounded-lg">
+            <div className="rounded-[8px] bg-white border border-[#e8edf5] p-4">
               <p className="text-sm text-muted-foreground">Macro Recall</p>
-              <p className="text-3xl font-bold">{(metrics.macro_recall * 100).toFixed(1)}%</p>
+              <p className="mt-1 text-3xl font-semibold tracking-tight">{(metrics.macro_recall * 100).toFixed(1)}%</p>
             </div>
-            <div className="p-4 bg-muted rounded-lg">
+            <div className="rounded-[8px] bg-white border border-[#e8edf5] p-4">
               <p className="text-sm text-muted-foreground">ROC-AUC (OvR)</p>
-              <p className="text-3xl font-bold">{metrics.roc_auc_ovr?.toFixed(3) ?? 'N/A'}</p>
+              <p className="mt-1 text-3xl font-semibold tracking-tight">{metrics.roc_auc_ovr?.toFixed(3) ?? 'N/A'}</p>
             </div>
-            <div className="p-4 bg-muted rounded-lg">
+            <div className="rounded-[8px] bg-white border border-[#e8edf5] p-4">
               <p className="text-sm text-muted-foreground">Total Support</p>
-              <p className="text-3xl font-bold">{metrics.support.toLocaleString()}</p>
+              <p className="mt-1 text-3xl font-semibold tracking-tight">{metrics.support.toLocaleString()}</p>
             </div>
           </div>
         </CardContent>

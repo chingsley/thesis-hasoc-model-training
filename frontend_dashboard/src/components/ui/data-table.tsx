@@ -41,7 +41,7 @@ export function DataTable<T>({
 
   return (
     <div
-      className={cn('overflow-auto rounded-lg border border-border', className)}
+      className={cn('overflow-auto rounded-[8px] border border-border/70 bg-card shadow-sm', className)}
       style={{ maxHeight }}
     >
       <table className="w-full caption-bottom text-sm">

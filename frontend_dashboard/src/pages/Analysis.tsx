@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
-import { fetchClusters, fetchVolumeData } from '@/lib/api/client'
+import { fetchClusters } from '@/lib/api/client'
 import { useDriftData } from '@/hooks/use-metrics'
 import { useDashboardStore } from '@/lib/store/dashboard'
 import { ToxicWordCloud } from '@/components/charts/ToxicWordCloud'
 import { ModelDriftChart } from '@/components/charts/ModelDriftChart'
-import { VolumeChart } from '@/components/charts/VolumeChart'
+import { VolumePanel } from '@/components/charts/VolumePanel'
 import { PostClusters } from '@/components/reports/PostClusters'
 import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card'
 import { SectionTitle } from '@/components/ui/data-source-badge'
@@ -14,10 +14,6 @@ import { Loader2 } from 'lucide-react'
 export default function Analysis() {
   const language = useDashboardStore((s) => s.language)
   const { data: driftData, isLoading: driftLoading } = useDriftData()
-  const { data: volumeData } = useQuery({
-    queryKey: ['volume', language],
-    queryFn: () => fetchVolumeData(language),
-  })
   const { data: clusters, isLoading: clustersLoading } = useQuery({
     queryKey: ['clusters', language],
     queryFn: () => fetchClusters(language),
@@ -26,15 +22,23 @@ export default function Analysis() {
   return (
     <div className="space-y-6">
       <Tabs defaultValue="wordcloud" className="w-full">
-        <TabsList className="w-full justify-start">
-          <TabsTrigger value="wordcloud">Toxic Word Cloud</TabsTrigger>
-          <TabsTrigger value="drift">Model Drift</TabsTrigger>
-          <TabsTrigger value="volume">Post Volume</TabsTrigger>
-          <TabsTrigger value="clusters">Post Clusters</TabsTrigger>
+        <TabsList className="h-auto w-full justify-start gap-1 rounded-[8px] border border-[var(--hg-border)] bg-white p-1 shadow-[var(--hg-shadow)]">
+          <TabsTrigger value="wordcloud" className="rounded-[6px] data-active:bg-[var(--hg-canvas)] data-active:text-[var(--hg-ink)] data-active:shadow-none">
+            Toxic Word Cloud
+          </TabsTrigger>
+          <TabsTrigger value="drift" className="rounded-[6px] data-active:bg-[var(--hg-canvas)] data-active:text-[var(--hg-ink)] data-active:shadow-none">
+            Model Drift
+          </TabsTrigger>
+          <TabsTrigger value="volume" className="rounded-[6px] data-active:bg-[var(--hg-canvas)] data-active:text-[var(--hg-ink)] data-active:shadow-none">
+            Post Volume
+          </TabsTrigger>
+          <TabsTrigger value="clusters" className="rounded-[6px] data-active:bg-[var(--hg-canvas)] data-active:text-[var(--hg-ink)] data-active:shadow-none">
+            Post Clusters
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="wordcloud" className="mt-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             <Card>
               <CardHeader>
                 <SectionTitle>Frequent Terms in Toxic Posts</SectionTitle>
@@ -80,14 +84,7 @@ export default function Analysis() {
         </TabsContent>
 
         <TabsContent value="volume" className="mt-4">
-          <Card>
-            <CardHeader>
-              <SectionTitle>Post Volume Per Hour</SectionTitle>
-            </CardHeader>
-            <CardContent>
-              {volumeData && <VolumeChart data={volumeData} />}
-            </CardContent>
-          </Card>
+          <VolumePanel />
         </TabsContent>
 
         <TabsContent value="clusters" className="mt-4">

@@ -22,6 +22,7 @@ from . import db, posts_service, user_posts_service
 logger = logging.getLogger(__name__)
 
 VOLUME_HOURS = 24
+MAX_VOLUME_HOURS = 2160
 DRIFT_DAYS = 30
 HATE_SPIKE_THRESHOLD = int(os.getenv("ALERT_HATE_HOUR_THRESHOLD", "40"))
 HATE_SPIKE_HIGH = int(os.getenv("ALERT_HATE_HOUR_HIGH", "60"))
@@ -43,11 +44,58 @@ def _hour_bucket(ts: str) -> str:
     return ts[:13] + ":00"
 
 
+def _parse_boundary(value: str | None, *, end_of_day: bool = False) -> datetime | None:
+    if not value:
+        return None
+    text = value.strip()
+    if len(text) == 10:  # YYYY-MM-DD
+        day = datetime.fromisoformat(text).replace(tzinfo=timezone.utc)
+        if end_of_day:
+            return day.replace(hour=23, minute=0, second=0, microsecond=0)
+        return day.replace(hour=0, minute=0, second=0, microsecond=0)
+    dt = datetime.fromisoformat(text.replace("Z", "+00:00"))
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    return dt.astimezone(timezone.utc).replace(minute=0, second=0, microsecond=0)
+
+
 def volume_by_hour(
-    hours: int = VOLUME_HOURS, user_id: int | None = None, language: str | None = None
+    hours: int = VOLUME_HOURS,
+    user_id: int | None = None,
+    language: str | None = None,
+    since: str | None = None,
+    until: str | None = None,
 ) -> list[dict[str, Any]]:
-    since = (datetime.now(timezone.utc) - timedelta(hours=hours)).isoformat()
-    rows = db.prediction_rows_since(since, user_id=user_id)
+    now = datetime.now(timezone.utc).replace(minute=0, second=0, microsecond=0)
+    start = _parse_boundary(since, end_of_day=False)
+    end = _parse_boundary(until, end_of_day=True)
+
+    if start is None and end is None:
+        end = now
+        start = now - timedelta(hours=hours - 1)
+    elif start is None:
+        assert end is not None
+        start = end - timedelta(hours=hours - 1)
+    elif end is None:
+        end = min(now, start + timedelta(hours=hours - 1))
+        if end < start:
+            end = start
+
+    if end < start:
+        start, end = end, start
+
+    span_hours = int((end - start).total_seconds() // 3600) + 1
+    if span_hours > MAX_VOLUME_HOURS:
+        start = end - timedelta(hours=MAX_VOLUME_HOURS - 1)
+        span_hours = MAX_VOLUME_HOURS
+    if span_hours < 1:
+        span_hours = 1
+        start = end
+
+    since_iso = start.isoformat()
+    rows = db.prediction_rows_since(since_iso, user_id=user_id)
+    until_iso = (end + timedelta(hours=1)).isoformat()
+    rows = [row for row in rows if row["ts"] < until_iso]
     if language:
         rows = [row for row in rows if row["language"] == language]
 
@@ -55,10 +103,9 @@ def volume_by_hour(
     for row in rows:
         buckets[_hour_bucket(row["ts"])][row["predicted_label"]] += 1
 
-    now = datetime.now(timezone.utc).replace(minute=0, second=0, microsecond=0)
     points = []
-    for offset in range(hours - 1, -1, -1):
-        moment = now - timedelta(hours=offset)
+    for offset in range(span_hours):
+        moment = start + timedelta(hours=offset)
         key = moment.isoformat()[:13] + ":00"
         counts = buckets.get(key, Counter())
         normal, abuse, hate = counts.get("Normal", 0), counts.get("Abuse", 0), counts.get("Hate", 0)

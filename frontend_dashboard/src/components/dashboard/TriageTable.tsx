@@ -217,7 +217,7 @@ export function TriageTable({ bucket, posts, onRelabel }: TriageTableProps) {
 
       <div className="grid grid-cols-3 gap-4">
         <div className="p-3 bg-muted rounded-lg text-center">
-          <p className="text-2xl font-bold text-primary">{filtered.length}</p>
+          <p className="text-2xl font-bold text-[var(--hg-secondary)]">{filtered.length}</p>
           <p className="text-xs text-muted-foreground">{BUCKET_TITLES[bucket]}</p>
         </div>
         <div className="p-3 bg-muted rounded-lg text-center">

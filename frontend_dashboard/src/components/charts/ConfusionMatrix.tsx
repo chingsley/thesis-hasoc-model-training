@@ -5,12 +5,12 @@ interface ConfusionMatrixProps {
 const labels = ['Normal', 'Abuse', 'Hate']
 
 const cellColors = (value: number, max: number) => {
-  if (max === 0) return 'bg-blue-50'
+  if (max === 0) return 'bg-[#c1002c]/10'
   const intensity = value / max
-  if (intensity > 0.8) return 'bg-blue-600 text-white'
-  if (intensity > 0.5) return 'bg-blue-400 text-white'
-  if (intensity > 0.2) return 'bg-blue-200 text-blue-900'
-  return 'bg-blue-50 text-blue-900'
+  if (intensity > 0.8) return 'bg-[#c1002c] text-white'
+  if (intensity > 0.5) return 'bg-[#c1002c]/70 text-white'
+  if (intensity > 0.2) return 'bg-[#c1002c]/25 text-[#5a0014]'
+  return 'bg-[#c1002c]/10 text-[#5a0014]'
 }
 
 export function ConfusionMatrix({ matrix }: ConfusionMatrixProps) {

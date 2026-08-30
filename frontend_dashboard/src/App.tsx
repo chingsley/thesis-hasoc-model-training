@@ -27,7 +27,7 @@ const queryClient = new QueryClient({
 function PageLoader() {
   return (
     <div className="flex items-center justify-center py-24">
-      <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      <Loader2 className="h-7 w-7 animate-spin text-[var(--hg-subtle)]" />
     </div>
   )
 }

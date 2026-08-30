@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type CSSProperties } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Loader2, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -51,11 +51,20 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex bg-background">
-      {/* Brand panel — HateGuard navy (#19305a) */}
+    <div
+      className="flex min-h-screen bg-background"
+      style={
+        {
+          // Keep login on the original navy/blue palette
+          '--ring': '#2c64f1',
+          '--hg-secondary': '#2c64f1',
+          '--hg-accent': '#2c64f1',
+        } as CSSProperties
+      }
+    >      {/* Brand panel — HateGuard navy (#19305a) */}
       <div className="hidden lg:flex lg:w-1/2 xl:w-3/5 flex-col justify-between bg-gradient-to-br from-[#24468a] via-[#19305a] to-[#0e1c38] p-12 text-white">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/10 ring-1 ring-white/20">
+          <div className="flex h-10 w-10 items-center justify-center rounded-[8px] bg-white/10 ring-1 ring-white/20">
             <ShieldCheck className="h-6 w-6" />
           </div>
           <span className="text-2xl font-semibold tracking-tight">HateGuard</span>
