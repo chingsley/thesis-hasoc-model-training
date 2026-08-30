@@ -55,13 +55,13 @@ function RelabelForm({
   onCancel: () => void
 }) {
   const [label, setLabel] = useState<Label>(post.manual_label ?? post.predicted_label)
-  const [bucket, setBucket] = useState<'cleared' | 'flagged'>(
-    post.triage_status === 'flagged' ? 'flagged' : 'cleared',
-  )
+  const [bucket, setBucket] = useState<'cleared' | 'flagged' | null>(null)
 
   const handleSave = async () => {
     try {
-      await Promise.resolve(onSave(label, mode === 'create' ? bucket : undefined))
+      await Promise.resolve(
+        onSave(label, mode === 'create' ? bucket ?? undefined : undefined),
+      )
       onCancel()
     } catch {
       // Keep the sheet open when the save request fails.
@@ -122,6 +122,9 @@ function RelabelForm({
         {mode === 'create' && (
           <fieldset className="space-y-2.5 border-0 p-0">
             <legend className="text-sm font-semibold text-[var(--hg-ink)]">Send to bucket</legend>
+            <p className="text-xs text-[var(--hg-muted)]">
+              Optional — leave unselected to keep the post in Pending after relabeling.
+            </p>
             <div className="grid grid-cols-2 gap-2" role="radiogroup" aria-label="Send to bucket">
               {(
                 [
@@ -137,7 +140,9 @@ function RelabelForm({
                     type="button"
                     role="radio"
                     aria-checked={selected}
-                    onClick={() => setBucket(option.id)}
+                    onClick={() =>
+                      setBucket((current) => (current === option.id ? null : option.id))
+                    }
                     className={cn(
                       'flex items-center justify-center gap-2 rounded-[4px] border px-3 py-3 text-sm font-medium transition-all',
                       'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--hg-brand)]/30',
@@ -252,7 +257,7 @@ export function RelabelSheet({ post, mode, saving, onSave, onClose }: RelabelShe
             </h2>
             <p id={descriptionId} className="text-sm leading-snug text-[var(--hg-muted)]">
               {mode === 'create'
-                ? 'Correct the model’s label and choose where the post goes.'
+                ? 'Correct the model’s label. Optionally send the post to Flagged or Cleared, or leave it in Pending.'
                 : 'Update the manual label. Matching the model’s label removes the post from Relabelled.'}
             </p>
           </div>
