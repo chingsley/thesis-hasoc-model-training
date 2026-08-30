@@ -33,6 +33,33 @@ IG_N_STEPS = int(os.getenv("EXPLAIN_IG_STEPS", "32"))
 EXPLAIN_MAX_WORKERS = int(os.getenv("EXPLAIN_MAX_WORKERS", "4"))
 
 
+class _LockedTokenizerProxy:
+    """Serialize HuggingFace fast-tokenizer encode calls across threads."""
+
+    def __init__(self, tokenizer, lock) -> None:
+        self._tokenizer = tokenizer
+        self._lock = lock
+
+    def __call__(self, *args, **kwargs):
+        with self._lock:
+            return self._tokenizer(*args, **kwargs)
+
+    def encode(self, *args, **kwargs):
+        with self._lock:
+            return self._tokenizer.encode(*args, **kwargs)
+
+    def encode_plus(self, *args, **kwargs):
+        with self._lock:
+            return self._tokenizer.encode_plus(*args, **kwargs)
+
+    def batch_encode_plus(self, *args, **kwargs):
+        with self._lock:
+            return self._tokenizer.batch_encode_plus(*args, **kwargs)
+
+    def __getattr__(self, name):
+        return getattr(self._tokenizer, name)
+
+
 class Explainer:
     """Runs XAI methods against an already-loaded ModelService."""
 
@@ -47,11 +74,12 @@ class Explainer:
         if isinstance(texts, str):
             texts = [texts]
         texts = [str(text) for text in texts]
-        with torch.no_grad():
+        with self.service.tokenizer_lock:
             inputs = self.tokenizer(
                 texts, return_tensors="pt", padding=True, truncation=True, max_length=256
             )
-            inputs = {key: value.to(self.device) for key, value in inputs.items()}
+        inputs = {key: value.to(self.device) for key, value in inputs.items()}
+        with torch.no_grad():
             logits = self.model(**inputs).logits
             return torch.softmax(logits, dim=-1).detach().cpu().numpy()
 
@@ -77,7 +105,10 @@ class Explainer:
             import shap
         except ImportError as exc:
             raise ImportError("shap is required for SHAP explanations") from exc
-        masker = shap.maskers.Text(self.tokenizer)
+        # SHAP's Text masker tokenizes internally; proxy serializes encode() without
+        # holding the lock across model forwards (avoids deadlocks with LIME).
+        locked_tokenizer = _LockedTokenizerProxy(self.tokenizer, self.service.tokenizer_lock)
+        masker = shap.maskers.Text(locked_tokenizer)
         explainer = shap.Explainer(self.predict_proba, masker, output_names=LABELS)
         values = explainer([text])
         row = values[0]
@@ -93,9 +124,11 @@ class Explainer:
         }
 
     def attention_rollout(self, text: str) -> Dict:
-        with torch.no_grad():
+        with self.service.tokenizer_lock:
             encoded = self.tokenizer(text, return_tensors="pt", truncation=True, max_length=256)
-            encoded = {key: value.to(self.device) for key, value in encoded.items()}
+            tokens = self.tokenizer.convert_ids_to_tokens(encoded["input_ids"][0])
+        encoded = {key: value.to(self.device) for key, value in encoded.items()}
+        with torch.no_grad():
             outputs = self.model(**encoded, output_attentions=True)
         attentions = outputs.attentions
         if not attentions:
@@ -108,7 +141,6 @@ class Explainer:
             layer = layer / layer.sum(dim=-1, keepdim=True)
             rollout = layer if rollout is None else torch.matmul(layer, rollout)
         scores = rollout[0].detach().cpu().numpy()
-        tokens = self.tokenizer.convert_ids_to_tokens(encoded["input_ids"][0])
         return {
             "method": "attention_rollout",
             "tokens": tokens,
@@ -129,11 +161,18 @@ class Explainer:
 
     def integrated_gradients(self, text: str, n_steps: int = IG_N_STEPS) -> Dict:
         try:
-            from captum.attr import LayerIntegratedGradients
+            from captum.attr import IntegratedGradients
         except ImportError as exc:
             raise ImportError("captum is required for integrated gradients explanations") from exc
 
-        encoded = self.tokenizer(text, return_tensors="pt", truncation=True, max_length=256)
+        # Attribute w.r.t. input embeddings directly. LayerIntegratedGradients
+        # registers hooks on the shared embedding module; when the dashboard
+        # fires parallel /explain calls those hooks cross-contaminate and yield
+        # "tensor a (N) must match tensor b (M) at dimension 1" failures.
+        with self.service.tokenizer_lock:
+            encoded = self.tokenizer(text, return_tensors="pt", truncation=True, max_length=256)
+            tokens = self.tokenizer.convert_ids_to_tokens(encoded["input_ids"][0])
+
         input_ids = encoded["input_ids"].to(self.device)
         attention_mask = encoded.get("attention_mask")
         if attention_mask is None:
@@ -148,24 +187,25 @@ class Explainer:
 
         top_class = int(np.argmax(self.predict_proba([text])[0]))
         embedding_layer = self.model.get_input_embeddings()
+        inputs_embeds = embedding_layer(input_ids).detach().clone().requires_grad_(True)
+        baseline_embeds = embedding_layer(baseline_ids).detach().clone()
 
-        def forward_func(ids, mask):
-            return self.model(input_ids=ids, attention_mask=mask).logits
+        def forward_func(embeds: torch.Tensor, mask: torch.Tensor) -> torch.Tensor:
+            return self.model(inputs_embeds=embeds, attention_mask=mask).logits
 
-        explainer = LayerIntegratedGradients(forward_func, embedding_layer)
-        attributions = explainer.attribute(
-            inputs=input_ids,
-            baselines=baseline_ids,
+        ig = IntegratedGradients(forward_func)
+        attributions = ig.attribute(
+            inputs=inputs_embeds,
+            baselines=baseline_embeds,
             additional_forward_args=(attention_mask,),
             target=top_class,
             n_steps=n_steps,
         )
         token_scores = attributions.sum(dim=-1).squeeze(0)
-        norm = torch.norm(token_scores)
+        norm = torch.norm(token_scores.detach())
         if float(norm) > 0:
             token_scores = token_scores / norm
         token_scores = token_scores.detach().cpu().numpy()
-        tokens = self.tokenizer.convert_ids_to_tokens(input_ids[0])
         return {
             "method": "integrated_gradients",
             "predicted_label": LABELS[top_class],

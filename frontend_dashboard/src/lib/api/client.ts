@@ -26,7 +26,7 @@ import {
   generateMockAlerts,
 } from './mock';
 import { BATCH_SIZE, USE_MOCK } from './config';
-import { apiFetch, type BatchPredictResponse, type PredictResponse } from './http';
+import { apiFetch, ApiError, type BatchPredictResponse, type PredictResponse } from './http';
 
 function delay<T>(data: T, ms = 200): Promise<T> {
   return new Promise((resolve) => setTimeout(() => resolve(data), ms));
@@ -64,10 +64,17 @@ export async function fetchExplanationMethod(
   }
   // One method per request: the page fires all four in parallel and renders
   // each panel as it lands; the backend caches each (language, methods, text).
-  return apiFetch<ExplanationPayload>('/explain', {
+  const payload = await apiFetch<ExplanationPayload>('/explain', {
     method: 'POST',
     body: JSON.stringify({ text: post.tweet, language: post.language, methods: [method], post_id: post.id }),
   });
+  const entry = payload.methods?.[method];
+  // Treat per-method dependency/runtime failures as query errors so react-query
+  // does not permanently cache an empty explanation (staleTime is Infinity).
+  if (entry && typeof entry === 'object' && 'error' in entry) {
+    throw new ApiError(503, String((entry as { error: string }).error));
+  }
+  return payload;
 }
 
 export async function fetchModelMetrics(language: Language): Promise<ModelMetrics> {

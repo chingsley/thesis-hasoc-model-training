@@ -21,10 +21,16 @@ export default function Explainability() {
   if (selectedPost) {
     const mergedMethods: ExplanationPayload['methods'] = {}
     const metrics: ExplanationPayload['metrics'] = {}
-    methodQueries.forEach((query) => {
+    methodQueries.forEach((query, i) => {
+      const method = XAI_METHODS[i]
       if (query.data) {
         Object.assign(mergedMethods, query.data.methods)
         Object.assign(metrics, query.data.metrics)
+      } else if (query.isError) {
+        mergedMethods[method] = {
+          method,
+          error: query.error instanceof Error ? query.error.message : 'Explanation failed',
+        }
       }
     })
     const agreement = crossMethodAgreementMean(mergedMethods)
@@ -38,6 +44,10 @@ export default function Explainability() {
       metrics,
     }
   }
+
+  const confidenceLoading = Boolean(
+    selectedPost && methodQueries.some((query) => query.isPending),
+  )
 
   return (
     <div className="space-y-8">
@@ -125,7 +135,7 @@ export default function Explainability() {
         </Card>
 
         <Card className="lg:col-span-2">
-          <CardHeader>
+          <CardHeader className="border-b border-[var(--hg-border)] pb-5">
             <SectionTitle
               size="md"
               description={
@@ -136,17 +146,26 @@ export default function Explainability() {
             >
               {selectedPost ? `Explanation for ${selectedPost.id}` : 'Explanation Comparison'}
             </SectionTitle>
+            {selectedPost ? (
+              <p className="mt-3 line-clamp-2 text-sm leading-relaxed text-[var(--hg-muted)]">
+                {selectedPost.tweet}
+              </p>
+            ) : null}
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-5">
             {explanation ? (
-              <div className="space-y-6">
-                <ConfidenceMeter metrics={explanation.metrics} />
+              <div className="space-y-8">
+                <ConfidenceMeter metrics={explanation.metrics} loading={confidenceLoading} />
                 <ExplanationComparison explanation={explanation} loadingMethods={loadingMethods} />
               </div>
             ) : (
-              <div className="py-12 text-center text-muted-foreground">
-                <p>Select a post from the list to see its explanations</p>
-                <p className="mt-1 text-sm">LIME, SHAP, Attention Rollout, and Integrated Gradients</p>
+              <div className="flex flex-col items-center justify-center rounded-[4px] border border-dashed border-[var(--hg-border)] bg-[var(--hg-canvas)] px-6 py-16 text-center">
+                <p className="text-sm font-medium text-[var(--hg-ink)]">
+                  Select a post to inspect explanations
+                </p>
+                <p className="mt-1.5 max-w-sm text-xs leading-relaxed text-[var(--hg-muted)]">
+                  Compare LIME, SHAP, Attention Rollout, and Integrated Gradients token by token.
+                </p>
               </div>
             )}
           </CardContent>

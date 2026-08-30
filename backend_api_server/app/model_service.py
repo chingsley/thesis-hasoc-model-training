@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 import os
+import threading
 from pathlib import Path
 from typing import Dict, List, Sequence
 
@@ -34,6 +35,9 @@ class ModelService:
         self.tokenizer = AutoTokenizer.from_pretrained(source)
         self.model = AutoModelForSequenceClassification.from_pretrained(source)
         self.model.eval()
+        # Fast tokenizers are not safe for concurrent encode() from multiple threads
+        # (dashboard fires parallel /explain calls per XAI method).
+        self.tokenizer_lock = threading.RLock()
 
         if device == "auto":
             self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -50,13 +54,14 @@ class ModelService:
         outputs: List[Dict[str, object]] = []
         for start in range(0, len(texts), self.batch_size):
             chunk = list(texts[start : start + self.batch_size])
-            encoded = self.tokenizer(
-                chunk,
-                padding=True,
-                truncation=True,
-                max_length=self.max_length,
-                return_tensors="pt",
-            )
+            with self.tokenizer_lock:
+                encoded = self.tokenizer(
+                    chunk,
+                    padding=True,
+                    truncation=True,
+                    max_length=self.max_length,
+                    return_tensors="pt",
+                )
             encoded = {key: value.to(self.device) for key, value in encoded.items()}
 
             with torch.inference_mode():

@@ -110,7 +110,7 @@ class TransformerExplainer(object):
 
     def integrated_gradients(self, text: str, n_steps: int = 50) -> Dict:
         try:
-            from captum.attr import LayerIntegratedGradients
+            from captum.attr import IntegratedGradients
         except ImportError as exc:
             raise ImportError("captum is required for integrated gradients explanations") from exc
 
@@ -127,14 +127,18 @@ class TransformerExplainer(object):
 
         top_class = int(np.argmax(self.predict_proba([text])[0]))
         embedding_layer = self.model.get_input_embeddings()
+        # Attribute on embeddings directly — avoids LayerIntegratedGradients hooks
+        # that break under concurrent / multi-length forwards.
+        inputs_embeds = embedding_layer(input_ids).detach().clone().requires_grad_(True)
+        baseline_embeds = embedding_layer(baseline_ids).detach().clone()
 
-        def forward_func(ids, mask):
-            return self.model(input_ids=ids, attention_mask=mask).logits
+        def forward_func(embeds, mask):
+            return self.model(inputs_embeds=embeds, attention_mask=mask).logits
 
-        explainer = LayerIntegratedGradients(forward_func, embedding_layer)
-        attributions = explainer.attribute(
-            inputs=input_ids,
-            baselines=baseline_ids,
+        ig = IntegratedGradients(forward_func)
+        attributions = ig.attribute(
+            inputs=inputs_embeds,
+            baselines=baseline_embeds,
             additional_forward_args=(attention_mask,),
             target=top_class,
             n_steps=n_steps,
@@ -142,7 +146,7 @@ class TransformerExplainer(object):
         # Collapse the embedding dimension to a single score per token, then
         # L2-normalize so scores are comparable across sentences of different length.
         token_scores = attributions.sum(dim=-1).squeeze(0)
-        norm = self.torch.norm(token_scores)
+        norm = self.torch.norm(token_scores.detach())
         if float(norm) > 0:
             token_scores = token_scores / norm
         token_scores = token_scores.detach().cpu().numpy()

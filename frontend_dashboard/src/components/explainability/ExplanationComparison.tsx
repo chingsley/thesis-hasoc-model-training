@@ -1,6 +1,5 @@
 import type { ExplanationPayload } from '@/lib/types'
 import { ExplanationPanel } from './ExplanationPanel'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import type { XaiMethod } from '@/lib/types'
 
 interface ExplanationComparisonProps {
@@ -18,31 +17,52 @@ const methodLabels: Record<XaiMethod, string> = {
   integrated_gradients: 'Integrated Gradients',
 }
 
-function ExplanationSkeleton({ method }: { method: XaiMethod }) {
+function AttributionLegend() {
   return (
-    <Card>
-      <CardHeader className="pb-2">
-        <CardTitle className="text-sm">{methodLabels[method]}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-2 animate-pulse" aria-label={`${methodLabels[method]} loading`}>
-          <div className="h-4 bg-muted rounded w-full" />
-          <div className="h-4 bg-muted rounded w-5/6" />
-          <div className="h-4 bg-muted rounded w-4/6" />
-          <p className="text-xs text-muted-foreground pt-1">Computing {methodLabels[method]}…</p>
-        </div>
-      </CardContent>
-    </Card>
+    <div className="flex flex-wrap items-center gap-3 text-[11px] text-[var(--hg-muted)]">
+      <span className="inline-flex items-center gap-1.5">
+        <span className="size-2.5 rounded-[2px] bg-[rgba(239,68,68,0.55)]" aria-hidden />
+        Toward prediction
+      </span>
+      <span className="inline-flex items-center gap-1.5">
+        <span className="size-2.5 rounded-[2px] bg-[rgba(59,130,246,0.55)]" aria-hidden />
+        Against prediction
+      </span>
+    </div>
   )
 }
 
-export function ExplanationComparison({ explanation, loadingMethods = [] }: ExplanationComparisonProps) {
+function ExplanationSkeleton({ method }: { method: XaiMethod }) {
   return (
-    <div className="space-y-3">
-      <h3 className="text-sm font-medium text-muted-foreground">
-        Side-by-Side Method Comparison
-      </h3>
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-3">
+    <article className="flex min-h-[148px] flex-col overflow-hidden rounded-[4px] border border-[var(--hg-border)] bg-white">
+      <header className="flex items-center justify-between gap-3 border-b border-[var(--hg-border)] px-4 py-2.5">
+        <h4 className="text-sm font-semibold text-[var(--hg-ink)]">{methodLabels[method]}</h4>
+        <span className="text-[10px] font-medium tracking-wide text-[var(--hg-subtle)] uppercase">
+          Computing
+        </span>
+      </header>
+      <div className="space-y-2.5 px-4 py-3.5" aria-label={`${methodLabels[method]} loading`}>
+        <div className="h-3.5 w-full animate-pulse rounded bg-[var(--hg-canvas)]" />
+        <div className="h-3.5 w-5/6 animate-pulse rounded bg-[var(--hg-canvas)]" />
+        <div className="h-3.5 w-2/3 animate-pulse rounded bg-[var(--hg-canvas)]" />
+      </div>
+    </article>
+  )
+}
+
+export function ExplanationComparison({
+  explanation,
+  loadingMethods = [],
+}: ExplanationComparisonProps) {
+  return (
+    <section className="space-y-3">
+      <div className="flex flex-wrap items-end justify-between gap-2">
+        <h3 className="text-[11px] font-semibold tracking-wide text-[var(--hg-muted)] uppercase">
+          Method Comparison
+        </h3>
+        <AttributionLegend />
+      </div>
+      <div className="grid grid-cols-1 gap-3 xl:grid-cols-2">
         {methods.map((method) =>
           !explanation.methods[method] && loadingMethods.includes(method) ? (
             <ExplanationSkeleton key={method} method={method} />
@@ -52,9 +72,9 @@ export function ExplanationComparison({ explanation, loadingMethods = [] }: Expl
               method={method}
               explanation={explanation.methods[method]}
             />
-          )
+          ),
         )}
       </div>
-    </div>
+    </section>
   )
 }

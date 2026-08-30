@@ -484,12 +484,31 @@ def explain(payload: ExplainRequest, user: dict = Depends(get_caller_user)) -> d
     cache_key = sha256_hex(f"{payload.language}|{methods_key}|{text}")
     cached = db.get_cached_explanation(cache_key)
     if cached is not None:
-        cached["id"] = explanation_id
-        logger.info("explain cache hit language=%s methods=%s", payload.language, methods_key)
-        return cached
+        # Skip cache entries that only captured dependency/runtime failures so a
+        # later install (or transient error) can recompute successfully.
+        methods = cached.get("methods") or {}
+        has_usable = any(
+            isinstance(entry, dict) and "error" not in entry and entry.get("scores")
+            for entry in methods.values()
+        )
+        if has_usable:
+            cached["id"] = explanation_id
+            logger.info("explain cache hit language=%s methods=%s", payload.language, methods_key)
+            return cached
+        logger.info(
+            "explain cache bypass (error-only) language=%s methods=%s",
+            payload.language,
+            methods_key,
+        )
 
     result = explain_text(service, text, explanation_id, methods=payload.methods)
-    db.save_cached_explanation(cache_key, payload.language, result)
+    methods = result.get("methods") or {}
+    has_usable = any(
+        isinstance(entry, dict) and "error" not in entry and entry.get("scores")
+        for entry in methods.values()
+    )
+    if has_usable:
+        db.save_cached_explanation(cache_key, payload.language, result)
     return result
 
 
