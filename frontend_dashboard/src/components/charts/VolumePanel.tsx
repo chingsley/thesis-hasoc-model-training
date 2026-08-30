@@ -69,7 +69,17 @@ export function VolumePanel({ onVolumeChange }: VolumePanelProps) {
     <Card>
       <CardHeader className="gap-4 border-b border-[var(--hg-border)] pb-4">
         <SectionTitle size="md" description={volumeDescription}>
-          Post Volume
+          <span className="inline-flex items-center">
+            Post volume
+            <span
+              aria-hidden
+              className="mx-4 inline-block h-[0.85em] w-[3px] shrink-0 rounded-full bg-[var(--hg-border)]"
+            />
+            <span className="text-base font-normal tracking-wide text-[#950000] uppercase">
+              {language.charAt(0).toUpperCase()}
+              {language.slice(1)}
+            </span>
+          </span>
         </SectionTitle>
         <CardAction>
           <div className="flex flex-col items-stretch gap-2 sm:items-end">

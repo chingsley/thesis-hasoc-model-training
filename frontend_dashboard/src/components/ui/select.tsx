@@ -115,7 +115,7 @@ function SelectItem({
     <SelectPrimitive.Item
       data-slot="select-item"
       className={cn(
-        "relative flex w-full cursor-pointer items-center gap-1.5 rounded-md py-1 pr-8 pl-1.5 text-sm outline-hidden select-none focus:bg-[var(--hg-secondary)] focus:text-white data-highlighted:bg-[var(--hg-secondary)] data-highlighted:text-white not-data-[variant=destructive]:focus:**:text-white data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 data-highlighted:[&_svg]:text-white focus:[&_svg]:text-white *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2",
+        "relative flex w-full cursor-pointer items-center gap-1.5 rounded-md py-1 pr-8 pl-1.5 text-sm text-black outline-hidden select-none focus:bg-[var(--hg-soft)] focus:text-black data-highlighted:bg-[var(--hg-soft)] data-highlighted:text-black data-[selected]:bg-[var(--hg-soft-selected)] data-[selected]:text-black not-data-[variant=destructive]:focus:**:text-black data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 data-highlighted:[&_svg]:text-black focus:[&_svg]:text-black data-[selected]:[&_svg]:text-black *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2",
         className
       )}
       {...props}

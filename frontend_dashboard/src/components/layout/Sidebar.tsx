@@ -111,14 +111,14 @@ export function Sidebar({ open, onClose }: SidebarProps) {
                           className={cn(
                             'relative flex cursor-pointer items-center gap-3 px-6 py-2.5 text-sm transition-colors',
                             active
-                              ? 'bg-[var(--hg-secondary)] font-medium text-white'
+                              ? 'bg-[var(--hg-soft)] font-semibold text-black'
                               : 'font-normal text-[#6b7c93] hover:bg-[#eef1f6] hover:text-[#4a5a73]',
                           )}
                         >
                           <item.icon
                             className={cn(
                               'h-[18px] w-[18px] shrink-0 stroke-[1.75]',
-                              active ? 'text-white' : 'text-[#8a9bb0]',
+                              active ? 'text-black' : 'text-[#8a9bb0]',
                             )}
                           />
                           {item.label}

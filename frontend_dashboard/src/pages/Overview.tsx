@@ -57,7 +57,7 @@ export default function Overview() {
 
       <section className="space-y-3">
         <SectionTitle description="Totals and trends for the selected volume window.">
-          Post Statistics
+          Post Overview
         </SectionTitle>
         <StatsCards volume={volume} periodLabel={periodLabel} />
       </section>
@@ -65,7 +65,7 @@ export default function Overview() {
       <VolumePanel onVolumeChange={handleVolumeChange} />
 
       <Card className="pt-0">
-        <CardHeader className="rounded-t-[4px] border-b-2 border-[var(--hg-secondary)] bg-[#ffe6e6b1] pt-(--card-spacing) pb-4">
+        <CardHeader className="rounded-t-[4px] border-b-2 border-[var(--hg-secondary)] bg-[var(--hg-soft)] pt-(--card-spacing) pb-4">
           <SectionTitle size="md" description="Held-out test metrics for the active language model.">
             Model Performance Summary
           </SectionTitle>
