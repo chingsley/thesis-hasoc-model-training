@@ -5,6 +5,7 @@ import { USE_MOCK } from '@/lib/api/config'
 import { useDashboardStore } from '@/lib/store/dashboard'
 import { useMemo } from 'react'
 import { Loader2 } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 export type WordCloudSource = 'frequent' | 'toxic'
 
@@ -20,6 +21,18 @@ const MOCK_TOXIC_TERMS = new Set([
   'okwu', 'nke', 'mad', 'ka', 'asi', 'ko', 'talika', 'egbin',
   'ole', 'arekereke', 'iwe', 'irori', 'ogun', 'idajo',
 ])
+
+/** One hue per cloud; intensity tracks the same signal as size (no decorative colors). */
+function colorForRatio(source: WordCloudSource, ratio: number): string {
+  if (source === 'toxic') {
+    // Alert red — darker = stronger toxicity contribution
+    const light = Math.round(46 - ratio * 18)
+    return `hsl(346, 100%, ${light}%)`
+  }
+  // Brand purple — darker = more frequent
+  const light = Math.round(48 - ratio * 18)
+  return `hsl(255, 22%, ${light}%)`
+}
 
 interface ToxicWordCloudProps {
   /** 'frequent' = most common words in Hate/Abuse posts (surfaces targets);
@@ -42,7 +55,7 @@ export function ToxicWordCloud({ source = 'frequent' }: ToxicWordCloudProps) {
       return query.data ?? []
     }
     const posts = getMockPosts().filter(
-      (p) => p.language === language && (p.label === 'Hate' || p.label === 'Abuse')
+      (p) => p.language === language && (p.label === 'Hate' || p.label === 'Abuse'),
     )
     const freq = new Map<string, number>()
     posts.forEach((p) => {
@@ -62,11 +75,10 @@ export function ToxicWordCloud({ source = 'frequent' }: ToxicWordCloudProps) {
   }, [language, query.data, source])
 
   const maxVal = Math.max(...words.map((w) => w.value), source === 'toxic' ? 0.0001 : 1)
-  const fontSizeRange = { min: 12, max: 48 }
 
   if (!USE_MOCK && query.isPending) {
     return (
-      <div className="flex items-center justify-center py-8 text-muted-foreground gap-2">
+      <div className="flex min-h-[240px] items-center justify-center gap-2 text-[var(--hg-muted)]">
         <Loader2 className="h-5 w-5 animate-spin" />
         <span className="text-sm">
           {source === 'toxic' ? 'Measuring word toxicity…' : 'Loading…'}
@@ -77,21 +89,22 @@ export function ToxicWordCloud({ source = 'frequent' }: ToxicWordCloudProps) {
 
   if (words.length === 0) {
     return (
-      <p className="text-center text-muted-foreground py-8">
+      <p className="min-h-[240px] py-8 text-center text-[var(--hg-muted)]">
         {source === 'toxic' ? 'No toxic terms identified yet' : 'No toxic terms to display'}
       </p>
     )
   }
 
   return (
-    <div className="flex flex-wrap justify-center gap-1 p-4 min-h-[200px] items-center">
+    <div
+      className="flex min-h-[240px] flex-wrap content-center items-center justify-center gap-x-2.5 gap-y-1 rounded-[4px] bg-[var(--hg-canvas)] px-5 py-8 md:min-h-[280px] md:px-8 md:py-10"
+      role="list"
+      aria-label={source === 'toxic' ? 'Toxic terms word cloud' : 'Frequent terms word cloud'}
+    >
       {words.map(({ text, value, count, contribution }) => {
-        const ratio = value / maxVal
-        const fontSize = fontSizeRange.min + ratio * (fontSizeRange.max - fontSizeRange.min)
-        const opacity = 0.4 + ratio * 0.6
-        const hue = 0
-        const sat = Math.round(70 + ratio * 30)
-        const light = Math.round(80 - ratio * 40)
+        const ratio = Math.sqrt(Math.max(0, value) / maxVal)
+        const fontSize = 13 + ratio * 30
+        const weight = ratio > 0.72 ? 700 : ratio > 0.4 ? 600 : 500
 
         const title =
           source === 'toxic' && count !== undefined && contribution !== undefined
@@ -101,14 +114,18 @@ export function ToxicWordCloud({ source = 'frequent' }: ToxicWordCloudProps) {
         return (
           <span
             key={text}
+            role="listitem"
+            title={title}
             style={{
               fontSize: `${fontSize}px`,
-              opacity,
-              color: `hsl(${hue}, ${sat}%, ${light}%)`,
-              cursor: 'pointer',
+              fontWeight: weight,
+              color: colorForRatio(source, ratio),
+              lineHeight: 1.15,
             }}
-            className="px-1 py-0.5 rounded hover:bg-accent transition-colors"
-            title={title}
+            className={cn(
+              'cursor-default select-none rounded-[3px] px-0.5 transition-colors',
+              'hover:bg-white/80',
+            )}
           >
             {text}
           </span>

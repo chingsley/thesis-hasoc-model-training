@@ -16,9 +16,11 @@ import type { VolumeDataPoint } from '@/lib/types'
 
 interface VolumePanelProps {
   onVolumeChange?: (data: VolumeDataPoint[] | undefined, rangeLabel: string) => void
+  /** Render chart + controls without an outer Card (for embedding in a parent shell). */
+  embedded?: boolean
 }
 
-export function VolumePanel({ onVolumeChange }: VolumePanelProps) {
+export function VolumePanel({ onVolumeChange, embedded = false }: VolumePanelProps) {
   const language = useDashboardStore((s) => s.language)
   const mode = useVolumeSelectionStore((s) => s.mode)
   const customFrom = useVolumeSelectionStore((s) => s.customFrom)
@@ -65,6 +67,100 @@ export function VolumePanel({ onVolumeChange }: VolumePanelProps) {
     downloadVolumeCsv(volumeData, `hateguard-volume-${language}-${stamp}.csv`)
   }
 
+  const toolbar = (
+    <div className="flex flex-col items-stretch gap-2 sm:items-end">
+      <div className="flex flex-wrap items-center justify-end gap-1.5">
+        <div
+          className="inline-flex rounded-[8px] border border-[var(--hg-border)] bg-[var(--hg-canvas)] p-0.5"
+          role="group"
+          aria-label="Chart style"
+        >
+          <button
+            type="button"
+            aria-pressed={chartStyle === 'line'}
+            onClick={() => setChartStyle('line')}
+            className={cn(
+              'inline-flex items-center gap-1 rounded-[6px] px-2.5 py-1.5 text-xs font-medium transition-colors',
+              chartStyle === 'line'
+                ? 'bg-white text-[var(--hg-ink)] shadow-sm'
+                : 'text-[var(--hg-muted)] hover:bg-[var(--hg-soft)] hover:text-black',
+            )}
+            title="Line chart"
+          >
+            <LineChartIcon className="h-3.5 w-3.5" />
+            Line
+          </button>
+          <button
+            type="button"
+            aria-pressed={chartStyle === 'stacked'}
+            onClick={() => setChartStyle('stacked')}
+            className={cn(
+              'inline-flex items-center gap-1 rounded-[6px] px-2.5 py-1.5 text-xs font-medium transition-colors',
+              chartStyle === 'stacked'
+                ? 'bg-white text-[var(--hg-ink)] shadow-sm'
+                : 'text-[var(--hg-muted)] hover:bg-[var(--hg-soft)] hover:text-black',
+            )}
+            title="Stacked area"
+          >
+            <Layers className="h-3.5 w-3.5" />
+            Stacked
+          </button>
+        </div>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          className="h-8 gap-1.5 rounded-[8px] border-[var(--hg-border)] text-xs hover:bg-[var(--hg-soft)] hover:text-black"
+          onClick={handleDownload}
+          disabled={!volumeData?.length}
+          title="Download CSV"
+        >
+          <Download className="h-3.5 w-3.5" />
+          CSV
+        </Button>
+      </div>
+      <VolumeRangeToggle
+        mode={mode}
+        customFrom={customFrom}
+        customTo={customTo}
+        onPreset={setPreset}
+        onCustomMode={setCustomMode}
+        onCustomRange={setCustomRange}
+      />
+    </div>
+  )
+
+  const body = (
+    <>
+      {isLoading && !volumeData ? (
+        <div className="flex h-[360px] items-center justify-center">
+          <Loader2 className="h-6 w-6 animate-spin text-[var(--hg-subtle)]" />
+        </div>
+      ) : !hasData ? (
+        <div className="flex h-[360px] flex-col items-center justify-center gap-1 rounded-[4px] border border-dashed border-[var(--hg-border)] bg-[var(--hg-canvas)] text-center">
+          <p className="text-sm font-medium text-[var(--hg-ink)]">No posts in this window</p>
+          <p className="max-w-sm text-xs text-[var(--hg-muted)]">
+            Try a wider range, switch language, or classify posts in Testing Tools.
+          </p>
+        </div>
+      ) : (
+        <VolumeChart data={volumeData!} range={range} chartStyle={chartStyle} />
+      )}
+    </>
+  )
+
+  if (embedded) {
+    return (
+      <div className="space-y-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <p className="text-xs text-[var(--hg-muted)]">{volumeDescription}</p>
+          {toolbar}
+        </div>
+        {body}
+      </div>
+    )
+  }
+
   return (
     <Card>
       <CardHeader className="gap-4 border-b border-[var(--hg-border)] pb-4">
@@ -81,85 +177,9 @@ export function VolumePanel({ onVolumeChange }: VolumePanelProps) {
             </span>
           </span>
         </SectionTitle>
-        <CardAction>
-          <div className="flex flex-col items-stretch gap-2 sm:items-end">
-            <div className="flex flex-wrap items-center justify-end gap-1.5">
-              <div
-                className="inline-flex rounded-[8px] border border-[var(--hg-border)] bg-[var(--hg-canvas)] p-0.5"
-                role="group"
-                aria-label="Chart style"
-              >
-                <button
-                  type="button"
-                  aria-pressed={chartStyle === 'line'}
-                  onClick={() => setChartStyle('line')}
-                  className={cn(
-                    'inline-flex items-center gap-1 rounded-[6px] px-2.5 py-1.5 text-xs font-medium transition-colors',
-                    chartStyle === 'line'
-                      ? 'bg-white text-[var(--hg-ink)] shadow-sm'
-                      : 'text-[var(--hg-muted)] hover:bg-[var(--hg-soft)] hover:text-black',
-                  )}
-                  title="Line chart"
-                >
-                  <LineChartIcon className="h-3.5 w-3.5" />
-                  Line
-                </button>
-                <button
-                  type="button"
-                  aria-pressed={chartStyle === 'stacked'}
-                  onClick={() => setChartStyle('stacked')}
-                  className={cn(
-                    'inline-flex items-center gap-1 rounded-[6px] px-2.5 py-1.5 text-xs font-medium transition-colors',
-                    chartStyle === 'stacked'
-                      ? 'bg-white text-[var(--hg-ink)] shadow-sm'
-                      : 'text-[var(--hg-muted)] hover:bg-[var(--hg-soft)] hover:text-black',
-                  )}
-                  title="Stacked area"
-                >
-                  <Layers className="h-3.5 w-3.5" />
-                  Stacked
-                </button>
-              </div>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                className="h-8 gap-1.5 rounded-[8px] border-[var(--hg-border)] text-xs hover:bg-[var(--hg-soft)] hover:text-black"
-                onClick={handleDownload}
-                disabled={!volumeData?.length}
-                title="Download CSV"
-              >
-                <Download className="h-3.5 w-3.5" />
-                CSV
-              </Button>
-            </div>
-            <VolumeRangeToggle
-              mode={mode}
-              customFrom={customFrom}
-              customTo={customTo}
-              onPreset={setPreset}
-              onCustomMode={setCustomMode}
-              onCustomRange={setCustomRange}
-            />
-          </div>
-        </CardAction>
+        <CardAction>{toolbar}</CardAction>
       </CardHeader>
-      <CardContent className="pt-5">
-        {isLoading && !volumeData ? (
-          <div className="flex h-[360px] items-center justify-center">
-            <Loader2 className="h-6 w-6 animate-spin text-[var(--hg-subtle)]" />
-          </div>
-        ) : !hasData ? (
-          <div className="flex h-[360px] flex-col items-center justify-center gap-1 rounded-[4px] border border-dashed border-[var(--hg-border)] bg-[var(--hg-canvas)] text-center">
-            <p className="text-sm font-medium text-[var(--hg-ink)]">No posts in this window</p>
-            <p className="max-w-sm text-xs text-[var(--hg-muted)]">
-              Try a wider range, switch language, or classify posts in Testing Tools.
-            </p>
-          </div>
-        ) : (
-          <VolumeChart data={volumeData!} range={range} chartStyle={chartStyle} />
-        )}
-      </CardContent>
+      <CardContent className="pt-5">{body}</CardContent>
     </Card>
   )
 }
