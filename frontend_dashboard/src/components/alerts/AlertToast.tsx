@@ -1,20 +1,25 @@
-import { useDashboardStore } from '@/lib/store/dashboard'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { toast } from 'sonner'
+import { useDashboardStore } from '@/lib/store/dashboard'
 
+/** Surfaces newly arrived unread alerts once (layout-mounted). */
 export function AlertToast() {
   const alerts = useDashboardStore((s) => s.alerts)
-  const unreadAlerts = alerts.filter((a) => !a.read).slice(0, 3)
+  const toastedIds = useRef(new Set<string>())
 
   useEffect(() => {
-    unreadAlerts.forEach((alert) => {
-      const method = alert.severity === 'high' ? 'error' : alert.severity === 'medium' ? 'warning' : 'info'
+    const unread = alerts.filter((a) => !a.read)
+    const fresh = unread.filter((a) => !toastedIds.current.has(a.id)).slice(0, 3)
+    fresh.forEach((alert) => {
+      toastedIds.current.add(alert.id)
+      const method =
+        alert.severity === 'high' ? 'error' : alert.severity === 'medium' ? 'warning' : 'info'
       toast[method](alert.message, {
         description: new Date(alert.timestamp).toLocaleString(),
         duration: 6000,
       })
     })
-  }, [unreadAlerts.map((a) => a.id).join(',')])
+  }, [alerts])
 
   return null
 }

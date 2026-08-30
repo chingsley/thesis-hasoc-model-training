@@ -2,9 +2,13 @@ import { useState } from 'react'
 import { Outlet } from 'react-router-dom'
 import { Sidebar } from './Sidebar'
 import { Header } from './Header'
+import { useAlerts } from '@/hooks/use-alerts'
+import { AlertToast } from '@/components/alerts/AlertToast'
+import { Toaster } from '@/components/ui/sonner'
 
 export function DashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  useAlerts()
 
   return (
     <div className="flex h-screen overflow-hidden bg-[#eaebf4]">
@@ -17,6 +21,8 @@ export function DashboardLayout() {
           </div>
         </main>
       </div>
+      <AlertToast />
+      <Toaster />
     </div>
   )
 }

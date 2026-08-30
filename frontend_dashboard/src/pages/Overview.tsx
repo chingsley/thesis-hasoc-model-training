@@ -1,9 +1,7 @@
 import { useCallback, useState } from 'react'
 import { useModelMetrics } from '@/hooks/use-metrics'
-import { useAlerts } from '@/hooks/use-alerts'
 import { StatsCards } from '@/components/dashboard/StatsCards'
 import { VolumePanel } from '@/components/charts/VolumePanel'
-import { AlertToast } from '@/components/alerts/AlertToast'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { SectionTitle } from '@/components/ui/data-source-badge'
 import { cn } from '@/lib/utils'
@@ -44,7 +42,6 @@ export default function Overview() {
   const { data: metrics, isError: metricsError } = useModelMetrics()
   const [volume, setVolume] = useState<VolumeDataPoint[] | undefined>()
   const [periodLabel, setPeriodLabel] = useState('24 Hours')
-  useAlerts()
 
   const handleVolumeChange = useCallback((data: VolumeDataPoint[] | undefined, label: string) => {
     setVolume(data)
@@ -53,8 +50,6 @@ export default function Overview() {
 
   return (
     <div className="space-y-8">
-      <AlertToast />
-
       <section className="space-y-3">
         <SectionTitle description="Totals and trends for the selected volume window.">
           Post Overview

@@ -1,4 +1,4 @@
-import { Bell, Menu } from 'lucide-react'
+import { Menu } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { DataSourceBadge } from '@/components/ui/data-source-badge'
 import {
@@ -8,6 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { AlertsBell } from '@/components/alerts/AlertsBell'
 import { useDashboardStore } from '@/lib/store/dashboard'
 import type { Language } from '@/lib/types'
 import { cn } from '@/lib/utils'
@@ -28,7 +29,6 @@ const HEADER_CUTOUT_PATH =
 export function Header({ onMenuClick }: HeaderProps) {
   const language = useDashboardStore((s) => s.language)
   const setLanguage = useDashboardStore((s) => s.setLanguage)
-  const unreadAlertCount = useDashboardStore((s) => s.unreadAlertCount)
 
   return (
     <header className="sticky top-0 z-30 bg-[#eaebf4]">
@@ -116,17 +116,7 @@ export function Header({ onMenuClick }: HeaderProps) {
               </SelectContent>
             </Select>
 
-            <Button variant="ghost" size="icon" className="relative text-[var(--hg-muted)]">
-              <Bell className="h-5 w-5" />
-              {unreadAlertCount > 0 && (
-                <span
-                  aria-label={`${unreadAlertCount} unread alerts`}
-                  className="absolute -top-0.5 -right-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-[var(--hg-secondary)] px-1 text-[11px] font-bold leading-none text-white tabular-nums shadow-sm ring-2 ring-white"
-                >
-                  {unreadAlertCount > 99 ? '99+' : unreadAlertCount}
-                </span>
-              )}
-            </Button>
+            <AlertsBell />
           </div>
         </div>
       </div>
