@@ -52,38 +52,72 @@ export default function Explainability() {
               Select a Post
             </SectionTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-0">
             {isLoading ? (
               <div className="flex items-center justify-center py-8">
-                <Loader2 className="h-6 w-6 animate-spin" />
+                <Loader2 className="h-6 w-6 animate-spin text-[var(--hg-muted)]" />
               </div>
             ) : (
-              <ScrollArea className="h-[600px] pr-4">
-                <div className="space-y-2">
-                  {(posts ?? []).slice(0, 30).map((post) => (
-                    <button
-                      key={post.id}
-                      onClick={() => setSelectedPost(post)}
-                      className={`w-full rounded-[8px] border p-3 text-left transition-colors ${
-                        selectedPost?.id === post.id
-                          ? 'border-primary bg-primary/5'
-                          : 'border-border hover:bg-accent'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between gap-2">
-                        <p className="line-clamp-2 flex-1 text-sm">{post.tweet}</p>
-                        <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" />
-                      </div>
-                      <div className="mt-2 flex gap-2">
-                        <Badge variant="outline" className="text-xs">
-                          {post.id}
-                        </Badge>
-                        <Badge variant={labelBadgeVariant(post.label)} className="text-xs">
-                          {post.label}
-                        </Badge>
-                      </div>
-                    </button>
-                  ))}
+              <ScrollArea className="h-[600px]">
+                <div
+                  className="divide-y divide-[var(--hg-border)] pr-5"
+                  role="listbox"
+                  aria-label="Posts"
+                >
+                  {(posts ?? []).slice(0, 30).map((post) => {
+                    const selected = selectedPost?.id === post.id
+                    return (
+                      <button
+                        key={post.id}
+                        type="button"
+                        role="option"
+                        aria-selected={selected}
+                        onClick={() => setSelectedPost(post)}
+                        className={`group flex w-full gap-3 px-1 py-3.5 pr-2 text-left transition-colors ${
+                          selected
+                            ? 'bg-[var(--hg-soft)]/50'
+                            : 'hover:bg-[var(--hg-canvas)]'
+                        }`}
+                      >
+                        <span
+                          aria-hidden
+                          className={`mt-0.5 w-0.5 shrink-0 self-stretch rounded-full transition-colors ${
+                            selected ? 'bg-[var(--hg-brand)]' : 'bg-transparent group-hover:bg-[var(--hg-border)]'
+                          }`}
+                        />
+                        <div className="min-w-0 flex-1 space-y-2">
+                          <p
+                            className={`line-clamp-2 text-sm leading-snug ${
+                              selected ? 'font-medium text-[var(--hg-ink)]' : 'text-[var(--hg-ink)]'
+                            }`}
+                          >
+                            {post.tweet}
+                          </p>
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span className="font-mono text-[11px] text-[var(--hg-subtle)]">
+                              {post.id}
+                            </span>
+                            <span aria-hidden className="text-[var(--hg-border)]">
+                              ·
+                            </span>
+                            <Badge
+                              variant={labelBadgeVariant(post.predicted_label)}
+                              className="rounded-[4px] text-[10px] font-semibold"
+                            >
+                              {post.predicted_label}
+                            </Badge>
+                          </div>
+                        </div>
+                        <ChevronRight
+                          className={`mt-1 size-4 shrink-0 transition-colors ${
+                            selected
+                              ? 'text-[var(--hg-brand)]'
+                              : 'text-[var(--hg-subtle)] group-hover:text-[var(--hg-muted)]'
+                          }`}
+                        />
+                      </button>
+                    )
+                  })}
                 </div>
               </ScrollArea>
             )}

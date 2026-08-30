@@ -25,6 +25,7 @@ export function DataTable<T>({
   empty,
   maxHeight = '420px',
   className,
+  caption,
 }: {
   columns: DataTableColumn<T>[]
   data: readonly T[]
@@ -34,40 +35,79 @@ export function DataTable<T>({
   empty?: ReactNode
   maxHeight?: string
   className?: string
+  /** Accessible name announced by screen readers */
+  caption?: string
 }) {
   if (data.length === 0) {
-    return empty ?? null
+    return (
+      <div
+        className={cn(
+          'flex min-h-[200px] items-center justify-center rounded-[4px] border border-dashed border-[var(--hg-border)] bg-[var(--hg-canvas)]/50 px-6 py-12',
+          className,
+        )}
+        role="status"
+      >
+        {empty ?? (
+          <p className="text-sm text-[var(--hg-muted)]">No results</p>
+        )}
+      </div>
+    )
   }
 
   return (
     <div
-      className={cn('overflow-auto rounded-[8px] border border-border/70 bg-card shadow-sm', className)}
+      className={cn(
+        'overflow-auto rounded-[4px] border border-[var(--hg-border)] bg-white shadow-[var(--hg-shadow)]',
+        className,
+      )}
       style={{ maxHeight }}
     >
-      <table className="w-full caption-bottom text-sm">
-        <TableHeader>
-          <TableRow>
+      <table className="w-full caption-bottom border-separate border-spacing-0 text-sm">
+        {caption ? <caption className="sr-only">{caption}</caption> : null}
+        <TableHeader className="sticky top-0 z-10 bg-[var(--hg-canvas)] [&_tr]:border-b-0 [&_tr]:hover:bg-transparent">
+          <TableRow className="border-0 hover:bg-transparent">
             {columns.map((col) => (
-              <TableHead key={col.id} className={col.headerClassName}>
+              <TableHead
+                key={col.id}
+                scope="col"
+                className={cn(
+                  'h-10 border-b border-[var(--hg-border)] bg-[var(--hg-canvas)] px-4 text-[11px] font-semibold tracking-wide text-[var(--hg-muted)] uppercase',
+                  col.headerClassName,
+                )}
+              >
                 {col.header}
               </TableHead>
             ))}
             {actions ? (
-              <TableHead>{actionsHeader}</TableHead>
+              <TableHead
+                scope="col"
+                className="sticky right-0 z-20 h-10 border-b border-[var(--hg-border)] bg-[var(--hg-canvas)] px-4 text-right text-[11px] font-semibold tracking-wide text-[var(--hg-muted)] uppercase"
+              >
+                {actionsHeader}
+              </TableHead>
             ) : null}
           </TableRow>
         </TableHeader>
-        <TableBody>
+        <TableBody className="[&_tr:nth-child(even)]:bg-transparent">
           {data.map((row) => (
-            <TableRow key={getRowId(row)}>
+            <TableRow
+              key={getRowId(row)}
+              className="border-0 transition-colors hover:bg-[var(--hg-soft)]/35"
+            >
               {columns.map((col) => (
-                <TableCell key={col.id} className={col.className}>
+                <TableCell
+                  key={col.id}
+                  className={cn(
+                    'border-b border-[var(--hg-border)] px-4 py-3.5 align-middle text-[var(--hg-ink)]',
+                    col.className,
+                  )}
+                >
                   {col.cell(row)}
                 </TableCell>
               ))}
               {actions ? (
-                <TableCell>
-                  <div className="flex items-center gap-0.5">{actions(row)}</div>
+                <TableCell className="sticky right-0 border-b border-[var(--hg-border)] bg-white px-3 py-3 align-middle shadow-[-6px_0_8px_-6px_rgba(15,28,51,0.06)] group-hover/row:bg-[color-mix(in_srgb,var(--hg-soft)_35%,white)]">
+                  <div className="flex items-center justify-end gap-1">{actions(row)}</div>
                 </TableCell>
               ) : null}
             </TableRow>
