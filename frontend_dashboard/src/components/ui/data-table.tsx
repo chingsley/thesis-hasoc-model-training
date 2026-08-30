@@ -81,7 +81,7 @@ export function DataTable<T>({
             {actions ? (
               <TableHead
                 scope="col"
-                className="sticky right-0 z-20 h-10 border-b border-[var(--hg-border)] bg-[var(--hg-canvas)] px-4 text-right text-[11px] font-semibold tracking-wide text-[var(--hg-muted)] uppercase"
+                className="sticky right-0 z-20 h-10 border-b border-[var(--hg-border)] bg-[var(--hg-canvas)] px-4 text-left text-[11px] font-semibold tracking-wide text-[var(--hg-muted)] uppercase"
               >
                 {actionsHeader}
               </TableHead>
