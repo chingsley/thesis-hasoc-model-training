@@ -50,12 +50,11 @@ export default function Overview() {
 
   return (
     <div className="space-y-8">
-      <section className="space-y-3">
-        <SectionTitle description="Totals and trends for the selected volume window.">
-          Post Overview
-        </SectionTitle>
-        <StatsCards volume={volume} periodLabel={periodLabel} />
-      </section>
+      <SectionTitle description="Totals and trends for the selected volume window.">
+        Post Overview
+      </SectionTitle>
+
+      <StatsCards volume={volume} periodLabel={periodLabel} />
 
       <VolumePanel onVolumeChange={handleVolumeChange} />
 
