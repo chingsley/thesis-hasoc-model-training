@@ -36,7 +36,9 @@ export default function Reports() {
         className="w-full gap-8"
       >
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <SectionTitle description={current.description}>{current.title}</SectionTitle>
+          <SectionTitle description={current.description}>
+            {current.title}
+          </SectionTitle>
           <TabsList className="h-auto w-fit shrink-0 justify-end gap-0 rounded-[4px] border border-[var(--hg-border)] bg-[var(--hg-canvas)] p-0.5">
             {TABS.map((tab) => (
               <TabsTrigger

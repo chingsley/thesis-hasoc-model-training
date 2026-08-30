@@ -1,3 +1,4 @@
+import { useRef, type RefObject } from 'react'
 import { Menu } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { DataSourceBadge } from '@/components/ui/data-source-badge'
@@ -9,12 +10,15 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { AlertsBell } from '@/components/alerts/AlertsBell'
+import { useTitleChipProgress } from '@/hooks/use-title-chip-progress'
 import { useDashboardStore } from '@/lib/store/dashboard'
+import { usePageTitleStore } from '@/lib/store/page-title'
 import type { Language } from '@/lib/types'
 import { cn } from '@/lib/utils'
 
 interface HeaderProps {
   onMenuClick: () => void
+  scrollRootRef: RefObject<HTMLElement | null>
 }
 
 const LANGUAGES: { value: Language; label: string }[] = [
@@ -26,12 +30,17 @@ const LANGUAGES: { value: Language; label: string }[] = [
 const HEADER_CUTOUT_PATH =
   'M0.20,0 C0.22,0.18 0.23,0.42 0.24,0.62 C0.25,0.82 0.26,0.94 0.28,1 L1,1 L1,0 Z'
 
-export function Header({ onMenuClick }: HeaderProps) {
+export function Header({ onMenuClick, scrollRootRef }: HeaderProps) {
   const language = useDashboardStore((s) => s.language)
   const setLanguage = useDashboardStore((s) => s.setLanguage)
+  const titleEl = usePageTitleStore((s) => s.titleEl)
+  const chipLabel = usePageTitleStore((s) => s.chipLabel)
+  const headerRef = useRef<HTMLElement>(null)
+  const progress = useTitleChipProgress(titleEl, headerRef, scrollRootRef)
+  const chipVisible = Boolean(chipLabel) && progress > 0.01
 
   return (
-    <header className="sticky top-0 z-30 bg-[#eaebf4]">
+    <header ref={headerRef} className="sticky top-0 z-30 bg-[#eaebf4]">
       <div className="relative h-16 w-full">
         <svg width={0} height={0} className="absolute" aria-hidden>
           <defs>
@@ -64,11 +73,35 @@ export function Header({ onMenuClick }: HeaderProps) {
         </svg>
 
         <div className="relative z-10 flex h-full w-full items-center justify-between">
-          <div className="flex w-1/5 items-center gap-3 px-4 md:px-6 lg:px-8">
+          <div className="flex w-1/5 min-w-0 items-center gap-2 px-4 md:px-6 lg:px-8">
             <Button variant="ghost" size="icon" className="lg:hidden" onClick={onMenuClick}>
               <Menu className="h-5 w-5" />
             </Button>
-            <DataSourceBadge />
+            <DataSourceBadge className="hidden sm:inline-flex" />
+          </div>
+
+          {/* Page-title chip: flush with header top, descends as the page title scrolls under */}
+          <div
+            className="pointer-events-none absolute top-0 left-4 z-20 h-2/3 md:left-6 lg:left-8"
+            aria-hidden={!chipVisible}
+          >
+            <div className="h-full overflow-hidden">
+              {chipLabel ? (
+                <div
+                  className={cn(
+                    'inline-flex h-full min-w-[180px] items-center justify-center whitespace-nowrap bg-[#4a3f6e] px-3',
+                    'rounded-none rounded-b-[16px]',
+                    'text-[11px] font-semibold tracking-[0.08em] text-white uppercase',
+                    'will-change-transform',
+                  )}
+                  style={{
+                    transform: `translate3d(0, ${(1 - progress) * -100}%, 0)`,
+                  }}
+                >
+                  {chipLabel}
+                </div>
+              ) : null}
+            </div>
           </div>
 
           <div className="flex flex-1 items-center justify-end gap-2 px-4 md:px-6 lg:px-8">
