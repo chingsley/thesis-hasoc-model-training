@@ -173,7 +173,7 @@ function RelabelForm({
         <Button
           onClick={handleSave}
           disabled={saving}
-          className="h-9 rounded-[4px] bg-[var(--hg-ink)] px-4 text-white hover:bg-[var(--hg-ink)]/90"
+          className="h-9 rounded-[4px] bg-[#4a3f6e] px-4 text-white hover:bg-[#3d355c]"
         >
           {saving ? (
             <>

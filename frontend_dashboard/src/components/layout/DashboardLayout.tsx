@@ -13,7 +13,7 @@ export function DashboardLayout() {
 
   return (
     <div className="flex h-screen overflow-hidden bg-[#eaebf4]">
-      <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <Sidebar mobileOpen={sidebarOpen} onMobileClose={() => setSidebarOpen(false)} />
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
         <Header onMenuClick={() => setSidebarOpen(true)} scrollRootRef={mainRef} />
         <main ref={mainRef} className="flex-1 overflow-auto">

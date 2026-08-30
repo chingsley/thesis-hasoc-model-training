@@ -95,9 +95,21 @@ function ClusterKpiStrip({ clusters }: { clusters: PostCluster[] }) {
   ]
 
   return (
-    <div className="flex flex-wrap gap-x-8 gap-y-3 border-b border-[var(--hg-border)] pb-4">
-      {items.map((item) => (
-        <div key={item.label} className="min-w-0">
+    <div className="flex flex-wrap items-stretch border-b border-[var(--hg-border)] pb-4">
+      {items.map((item, index) => (
+        <div
+          key={item.label}
+          className={cn(
+            'relative min-w-0 py-0.5 pr-8',
+            index > 0 && 'pl-8',
+          )}
+        >
+          {index > 0 && (
+            <span
+              aria-hidden
+              className="absolute top-0.5 bottom-0.5 left-0 w-px bg-[var(--hg-border)]"
+            />
+          )}
           <p className="text-[10px] font-medium tracking-wide text-[var(--hg-subtle)] uppercase">
             {item.label}
           </p>
