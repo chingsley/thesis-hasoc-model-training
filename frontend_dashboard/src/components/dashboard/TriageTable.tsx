@@ -9,9 +9,11 @@ import { DatePickerField } from '@/components/ui/date-picker'
 import type { RelabelMode } from './RelabelSheet'
 import { DateCell, HateProbCell, PostIdCell, PostTextCell, PredictionCell } from './post-cells'
 import { useFlagPost, useUpdateTriageStatus } from '@/hooks/use-posts'
+import { useDashboardStore } from '@/lib/store/dashboard'
 import { cn } from '@/lib/utils'
 import {
   CheckCircle,
+  Download,
   Flag,
   FlagOff,
   ListFilter,
@@ -21,6 +23,24 @@ import {
   Tags,
   X,
 } from 'lucide-react'
+
+const CSV_HEADER =
+  'id,tweet,label,predicted_label,manual_label,hate_probability,triage_status,flagged,reported_date'
+
+function toCsvRow(p: Post): string {
+  const date = (p.timestamp || '').split('T')[0]
+  return [
+    p.id,
+    `"${p.tweet.replace(/"/g, '""')}"`,
+    p.label,
+    p.predicted_label,
+    p.manual_label ?? '',
+    p.probabilities.hate.toFixed(3),
+    p.triage_status,
+    String(p.flagged),
+    date,
+  ].join(',')
+}
 
 export type TriageBucket = 'pending' | 'cleared' | 'flagged' | 'relabelled'
 export type TriageLabelFilter = 'all' | 'Hate' | 'Abuse'
@@ -155,6 +175,7 @@ export function TriageTable({
   const [minHate, setMinHate] = useState('')
   const [maxHate, setMaxHate] = useState('')
   const [filterOpen, setFilterOpen] = useState(false)
+  const language = useDashboardStore((s) => s.language)
   const flagMutation = useFlagPost()
   const statusMutation = useUpdateTriageStatus()
 
@@ -175,6 +196,18 @@ export function TriageTable({
 
   const activeFilterCount = [startDate, endDate, minHate, maxHate].filter(Boolean).length
   const hasRangeFilters = activeFilterCount > 0
+
+  const handleDownloadCsv = () => {
+    if (filtered.length === 0) return
+    const csv = [CSV_HEADER, ...filtered.map(toCsvRow)].join('\n')
+    const blob = new Blob([csv], { type: 'text/csv' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `triage_${bucket}_${language}_${new Date().toISOString().slice(0, 10)}.csv`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
 
   const labelCounts = {
     all: posts.length,
@@ -461,6 +494,18 @@ export function TriageTable({
               )
             })}
           </div>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={handleDownloadCsv}
+            disabled={filtered.length === 0}
+            className="h-8 gap-1.5 rounded-[4px] border-[var(--hg-border)] text-xs hover:bg-[var(--hg-soft)] hover:text-black"
+            title="Download CSV"
+          >
+            <Download className="size-3.5" />
+            CSV
+          </Button>
         </div>
       </div>
 

@@ -131,13 +131,7 @@ export function TextTester() {
           )}
         />
 
-        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[var(--hg-border)] bg-white px-4 py-3">
-          <p className="text-[11px] text-[var(--hg-muted)]">
-            <span className="font-mono tabular-nums text-[var(--hg-ink)]">{text.trim().length}</span>
-            {' '}characters
-            <span className="mx-1.5 text-[var(--hg-subtle)]">·</span>
-            ⌘/Ctrl + Enter to run
-          </p>
+        <div className="flex flex-wrap items-center gap-3 border-t border-[var(--hg-border)] bg-white px-4 py-3">
           <Button
             type="button"
             onClick={runAnalyze}
@@ -151,6 +145,12 @@ export function TextTester() {
             )}
             {mutation.isPending ? 'Analyzing…' : 'Analyze'}
           </Button>
+          <p className="text-[11px] text-[var(--hg-muted)]">
+            <span className="font-mono tabular-nums text-[var(--hg-ink)]">{text.trim().length}</span>
+            {' '}characters
+            <span className="mx-1.5 text-[var(--hg-subtle)]">·</span>
+            ⌘/Ctrl + Enter to run
+          </p>
         </div>
       </div>
 
