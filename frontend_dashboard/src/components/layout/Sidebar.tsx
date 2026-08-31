@@ -54,6 +54,8 @@ const navSections: NavSection[] = [
 ]
 
 const COLLAPSED_KEY = 'hg-sidebar-collapsed'
+const SIDEBAR_EASE =
+  'transition-[width,padding,gap,opacity,max-width,margin,transform] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]'
 
 function readCollapsed(): boolean {
   try {
@@ -80,39 +82,40 @@ function NavLinkItem({
   onNavigate: () => void
 }) {
   const linkClass = cn(
-    'relative flex cursor-pointer items-center gap-3 px-6 py-2.5 text-sm transition-colors',
-    collapsed && 'lg:justify-center lg:gap-0 lg:px-0',
+    // Same padding & alignment in both states so icons never shift.
+    'relative flex cursor-pointer items-center px-6 py-2.5 text-sm',
+    SIDEBAR_EASE,
     active
       ? 'bg-[var(--hg-soft)] font-semibold text-black'
       : 'font-normal text-[var(--hg-muted)] hover:bg-[#eef1f6] hover:text-[var(--hg-ink)]',
   )
 
-  const icon = (
-    <item.icon
-      className={cn(
-        'h-[18px] w-[18px] shrink-0 stroke-[1.75]',
-        active ? 'text-black' : 'text-[var(--hg-subtle)]',
-      )}
-    />
+  const body = (
+    <>
+      <item.icon
+        className={cn(
+          'h-[18px] w-[18px] shrink-0 stroke-[1.75]',
+          active ? 'text-black' : 'text-[var(--hg-subtle)]',
+        )}
+      />
+      <span
+        className={cn(
+          'overflow-hidden whitespace-nowrap',
+          SIDEBAR_EASE,
+          collapsed
+            ? 'ml-0 max-w-0 opacity-0'
+            : 'ml-3 max-w-[11rem] opacity-100',
+        )}
+      >
+        {item.label}
+      </span>
+    </>
   )
-
-  const label = (
-    <span className={cn(collapsed && 'lg:sr-only')}>{item.label}</span>
-  )
-
-  if (!collapsed) {
-    return (
-      <Link to={item.to} onClick={onNavigate} className={linkClass}>
-        {icon}
-        {label}
-      </Link>
-    )
-  }
 
   return (
     <Tooltip>
       <TooltipTrigger
-        delay={200}
+        delay={collapsed ? 250 : 10_000}
         render={
           <Link
             to={item.to}
@@ -122,10 +125,13 @@ function NavLinkItem({
           />
         }
       >
-        {icon}
-        {label}
+        {body}
       </TooltipTrigger>
-      <TooltipContent side="right" sideOffset={8} className="hidden lg:inline-flex">
+      <TooltipContent
+        side="right"
+        sideOffset={8}
+        className={cn(!collapsed && 'hidden', 'lg:inline-flex')}
+      >
         {item.label}
       </TooltipContent>
     </Tooltip>
@@ -166,66 +172,71 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
       <aside
         data-collapsed={collapsed || undefined}
         className={cn(
-          'fixed top-0 left-0 z-50 flex h-full w-64 flex-col border-r border-[#e8edf5] bg-white',
-          'transition-[width,transform] duration-200 ease-out',
+          'fixed top-0 left-0 z-50 flex h-full w-64 flex-col overflow-hidden border-r border-[#e8edf5] bg-white',
+          'transition-[width,transform] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]',
+          'will-change-[width]',
           'lg:relative lg:translate-x-0',
-          collapsed ? 'lg:w-[72px]' : 'lg:w-64',
+          collapsed ? 'lg:w-[88px]' : 'lg:w-64',
           mobileOpen ? 'translate-x-0' : '-translate-x-full',
         )}
       >
         <div
           className={cn(
-            'flex h-16 shrink-0 items-center justify-between gap-2 border-b border-[#e8edf5] px-4',
-            collapsed && 'lg:justify-center lg:px-2',
+            'relative flex h-16 shrink-0 items-center border-b border-[#e8edf5] px-4',
+            SIDEBAR_EASE,
           )}
         >
-          <div
+          {/* Logomark stays fixed at the expanded inset; only the wordmark fades. */}
+          <button
+            type="button"
             className={cn(
-              'flex min-w-0 items-center gap-2.5',
-              collapsed && 'lg:hidden',
+              'relative z-10 flex shrink-0 items-center rounded-[4px]',
+              collapsed
+                ? 'cursor-pointer hover:bg-[var(--hg-soft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--hg-brand)]/30'
+                : 'cursor-default',
             )}
+            onClick={collapsed ? toggleCollapsed : undefined}
+            aria-label={collapsed ? 'Expand sidebar' : undefined}
+            title={collapsed ? 'Expand sidebar' : undefined}
+            tabIndex={collapsed ? 0 : -1}
           >
             <img
-              src="/favicon.svg"
+              src="/sidebar-logomark.png"
               alt=""
-              width={32}
-              height={32}
-              className="h-8 w-8 shrink-0"
+              width={56}
+              height={49}
+              className="shrink-0"
             />
-            <h1 className="truncate text-lg font-semibold tracking-tight text-primary">
-              HateGuard
-            </h1>
-          </div>
+          </button>
 
-          {collapsed ? (
-            <button
-              type="button"
-              className="hidden size-10 items-center justify-center rounded-[4px] transition-colors hover:bg-[var(--hg-soft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--hg-brand)]/30 lg:inline-flex"
-              onClick={toggleCollapsed}
-              aria-label="Expand sidebar"
-              title="Expand sidebar"
-            >
-              <img
-                src="/favicon.svg"
-                alt=""
-                width={32}
-                height={32}
-                className="h-8 w-8"
-              />
-            </button>
-          ) : (
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              className="hidden text-[var(--hg-muted)] lg:inline-flex"
-              onClick={toggleCollapsed}
-              aria-label="Collapse sidebar"
-              title="Collapse sidebar"
-            >
-              <PanelLeftClose className="h-4 w-4" />
-            </Button>
-          )}
+          <h1
+            className={cn(
+              'truncate text-lg font-semibold tracking-tight text-primary',
+              SIDEBAR_EASE,
+              collapsed
+                ? 'ml-0 max-w-0 translate-x-1 overflow-hidden opacity-0'
+                : 'ml-[2px] max-w-[10rem] translate-x-0 opacity-100',
+            )}
+          >
+            HateGuard
+          </h1>
+
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className={cn(
+              'ml-auto hidden shrink-0 text-[var(--hg-muted)] lg:inline-flex',
+              SIDEBAR_EASE,
+              collapsed ? 'pointer-events-none w-0 opacity-0' : 'opacity-100',
+            )}
+            onClick={toggleCollapsed}
+            aria-label="Collapse sidebar"
+            title="Collapse sidebar"
+            tabIndex={collapsed ? -1 : 0}
+          >
+            <PanelLeftClose className="h-4 w-4" />
+          </Button>
 
           <Button
             type="button"
@@ -240,23 +251,21 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
         </div>
 
         <ScrollArea className="relative flex-1 py-5">
-          <nav className={cn('space-y-6', collapsed && 'lg:space-y-3')}>
-            {navSections.map((section, sectionIndex) => (
+          {/* Same vertical rhythm expanded & collapsed — only labels/titles fade. */}
+          <nav className="space-y-6">
+            {navSections.map((section) => (
               <div key={section.title}>
                 <p
                   className={cn(
                     'mb-2 px-6 text-[11px] font-medium tracking-[0.08em] text-[var(--hg-subtle)] uppercase',
-                    collapsed && 'lg:sr-only',
+                    SIDEBAR_EASE,
+                    // Keep layout height; only fade so icons below don’t jump.
+                    collapsed ? 'opacity-0' : 'opacity-100',
                   )}
+                  aria-hidden={collapsed}
                 >
                   {section.title}
                 </p>
-                {collapsed && sectionIndex > 0 && (
-                  <div
-                    className="mx-3 mb-2 hidden border-t border-[#e8edf5] lg:block"
-                    aria-hidden
-                  />
-                )}
                 <ul className="space-y-0.5">
                   {section.items.map((item) => {
                     const active = location.pathname === item.to
@@ -281,52 +290,44 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
           <div
             className={cn(
               'mt-auto flex items-center gap-2 border-t border-[#e8edf5] bg-white px-4 py-3',
-              collapsed && 'lg:justify-center lg:px-2',
+              SIDEBAR_EASE,
             )}
           >
             <span
               className={cn(
                 'min-w-0 flex-1 truncate text-sm text-[var(--hg-muted)]',
-                collapsed && 'lg:sr-only',
+                SIDEBAR_EASE,
+                collapsed ? 'max-w-0 opacity-0' : 'max-w-[12rem] opacity-100',
               )}
               title={user.email}
             >
               {user.org_name || user.email}
             </span>
-            {collapsed ? (
-              <Tooltip>
-                <TooltipTrigger
-                  delay={200}
-                  render={
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      className="shrink-0 text-[var(--hg-muted)]"
-                      onClick={handleLogout}
-                      aria-label="Sign out"
-                    />
-                  }
-                >
-                  <LogOut className="h-4 w-4" />
-                </TooltipTrigger>
-                <TooltipContent side="right" sideOffset={8} className="hidden lg:inline-flex">
-                  Sign out
-                </TooltipContent>
-              </Tooltip>
-            ) : (
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                className="shrink-0 text-[var(--hg-muted)]"
-                onClick={handleLogout}
-                title="Sign out"
-                aria-label="Sign out"
+            <Tooltip>
+              <TooltipTrigger
+                delay={collapsed ? 250 : 10_000}
+                render={
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="shrink-0 text-[var(--hg-muted)]"
+                    onClick={handleLogout}
+                    aria-label="Sign out"
+                    title={collapsed ? undefined : 'Sign out'}
+                  />
+                }
               >
                 <LogOut className="h-4 w-4" />
-              </Button>
-            )}
+              </TooltipTrigger>
+              <TooltipContent
+                side="right"
+                sideOffset={8}
+                className={cn(!collapsed && 'hidden', 'lg:inline-flex')}
+              >
+                Sign out
+              </TooltipContent>
+            </Tooltip>
           </div>
         )}
       </aside>

@@ -1,6 +1,6 @@
 import { useState, type CSSProperties } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
-import { Eye, EyeOff, Loader2, ShieldCheck } from 'lucide-react';
+import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -65,9 +65,13 @@ export default function Login() {
     >      {/* Brand panel — HateGuard navy (#19305a) */}
       <div className="hidden lg:flex lg:w-1/2 xl:w-3/5 flex-col justify-between bg-gradient-to-br from-[#24468a] via-[#19305a] to-[#0e1c38] p-12 text-white">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-[8px] bg-white/10 ring-1 ring-white/20">
-            <ShieldCheck className="h-6 w-6" />
-          </div>
+          <img
+            src="/logomark.png"
+            alt=""
+            width={40}
+            height={40}
+            className="h-10 w-10 object-contain"
+          />
           <span className="text-2xl font-semibold tracking-tight">HateGuard</span>
         </div>
 
@@ -91,8 +95,14 @@ export default function Login() {
       <div className="flex-1 flex items-center justify-center px-6 py-12">
         <div className="w-full max-w-md space-y-8">
           <div className="space-y-2">
-            <div className="flex items-center gap-2 lg:hidden mb-6">
-              <ShieldCheck className="h-6 w-6 text-primary" />
+            <div className="mb-6 flex items-center gap-2 lg:hidden">
+              <img
+                src="/logomark.png"
+                alt=""
+                width={28}
+                height={28}
+                className="h-7 w-7 object-contain"
+              />
               <span className="text-xl font-semibold">HateGuard</span>
             </div>
             <p className="text-sm font-medium uppercase tracking-widest text-muted-foreground">
