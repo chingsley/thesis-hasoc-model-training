@@ -158,7 +158,7 @@
   --secondary: #f4f6f9;
   --secondary-foreground: #0f1c33;
   --muted: #f4f6f9;
-  --muted-foreground: #6b7c93;
+  --muted-foreground: #556478;
   --accent: #eef1f6;
   --accent-foreground: #0f1c33;
   --destructive: #e11d48;
@@ -183,8 +183,10 @@
   /* Dashboard surfaces */
   --hg-canvas: #f2f3f8;
   --hg-border: #e8edf5;
-  --hg-muted: #6b7c93;
-  --hg-subtle: #9aa8bd;
+  /* Secondary body/description text — AA on white & canvas */
+  --hg-muted: #556478;
+  /* Captions, labels, inactive chrome — AA on white & canvas */
+  --hg-subtle: #5c6d84;
   --hg-ink: #0f1c33;
   --hg-brand: #625885;
   --hg-secondary: #c1002c;

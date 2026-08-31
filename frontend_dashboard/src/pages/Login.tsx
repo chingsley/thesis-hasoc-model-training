@@ -72,19 +72,19 @@ export default function Login() {
         </div>
 
         <div className="space-y-6 max-w-lg">
-          <p className="text-sm font-medium uppercase tracking-widest text-white/60">
+          <p className="text-sm font-medium uppercase tracking-widest text-white/80">
             Hate detection as a service
           </p>
           <h1 className="text-5xl xl:text-6xl font-bold leading-[1.05] tracking-tight">
             Safer platforms, in every language.
           </h1>
-          <p className="text-lg text-white/75 leading-relaxed">
+          <p className="text-lg text-white/90 leading-relaxed">
             Classify, triage, and explain hate speech in Igbo and Yoruba, through one API.
             Every call you make is tracked to your account and language.
           </p>
         </div>
 
-        <p className="text-sm text-white/50">© 2026 HateGuard</p>
+        <p className="text-sm text-white/70">© 2026 HateGuard</p>
       </div>
 
       {/* Form panel */}

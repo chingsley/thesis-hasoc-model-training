@@ -164,7 +164,7 @@ export default function Performance() {
                   <p
                     className={cn(
                       'text-[13px] font-medium',
-                      tile.accent ? 'text-white/85' : 'text-[var(--hg-muted)]',
+                      tile.accent ? 'text-white/90' : 'text-[var(--hg-muted)]',
                     )}
                   >
                     {tile.label}
@@ -177,7 +177,7 @@ export default function Performance() {
                   >
                     {tile.format(metrics)}
                   </p>
-                  <p className={cn('text-xs', tile.accent ? 'text-white/75' : 'text-[var(--hg-subtle)]')}>
+                  <p className={cn('text-xs', tile.accent ? 'text-white/85' : 'text-[var(--hg-subtle)]')}>
                     {tile.subtitle}
                   </p>
                 </div>

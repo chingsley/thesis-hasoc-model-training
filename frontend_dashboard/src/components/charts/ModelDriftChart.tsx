@@ -205,7 +205,7 @@ export function ModelDriftChart({ data }: ModelDriftChartProps) {
     )
   }
 
-  const tickStyle = { fontSize: 11, fill: '#9aa8bd' }
+  const tickStyle = { fontSize: 11, fill: '#5c6d84' }
   const interval = Math.max(0, Math.floor(points.length / 10) - 1)
 
   return (

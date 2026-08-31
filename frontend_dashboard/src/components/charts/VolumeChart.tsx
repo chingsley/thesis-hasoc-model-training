@@ -291,7 +291,7 @@ export function VolumeChart({ data, range, chartStyle = 'line' }: VolumeChartPro
     })
   }
 
-  const tickStyle = { fontSize: 11, fill: '#9aa8bd' }
+  const tickStyle = { fontSize: 11, fill: '#5c6d84' }
 
   const shared = (
     <>

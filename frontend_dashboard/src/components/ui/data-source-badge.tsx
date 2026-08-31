@@ -75,7 +75,7 @@ export function SectionTitle({
         <DataSourceBadge />
       </div>
       {description ? (
-        <p className={cn('text-sm', inverted ? 'text-white/80' : 'text-[var(--hg-muted)]')}>
+        <p className={cn('text-sm', inverted ? 'text-white/90' : 'text-[var(--hg-muted)]')}>
           {description}
         </p>
       ) : null}

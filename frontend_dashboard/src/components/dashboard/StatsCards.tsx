@@ -174,7 +174,7 @@ export function StatsCards({ volume, periodLabel }: StatsCardsProps) {
               <p
                 className={cn(
                   'text-[13px] font-medium',
-                  item.danger ? 'text-white/85' : 'text-[var(--hg-muted)]',
+                  item.danger ? 'text-white/90' : 'text-[var(--hg-muted)]',
                 )}
               >
                 {item.label}
@@ -190,7 +190,7 @@ export function StatsCards({ volume, periodLabel }: StatsCardsProps) {
                 </p>
                 {item.trend && <TrendPill trend={item.trend} inverted={item.danger} />}
               </div>
-              <p className={cn('text-xs', item.danger ? 'text-white/75' : 'text-[var(--hg-subtle)]')}>
+              <p className={cn('text-xs', item.danger ? 'text-white/85' : 'text-[var(--hg-subtle)]')}>
                 {item.subtitle}
               </p>
             </div>

@@ -67,7 +67,7 @@ export function TriageStats({ bucket, posts }: TriageStatsProps) {
               <p
                 className={cn(
                   'text-[13px] font-medium',
-                  item.danger ? 'text-white/85' : 'text-[var(--hg-muted)]',
+                  item.danger ? 'text-white/90' : 'text-[var(--hg-muted)]',
                 )}
               >
                 {item.label}
@@ -80,7 +80,7 @@ export function TriageStats({ bucket, posts }: TriageStatsProps) {
               >
                 {item.value.toLocaleString()}
               </p>
-              <p className={cn('text-xs', item.danger ? 'text-white/75' : 'text-[var(--hg-subtle)]')}>
+              <p className={cn('text-xs', item.danger ? 'text-white/85' : 'text-[var(--hg-subtle)]')}>
                 {item.subtitle}
               </p>
             </div>

@@ -84,14 +84,14 @@ function NavLinkItem({
     collapsed && 'lg:justify-center lg:gap-0 lg:px-0',
     active
       ? 'bg-[var(--hg-soft)] font-semibold text-black'
-      : 'font-normal text-[#6b7c93] hover:bg-[#eef1f6] hover:text-[#4a5a73]',
+      : 'font-normal text-[var(--hg-muted)] hover:bg-[#eef1f6] hover:text-[var(--hg-ink)]',
   )
 
   const icon = (
     <item.icon
       className={cn(
         'h-[18px] w-[18px] shrink-0 stroke-[1.75]',
-        active ? 'text-black' : 'text-[#8a9bb0]',
+        active ? 'text-black' : 'text-[var(--hg-subtle)]',
       )}
     />
   )
@@ -218,7 +218,7 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
               type="button"
               variant="ghost"
               size="icon"
-              className="hidden text-[#6b7c93] lg:inline-flex"
+              className="hidden text-[var(--hg-muted)] lg:inline-flex"
               onClick={toggleCollapsed}
               aria-label="Collapse sidebar"
               title="Collapse sidebar"
@@ -245,7 +245,7 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
               <div key={section.title}>
                 <p
                   className={cn(
-                    'mb-2 px-6 text-[11px] font-medium tracking-[0.08em] text-[#9aa8bd] uppercase',
+                    'mb-2 px-6 text-[11px] font-medium tracking-[0.08em] text-[var(--hg-subtle)] uppercase',
                     collapsed && 'lg:sr-only',
                   )}
                 >
@@ -286,7 +286,7 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
           >
             <span
               className={cn(
-                'min-w-0 flex-1 truncate text-sm text-[#6b7c93]',
+                'min-w-0 flex-1 truncate text-sm text-[var(--hg-muted)]',
                 collapsed && 'lg:sr-only',
               )}
               title={user.email}
@@ -302,7 +302,7 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
                       type="button"
                       variant="ghost"
                       size="icon"
-                      className="shrink-0 text-[#6b7c93]"
+                      className="shrink-0 text-[var(--hg-muted)]"
                       onClick={handleLogout}
                       aria-label="Sign out"
                     />
@@ -319,7 +319,7 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
                 type="button"
                 variant="ghost"
                 size="icon"
-                className="shrink-0 text-[#6b7c93]"
+                className="shrink-0 text-[var(--hg-muted)]"
                 onClick={handleLogout}
                 title="Sign out"
                 aria-label="Sign out"
