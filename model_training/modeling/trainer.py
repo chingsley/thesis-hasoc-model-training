@@ -22,6 +22,7 @@ from .data import LABELS, compute_class_weights, compute_sample_weights, load_jo
 from .evaluate import compute_metrics, save_evaluation_bundle
 from .reports import append_phase2_run
 from .robustness import run_robustness_suite
+from .runtime_mode import effective_dataset_source
 
 
 @dataclass
@@ -320,6 +321,7 @@ def train_from_config(
     )
     payload = {
         "config": config.__dict__,
+        "dataset_source": effective_dataset_source(),
         "best_hyperparameters": best_params,
         "dev": dev_metrics,
         "test": test_metrics,

@@ -4,15 +4,34 @@ import json
 import random
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 import numpy as np
+
+from .runtime_mode import effective_dataset_source
 
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 DATASET_DIR = PROJECT_ROOT / "dataset"
 RUNS_DIR = PROJECT_ROOT / "runs"
 REPORTS_DIR = PROJECT_ROOT / "reports"
+
+# Dataset roots selectable via MODELING_DATASET_SOURCE / DATASET_SOURCE.
+DATASET_SOURCE_DIRS = {
+    "original": "dataset",
+    "new": "new_dataset_split",
+    "merged": "merged_dataset",
+}
+
+
+def resolve_dataset_dir(source: Optional[str] = None) -> Path:
+    """Dataset root for a source name; defaults to the effective source (env/constant)."""
+    key = source or effective_dataset_source()
+    if key not in DATASET_SOURCE_DIRS:
+        raise ValueError(
+            "Unknown dataset source: {0!r} (expected one of {1})".format(key, tuple(DATASET_SOURCE_DIRS))
+        )
+    return PROJECT_ROOT / DATASET_SOURCE_DIRS[key]
 
 
 def ensure_dir(path: Path) -> Path:

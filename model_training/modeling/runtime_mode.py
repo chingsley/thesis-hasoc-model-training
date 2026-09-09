@@ -3,6 +3,11 @@ Training runtime mode for local smoke tests vs full runs on strong compute.
 
 Flip SMOKE_TEST in this file (or set environment variable MODELING_SMOKE=1)
 before importing other modeling training entry points, if you rely on env.
+
+Dataset source selection: DATASET_SOURCE (or env MODELING_DATASET_SOURCE) picks
+which dataset root training/eval reads from: "original" (dataset/), "new"
+(new_dataset_split/) or "merged" (merged_dataset/). The derived roots are
+produced by ``python -m modeling.scripts.build_merged_dataset``.
 """
 
 from __future__ import annotations
@@ -22,6 +27,28 @@ def smoke_from_env() -> bool:
 
 def effective_smoke() -> bool:
     return SMOKE_TEST or smoke_from_env()
+
+
+# Which dataset root training/eval reads from: "original" (dataset/),
+# "new" (new_dataset_split/) or "merged" (merged_dataset/).
+# Override with env MODELING_DATASET_SOURCE. Default keeps historic behavior.
+DATASET_SOURCE: str = "merged"
+
+VALID_DATASET_SOURCES = ("original", "new", "merged")
+
+
+def dataset_source_from_env() -> Optional[str]:
+    value = os.environ.get("MODELING_DATASET_SOURCE", "").strip().lower()
+    return value or None
+
+
+def effective_dataset_source() -> str:
+    source = dataset_source_from_env() or DATASET_SOURCE
+    if source not in VALID_DATASET_SOURCES:
+        raise ValueError(
+            "Unknown dataset source: {0!r} (expected one of {1})".format(source, VALID_DATASET_SOURCES)
+        )
+    return source
 
 
 def resolve_train_config_path(project_root: Path, stem: str, *, smoke: Optional[bool] = None) -> Path:

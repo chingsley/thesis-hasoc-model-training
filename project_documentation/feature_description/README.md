@@ -14,4 +14,10 @@ End-to-end documentation for each HateGuard sidebar module: what the user clicks
 | Performance | [performance.md](./performance.md) |
 | Reports | [reports.md](./reports.md) |
 
+## Operations guides
+
+| Task | File |
+|------|------|
+| Retrain models with the new labelled datasets (original / new / merged) | [retraining-with-new-datasets.md](./retraining-with-new-datasets.md) |
+
 Each component section is limited to ~300 words and written for clear, non-technical reading.

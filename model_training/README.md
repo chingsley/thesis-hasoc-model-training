@@ -12,6 +12,7 @@ Self-contained copy of the thesis **modeling** stack for a provisioned server (J
 - `requirements-modeling.txt` — core Python dependencies (training, baselines, eval).
 - `requirements-modeling-explain.txt` — optional LIME / SHAP / Captum for `run_explain` (see macOS note below).
 - `modeling/runtime_mode.py` — set `SMOKE_TEST = True` for local smoke configs (`*_smoke.yaml`); `False` for full training (restart kernel after editing).
+- `modeling/runtime_mode.py` also holds `DATASET_SOURCE` (`"original"` default) — or set env `MODELING_DATASET_SOURCE=original|new|merged` — to choose which dataset root training/eval reads from. `"new"` reads `new_dataset_split/`, `"merged"` reads `merged_dataset/`; both roots are produced by `python -m modeling.scripts.build_merged_dataset` (see “Dataset sources” below).
 
 `modeling/common.py` resolves the project root as the parent of the `modeling/` directory, so **keep this folder layout intact** after you copy `kc_train` to the server.
 
@@ -117,3 +118,32 @@ python -m modeling.scripts.run_finetune --config modeling/configs/xlmr_base.yaml
 ```
 
 The shell script `modeling/scripts/full_modeling_pipeline.sh` matches the logic in `notebooks/full_modeling_pipeline.ipynb`.
+
+## Dataset sources (original / new / merged)
+
+Training and evaluation read from one of three dataset roots, selected by the
+`MODELING_DATASET_SOURCE` environment variable (or the `DATASET_SOURCE` constant in
+`modeling/runtime_mode.py`):
+
+| Value | Root | Content |
+|-------|------|---------|
+| `original` (default) | `dataset/` | the existing thesis splits, untouched |
+| `new` | `new_dataset_split/` | only the newly labelled data (cleaned, stratified 80/10/10) |
+| `merged` | `merged_dataset/` | train = original train + new train; dev/test = original benchmark splits |
+
+Build the derived roots once (after adding/replacing files in `new_dataset/`):
+
+```bash
+python -m modeling.scripts.build_merged_dataset
+```
+
+The build cleans labels (`Abusive`→`Abuse`, drops `Invalid`), deduplicates, splits, and
+verifies the result through the real loader (see `merged_dataset/BUILD_REPORT.md`).
+Then train with e.g.:
+
+```bash
+MODELING_DATASET_SOURCE=merged python -m modeling.scripts.run_finetune --config modeling/configs/xlmr_base.yaml --lang igbo
+```
+
+Each run records the source used in `metrics.json` under `dataset_source`. With no env
+set, behavior is exactly the historic default (`original`).

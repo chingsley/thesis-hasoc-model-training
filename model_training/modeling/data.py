@@ -7,7 +7,7 @@ from typing import Dict, Iterable, List, Optional
 import numpy as np
 import pandas as pd
 
-from .common import DATASET_DIR
+from .common import DATASET_DIR, resolve_dataset_dir
 
 LABELS = ["Normal", "Abuse", "Hate"]
 LABEL_TO_ID = {label: idx for idx, label in enumerate(LABELS)}
@@ -25,7 +25,7 @@ class DatasetBundle(object):
 
 
 def dataset_path(language: str, split: str, dataset_dir: Optional[Path] = None) -> Path:
-    base_dir = dataset_dir or DATASET_DIR
+    base_dir = dataset_dir or resolve_dataset_dir()
     return base_dir / "{0}_{1}.csv".format(language, split)
 
 
