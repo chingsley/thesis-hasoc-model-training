@@ -54,6 +54,10 @@ Quick reference for returning to this project after a break. Each guide file cov
 1. [upload-model-to-huggingface.md](./upload-model-to-huggingface.md) — models must be on HF first
 2. [run-gradio-model-tester.md](./run-gradio-model-tester.md) — Gradio on server + port 7860
 
+**Retrain models on the new/merged datasets (server, tmux):**
+
+1. [feature_description/retraining-with-new-datasets.md](./feature_description/retraining-with-new-datasets.md) — exact runbook: pull, build merged dataset, `MODELING_DATASET_SOURCE=merged ./run_all.sh`
+
 ## Do not do this
 
 - **Do not** run `source ~/.ssh/config` — that file is for the `ssh` command, not your shell.

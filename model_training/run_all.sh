@@ -15,7 +15,13 @@
 #
 # Overrides (optional):
 #   CUDA_VISIBLE_DEVICES=0 ./run_all.sh   # use the other GPU
-#   VENV_DIR=/path/to/venv ./run_all.sh   # use a non-default venv
+#   VENV_DIR=/path/to/venv ./run_all.sh   # use a specific venv
+#
+# Venv resolution order (first match wins):
+#   1. $VENV_DIR (explicit override)
+#   2. an already-activated venv ($VIRTUAL_ENV)
+#   3. <bundle>/kc_train_venv
+#   4. <repo-root>/kc_train_venv   (monorepo layout — venv next to model_training/)
 #
 # What this script does:
 #   1. Activates kc_train_venv (which inherits the shared /usr/local/env torch).
@@ -30,12 +36,22 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
 
-VENV_DIR="${VENV_DIR:-$SCRIPT_DIR/kc_train_venv}"
-if [[ ! -f "$VENV_DIR/bin/activate" ]]; then
-  echo "ERROR: venv not found at $VENV_DIR" >&2
-  echo "       Create it with: python -m venv --system-site-packages $VENV_DIR" >&2
+if [[ -n "${VENV_DIR:-}" ]]; then
+  :
+elif [[ -n "${VIRTUAL_ENV:-}" && -f "${VIRTUAL_ENV}/bin/activate" ]]; then
+  VENV_DIR="$VIRTUAL_ENV"
+elif [[ -f "$SCRIPT_DIR/kc_train_venv/bin/activate" ]]; then
+  VENV_DIR="$SCRIPT_DIR/kc_train_venv"
+elif [[ -f "$SCRIPT_DIR/../kc_train_venv/bin/activate" ]]; then
+  VENV_DIR="$SCRIPT_DIR/../kc_train_venv"
+else
+  echo "ERROR: no venv found. Checked \$VENV_DIR, \$VIRTUAL_ENV," >&2
+  echo "       $SCRIPT_DIR/kc_train_venv and $SCRIPT_DIR/../kc_train_venv" >&2
+  echo "       Create one with: python -m venv --system-site-packages kc_train_venv" >&2
+  echo "       then: pip install -r requirements-modeling.txt" >&2
   exit 1
 fi
+VENV_DIR="$(cd "$VENV_DIR" && pwd)"
 # shellcheck disable=SC1091
 source "$VENV_DIR/bin/activate"
 
