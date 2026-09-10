@@ -20,6 +20,7 @@ export function useActiveModel() {
     activeModelId,
     models: query.data?.models ?? {},
     device: query.data?.device,
+    modelSet: query.data?.model_set ?? null,
     isLoading: query.isLoading,
     isLive: !USE_MOCK && Boolean(activeModelId),
   }

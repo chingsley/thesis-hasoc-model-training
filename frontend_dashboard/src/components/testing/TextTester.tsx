@@ -7,6 +7,7 @@ import { Badge, labelBadgeVariant } from '@/components/ui/badge'
 import { ToxicTextHighlighter } from '@/components/explainability/ToxicTextHighlighter'
 import { useDashboardStore } from '@/lib/store/dashboard'
 import { singleClassify } from '@/lib/api/client'
+import { useActiveModel } from '@/hooks/use-active-model'
 import { cn } from '@/lib/utils'
 
 const PROB_ROWS = [
@@ -64,6 +65,7 @@ function ProbabilityMeters({
 export function TextTester() {
   const language = useDashboardStore((s) => s.language)
   const languageLabel = language === 'igbo' ? 'Igbo' : 'Yoruba'
+  const { modelSet } = useActiveModel()
   const [text, setText] = useState('')
   const queryClient = useQueryClient()
 
@@ -206,11 +208,16 @@ export function TextTester() {
                 <p className="max-w-[14rem] truncate font-mono text-[11px] text-[var(--hg-muted)]" title={result.model_id}>
                   {result.model_id}
                 </p>
+                {modelSet ? (
+                  <p className="text-[10px] text-[var(--hg-muted)]">
+                    {modelSet === 'merged' ? 'Merged-dataset model' : 'Original-dataset model'}
+                  </p>
+                ) : null}
                 {result.used_fallback ? (
                   <p className="text-[10px] text-amber-600">Joint fallback</p>
-                ) : (
+                ) : !modelSet ? (
                   <p className="text-[10px] text-[var(--hg-muted)]">Logged to your account</p>
-                )}
+                ) : null}
               </div>
             )}
           </div>

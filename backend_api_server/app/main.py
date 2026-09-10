@@ -22,7 +22,7 @@ from .auth import (
 )
 from .explain_service import explain_text
 from .metrics_service import load_metrics
-from .model_service import ModelRouter
+from .model_service import ModelRouter, effective_model_set
 from .schemas import (
     ApiKeyCreateRequest,
     ApiKeyCreatedResponse,
@@ -154,6 +154,7 @@ def health() -> HealthResponse:
         status="ok",
         device=router.inference_device,
         models=router.model_map(),
+        model_set=effective_model_set(),
     )
 
 
@@ -478,10 +479,12 @@ def explain(payload: ExplainRequest, user: dict = Depends(get_caller_user)) -> d
     text = payload.text.strip()
     explanation_id = payload.post_id or f"adhoc_{hashlib.md5(text.encode('utf-8')).hexdigest()[:8]}"
 
-    # Explanations depend only on (language, methods, text) — cache them
-    # content-addressed so repeat requests (any user) return instantly.
+    # Explanations depend on (model, language, methods, text) — cache them
+    # content-addressed so repeat requests (any user) return instantly. The
+    # model id is part of the key because one language can be served by
+    # different models across HF_MODEL_SET values, and this cache is on disk.
     methods_key = ",".join(sorted(payload.methods)) if payload.methods else "all"
-    cache_key = sha256_hex(f"{payload.language}|{methods_key}|{text}")
+    cache_key = sha256_hex(f"{service.model_id}|{payload.language}|{methods_key}|{text}")
     cached = db.get_cached_explanation(cache_key)
     if cached is not None:
         # Skip cache entries that only captured dependency/runtime failures so a

@@ -50,6 +50,7 @@ class HealthResponse(BaseModel):
     device: str
     models: dict[str, str]
     routing: str = "per_language"
+    model_set: str | None = None
 
 
 class PerClassMetrics(BaseModel):

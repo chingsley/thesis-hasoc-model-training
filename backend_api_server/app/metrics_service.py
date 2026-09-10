@@ -8,6 +8,8 @@ from typing import Any
 
 from huggingface_hub import hf_hub_download
 
+from .model_service import env_for_key, effective_model_set, resolve_hf_model_id_for_key
+
 logger = logging.getLogger(__name__)
 
 METRICS_FILENAME = "test_metrics.json"
@@ -43,9 +45,9 @@ def load_metrics(language: str | None = None) -> dict[str, Any]:
     lang = (language or "igbo").strip().lower()
 
     # Local file/dir takes precedence when it exists (useful on the training machine).
-    metrics_path = os.getenv(f"METRICS_PATH_{lang.upper()}", "").strip() or os.getenv(
-        "METRICS_PATH", ""
-    ).strip()
+    metrics_path = env_for_key("METRICS_PATH", lang.upper())
+    if not metrics_path and effective_model_set() != "merged":
+        metrics_path = os.getenv("METRICS_PATH", "").strip()
     if metrics_path:
         try:
             return _read_metrics_file(_resolve_metrics_path(metrics_path))
@@ -54,9 +56,7 @@ def load_metrics(language: str | None = None) -> dict[str, Any]:
 
     # Otherwise fetch test_metrics.json from the same HF repo that serves the model,
     # so deployed backends (Render/Vercel/etc.) need no access to the training server.
-    repo_id = os.getenv(f"HF_MODEL_ID_{lang.upper()}", "").strip() or os.getenv(
-        "HF_MODEL_ID", ""
-    ).strip()
+    repo_id = resolve_hf_model_id_for_key(lang.upper())
     if not repo_id:
         raise FileNotFoundError(
             f"Set METRICS_PATH_{lang.upper()} or HF_MODEL_ID_{lang.upper()} for language={lang}."

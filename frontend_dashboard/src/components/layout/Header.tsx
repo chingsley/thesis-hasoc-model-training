@@ -1,7 +1,7 @@
 import { useRef, type RefObject } from 'react'
 import { Menu } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { DataSourceBadge } from '@/components/ui/data-source-badge'
+import { DataSourceBadge, ModelSetBadge } from '@/components/ui/data-source-badge'
 import {
   Select,
   SelectContent,
@@ -78,6 +78,7 @@ export function Header({ onMenuClick, scrollRootRef }: HeaderProps) {
               <Menu className="h-5 w-5" />
             </Button>
             <DataSourceBadge className="hidden sm:inline-flex" />
+            <ModelSetBadge className="hidden sm:inline-flex" />
           </div>
 
           {/* Page-title chip: flush with header top, descends as the page title scrolls under */}

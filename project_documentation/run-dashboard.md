@@ -59,6 +59,7 @@ cp backend_api_server/.env.example backend_api_server/.env
 Required vars (defaults in `.env.example`):
 
 ```env
+HF_MODEL_SET=original
 HF_MODEL_ID_IGBO=chingsley/afro-xlmr-igbo-hate
 HF_MODEL_ID_YORUBA=chingsley/afro-xlmr-yoruba-hate
 HF_MODEL_ID_JOINT=chingsley/afro-xlmr-joint-igbo-yoruba-hate
@@ -66,15 +67,38 @@ CORS_ORIGINS=http://localhost:5173
 INFERENCE_DEVICE=auto
 ```
 
+After retraining, upload to **new** Hub repos (`*-v2-merged`) and set `HF_MODEL_SET=merged` — see [upload-model-to-huggingface.md](./upload-model-to-huggingface.md). Restart the backend after changing `.env`.
+
 Models must be on Hugging Face: [upload-model-to-huggingface.md](./upload-model-to-huggingface.md).
 
-**First user account** — the dashboard requires login and the API requires an API key. Create both once (from `backend_api_server/`, venv active):
+**Dashboard login (demo)** — use these credentials after seeding the database once
+(from `backend_api_server/`, venv active):
+
+| Field | Value |
+|-------|-------|
+| Email | `admin@hateguard.local` |
+| Password | `hateguard123` |
+
+Seed the demo account (and sample dashboard data) **once** before first login:
+
+```bash
+cd "$REPO/backend_api_server"
+source ../kc_train_venv/bin/activate
+python scripts/seed_demo_data.py
+```
+
+The script prints an API key for `admin@hateguard.local` **once** — store it for
+`curl` / Postman (`X-API-Key: hgk_...`). Re-run with `--reset` only if you want
+to wipe and rebuild demo data.
+
+A second demo user exists after seeding (`demo@partner.local` / `partner123`) to
+test per-user isolation — use the admin account for normal dashboard work.
+
+For production accounts, create your own user instead:
 
 ```bash
 python scripts/create_user.py --email you@example.com --org "Your Platform" --key-name prod
 ```
-
-This prints your API key **once** — store it. Use the email/password to sign into the dashboard.
 
 **Metrics files** — the **Performance** page needs `test_metrics.json`. By default the backend downloads it from the model's HF repo (the upload script puts it there), so no local files are needed. Set `METRICS_PATH_*` in `.env` only to override with local `runs/.../test_metrics.json` files (e.g. on the lab server before uploading).
 
@@ -128,9 +152,14 @@ Wait for: `Local: http://localhost:5173/`
 
 ## Open the dashboard in your browser
 
-Open **http://localhost:5173** — you will be redirected to the login page. Sign in with the
-email/password created above. Everything you see (Overview stats, volume, drift, alerts) is scoped
-to your account; calls from the Testing page count toward your own stats.
+Open **http://localhost:5173** — you will be redirected to the login page. Sign in with:
+
+- **Email:** `admin@hateguard.local`
+- **Password:** `hateguard123`
+
+(run `python scripts/seed_demo_data.py` first if you have not seeded the database).
+Everything you see (Overview stats, volume, drift, alerts) is scoped to your
+account; calls from the Testing page count toward your own stats.
 
 ### Cursor / VS Code Remote SSH
 
@@ -155,10 +184,6 @@ Open **http://localhost:5173**
 With `VITE_USE_MOCK=false` (default), **every page is live**. Set `VITE_USE_MOCK=true` to run without a backend — the header and section titles then show a **MOCK** badge. There is no LIVE badge.
 
 | Page / feature | Data source |
-|----------------|-------------|
-
-| Page / feature | Data source |
-|----------------|-------------|
 | **Overview** stats | Your prediction log (`/stats/overview`, per language) |
 | **Testing** (single + batch classify) | Live API (`/predict*`) — counts toward your stats |
 | **Triage, Explainability, Reports** | Your own processed texts (`/predictions*`) |
@@ -186,12 +211,12 @@ Response includes `model_id` and `used_fallback` (should be `false` when per-lan
 | `Set HF_MODEL_ID or MODEL_PATH` | Edit `backend_api_server/.env`; restart backend |
 | `kc_train_venv/bin/activate: No such file` | Run `python3 -m venv kc_train_venv` in repo root (see Prerequisites) |
 | HF 401 / model not found | `export HF_TOKEN=...` or `huggingface-cli login`; need access to private repos |
-| Performance page errors | `test_metrics.json` missing in the HF repo — run `scripts/upload_metrics_to_hf.py` on the server, or set `METRICS_PATH_*` in `.env` to a local file |
+| Performance page errors | `test_metrics.json` missing in the HF repo — run `python -m modeling.scripts.publish_to_hf --artifacts-only` from `model_training/` on the server, or set `METRICS_PATH_*` in `.env` to a local file |
 | Frontend Vite / rolldown error | `nvm use 20`, then reinstall `node_modules` |
 | Classification failed in Testing | Backend not running on 8080 |
 | Slow backend startup | Normal — three models loading from HF |
 | Mock data everywhere | Set `VITE_USE_MOCK=false` in `frontend_dashboard/.env` |
-| Dashboard stuck on login / 401s | Create a user first: `python scripts/create_user.py --email ... --org ...` from `backend_api_server/` |
+| Dashboard stuck on login / 401s | Run `python scripts/seed_demo_data.py` from `backend_api_server/`, then sign in with `admin@hateguard.local` / `hateguard123` |
 | API returns `401 Missing credentials` | Send `X-API-Key: hgk_...` (curl/code) or sign in (dashboard); keys are revocable, check `revoked_at` via `GET /auth/keys` |
 
 ## Related

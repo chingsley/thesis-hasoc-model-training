@@ -41,6 +41,7 @@ export interface HealthResponse {
   device: string
   models: Record<string, string>
   routing: string
+  model_set?: string | null
 }
 
 export interface PredictResponse {

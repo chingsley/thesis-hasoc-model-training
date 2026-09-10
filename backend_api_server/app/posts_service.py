@@ -1,7 +1,7 @@
 """Serves dataset posts with model predictions.
 
 Source of truth: predictions_test.csv in each model's Hugging Face repo
-(uploaded by scripts/upload_to_hf.py). Optional PREDICTIONS_PATH_<LANG> /
+(uploaded by modeling.scripts.publish_to_hf). Optional PREDICTIONS_PATH_<LANG> /
 PREDICTIONS_PATH local overrides take precedence when the file exists —
 same pattern as metrics_service.py.
 """
@@ -17,7 +17,7 @@ from typing import Any
 from huggingface_hub import hf_hub_download
 
 from . import db
-from .model_service import LABELS
+from .model_service import LABELS, effective_model_set, env_for_key, resolve_hf_model_id_for_key
 
 logger = logging.getLogger(__name__)
 
@@ -48,18 +48,16 @@ def _download_csv_from_hub(repo_id: str) -> Path:
 
 def _resolve_csv(language: str) -> Path:
     lang = language.strip().lower()
-    local = os.getenv(f"PREDICTIONS_PATH_{lang.upper()}", "").strip() or os.getenv(
-        "PREDICTIONS_PATH", ""
-    ).strip()
+    local = env_for_key("PREDICTIONS_PATH", lang.upper())
+    if not local and effective_model_set() != "merged":
+        local = os.getenv("PREDICTIONS_PATH", "").strip()
     if local:
         try:
             return _resolve_local_csv(local)
         except FileNotFoundError as exc:
             logger.warning("Local predictions unavailable (%s); falling back to Hugging Face.", exc)
 
-    repo_id = os.getenv(f"HF_MODEL_ID_{lang.upper()}", "").strip() or os.getenv(
-        "HF_MODEL_ID", ""
-    ).strip()
+    repo_id = resolve_hf_model_id_for_key(lang.upper())
     if not repo_id:
         raise FileNotFoundError(
             f"Set PREDICTIONS_PATH_{lang.upper()} or HF_MODEL_ID_{lang.upper()} for language={lang}."
@@ -88,10 +86,17 @@ def _row_to_post(row: dict[str, str], language: str) -> dict[str, Any]:
     }
 
 
+def _cache_key(lang: str) -> str:
+    """Cache per (model set, language): the same language serves different
+    predictions_test.csv files under HF_MODEL_SET=original vs merged."""
+    return "{0}:{1}".format(effective_model_set() or "default", lang)
+
+
 def _load_posts(language: str) -> list[dict[str, Any]]:
     lang = language.strip().lower()
-    if lang in _cache:
-        return _cache[lang]
+    key = _cache_key(lang)
+    if key in _cache:
+        return _cache[key]
 
     csv_path = _resolve_csv(lang)
     with csv_path.open(encoding="utf-8", newline="") as handle:
@@ -105,7 +110,7 @@ def _load_posts(language: str) -> list[dict[str, Any]]:
         post["manual_label"] = state["manual_label"] if state else None
         post["timestamp"] = state["updated_at"] if state else ""
 
-    _cache[lang] = posts
+    _cache[key] = posts
     logger.info("Loaded %d posts for language=%s from %s", len(posts), lang, csv_path)
     return posts
 

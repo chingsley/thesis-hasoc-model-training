@@ -18,6 +18,7 @@ from typing import Any, Callable
 import numpy as np
 
 from . import db, posts_service, user_posts_service
+from .model_service import effective_model_set
 
 logger = logging.getLogger(__name__)
 
@@ -274,7 +275,19 @@ def _clusters_from_posts(all_posts: list[dict[str, Any]], max_clusters: int = 6)
         raise RuntimeError("scikit-learn is required for clustering") from exc
 
     texts = [post["tweet"] for post in posts]
-    matrix = TfidfVectorizer(max_features=2000, token_pattern=r"\w{3,}").fit_transform(texts)
+    try:
+        matrix = TfidfVectorizer(max_features=2000, token_pattern=r"\w{3,}").fit_transform(texts)
+    except ValueError:
+        # No token of 3+ characters across the corpus (very short texts).
+        # Clustering is meaningless here; degrade to the single-group shape.
+        return [
+            {
+                "cluster_id": 0,
+                "posts": posts[:20],
+                "representative_text": posts[0]["tweet"],
+                "size": len(posts),
+            }
+        ]
     n_clusters = min(max_clusters, max(2, len(posts) // 10))
     model = KMeans(n_clusters=n_clusters, n_init=10, random_state=42)
     labels = model.fit_predict(matrix)
@@ -305,9 +318,11 @@ _cluster_cache: dict[str, list[dict[str, Any]]] = {}
 
 def clusters(language: str, max_clusters: int = 6) -> list[dict[str, Any]]:
     lang = language.strip().lower()
-    if lang not in _cluster_cache:
-        _cluster_cache[lang] = _clusters_from_posts(posts_service.get_posts(lang), max_clusters)
-    return _cluster_cache[lang]
+    # Keyed by model set too: original and merged serve different test-set posts.
+    key = "{0}:{1}".format(effective_model_set() or "default", lang)
+    if key not in _cluster_cache:
+        _cluster_cache[key] = _clusters_from_posts(posts_service.get_posts(lang), max_clusters)
+    return _cluster_cache[key]
 
 
 def user_clusters(user_id: int, language: str, max_clusters: int = 6) -> list[dict[str, Any]]:

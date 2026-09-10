@@ -14,6 +14,15 @@ logger = logging.getLogger(__name__)
 
 LABELS = ["Normal", "Abuse", "Hate"]
 ROUTED_LANGUAGES = ("igbo", "yoruba")
+VALID_MODEL_SETS = ("original", "merged")
+_MODEL_SET_ALIASES = {
+    "original": "original",
+    "v1": "original",
+    "v1-original": "original",
+    "merged": "merged",
+    "v2": "merged",
+    "v2-merged": "merged",
+}
 
 
 class ModelService:
@@ -85,6 +94,49 @@ class ModelService:
         return outputs
 
 
+def effective_model_set() -> str | None:
+    """Which published model family the backend should load: original, merged, or unset."""
+    raw = os.getenv("HF_MODEL_SET", "").strip().lower()
+    if not raw:
+        return None
+    mapped = _MODEL_SET_ALIASES.get(raw)
+    if mapped is None:
+        raise ValueError(
+            "Unknown HF_MODEL_SET={0!r} (expected original or merged)".format(raw)
+        )
+    return mapped
+
+
+def env_for_key(stem: str, prefix: str) -> str | None:
+    """Resolve ``STEM_PREFIX`` with optional ``HF_MODEL_SET`` suffix.
+
+    Examples: ``HF_MODEL_ID_IGBO_ORIGINAL``, ``MODEL_PATH_YORUBA_MERGED``.
+
+    When ``HF_MODEL_SET=merged``, unsuffixed vars are ignored so the original Hub
+    IDs cannot be loaded by accident. ``original`` (and unset) may fall back to
+    the unsuffixed var used by the current ``.env``.
+    """
+    prefix = prefix.upper()
+    model_set = effective_model_set()
+    if model_set:
+        specific = os.getenv("{0}_{1}_{2}".format(stem, prefix, model_set.upper()), "").strip()
+        if specific:
+            return specific
+        if model_set == "merged":
+            return None
+    return os.getenv("{0}_{1}".format(stem, prefix), "").strip() or None
+
+
+def resolve_hf_model_id_for_key(prefix: str) -> str | None:
+    """Hub repo ID for metrics/posts, following ``HF_MODEL_SET``."""
+    specific = env_for_key("HF_MODEL_ID", prefix)
+    if specific:
+        return specific
+    if effective_model_set() == "merged":
+        return None
+    return os.getenv("HF_MODEL_ID", "").strip() or None
+
+
 def resolve_checkpoint_path(model_path: str) -> str:
     path = Path(model_path).expanduser().resolve()
     if not (path / "config.json").exists():
@@ -105,8 +157,8 @@ def resolve_checkpoint_path(model_path: str) -> str:
 
 
 def resolve_model_source_for_key(prefix: str) -> tuple[str | None, str | None]:
-    hf_model_id = os.getenv(f"HF_MODEL_ID_{prefix}", "").strip() or None
-    model_path = os.getenv(f"MODEL_PATH_{prefix}", "").strip() or None
+    hf_model_id = env_for_key("HF_MODEL_ID", prefix)
+    model_path = env_for_key("MODEL_PATH", prefix)
 
     if hf_model_id:
         return None, hf_model_id
@@ -176,13 +228,23 @@ class ModelRouter:
             )
 
         if not self._models and not self._fallback:
+            model_set = effective_model_set()
+            if model_set == "merged":
+                raise ValueError(
+                    "HF_MODEL_SET=merged but no *_MERGED model sources are set. "
+                    "Upload the retrained checkpoints to new Hub repos "
+                    "(do not overwrite the original ones) and set "
+                    "HF_MODEL_ID_IGBO_MERGED / HF_MODEL_ID_YORUBA_MERGED "
+                    "(and optionally HF_MODEL_ID_JOINT_MERGED)."
+                )
             raise ValueError(
                 "Configure HF_MODEL_ID_IGBO / HF_MODEL_ID_YORUBA (or legacy HF_MODEL_ID), "
                 "or HF_MODEL_ID_JOINT as fallback."
             )
 
         logger.info(
-            "ModelRouter ready: languages=%s fallback=%s device=%s",
+            "ModelRouter ready: model_set=%s languages=%s fallback=%s device=%s",
+            effective_model_set(),
             {lang: svc.model_id for lang, svc in self._models.items()},
             self._fallback.model_id if self._fallback else None,
             self.inference_device,

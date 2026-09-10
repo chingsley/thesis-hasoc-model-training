@@ -111,7 +111,26 @@ hf_spaces/
     README.md
 ```
 
-Model IDs are set in `hf_spaces/hate-speech-tester/app.py` under `MODELS`.
+Model IDs default to the v1 repos in `DEFAULT_MODELS` inside
+`hf_spaces/hate-speech-tester/app.py`, and follow the same environment
+convention as the backend — no code edit needed to switch:
+
+```bash
+# point the demo at the retrained models
+export HF_MODEL_SET=merged
+export HF_MODEL_ID_IGBO_MERGED=chingsley/afro-xlmr-igbo-hate-v2-merged
+export HF_MODEL_ID_YORUBA_MERGED=chingsley/afro-xlmr-yoruba-hate-v2-merged
+export HF_MODEL_ID_JOINT_MERGED=chingsley/afro-xlmr-joint-igbo-yoruba-hate-v2-merged
+bash hf_spaces/run_local.sh
+```
+
+`HF_MODEL_ID_<LANG>` overrides a single repo in either family. On a deployed
+Space, set the same names under **Settings → Variables and secrets**.
+
+Unlike the backend, the Space falls back to the v1 repos when `merged` is
+selected but no `*_MERGED` variable is set — a public demo should keep working
+rather than fail to boot. Check the "Model:" line in the output to confirm which
+repo answered.
 
 ## Verify models without the UI (optional)
 

@@ -71,11 +71,11 @@ def _require_transformers():
 
 
 def _build_training_arguments(TrainingArguments, **kwargs):
-    """Construct TrainingArguments across transformers >=4.40 <5.0.
+    """Construct TrainingArguments across transformers 4.40+ including 5.x.
 
-    The parameter was renamed from `evaluation_strategy` to `eval_strategy`
-    starting in transformers 4.46. We try the new name first and fall back
-    to the old name if the installed version predates the rename.
+    - `evaluation_strategy` was renamed to `eval_strategy` in 4.46.
+    - transformers 5 removed `warmup_ratio`; the same float is passed as
+      `warmup_steps` (v5 treats a value in [0, 1) as a ratio of total steps).
     """
     import inspect
 
@@ -86,10 +86,38 @@ def _build_training_arguments(TrainingArguments, **kwargs):
             kwargs["eval_strategy"] = eval_strategy
         else:
             kwargs["evaluation_strategy"] = eval_strategy
+    warmup_ratio = kwargs.pop("warmup_ratio", None)
+    if warmup_ratio is not None:
+        if "warmup_ratio" in params:
+            kwargs["warmup_ratio"] = warmup_ratio
+        elif "warmup_steps" in params:
+            kwargs["warmup_steps"] = warmup_ratio
     if os.environ.get("MODELING_DISABLE_TQDM", "").strip().lower() in ("1", "true", "yes"):
         if "disable_tqdm" in params:
             kwargs.setdefault("disable_tqdm", True)
     return TrainingArguments(**kwargs)
+
+
+def _make_trainer(trainer_class, *, tokenizer, **kwargs):
+    """Instantiate Trainer across transformers 4.x (`tokenizer=`) and 5.x (`processing_class=`).
+
+    Inspect the HuggingFace Trainer class in the MRO, not the local mixin.
+    ``WeightedLossTrainerMixin.__init__`` is ``(*args, **kwargs)``, so using
+    ``trainer_class.__init__`` would always miss the renamed argument.
+    """
+    import inspect
+
+    params = {}
+    for cls in inspect.getmro(trainer_class):
+        cls_params = inspect.signature(cls.__init__).parameters
+        if "processing_class" in cls_params or "tokenizer" in cls_params:
+            params = cls_params
+            break
+    if "processing_class" in params:
+        kwargs["processing_class"] = tokenizer
+    else:
+        kwargs["tokenizer"] = tokenizer
+    return trainer_class(**kwargs)
 
 
 class WeightedLossTrainerMixin(object):
@@ -263,7 +291,8 @@ def train_from_config(
         fp16=bool(config.fp16),
         seed=config.seed,
     )
-    trainer = trainer_class(
+    trainer = _make_trainer(
+        trainer_class,
         model=model,
         args=args,
         train_dataset=train_dataset,
@@ -464,7 +493,8 @@ def maybe_run_optuna(config, trainer_class, tokenizer, train_frame, dev_frame):
             fp16=bool(config.fp16),
             seed=config.seed,
         )
-        trainer = trainer_class(
+        trainer = _make_trainer(
+            trainer_class,
             model=model,
             args=args,
             train_dataset=train_dataset,

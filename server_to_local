@@ -29,7 +29,9 @@ Even I manually copy this "/run" or metrics from server to my local, issues:
 I need an efficient to solve this problem, and if possible be able to automate the code and model sycing between the server and local, between the server and deployed backend, and ensure frontend gets all data needed from backend for efficient model deployment.
 
 [KEEP]
-Where HF downloads go: ~/.cache/huggingface/hub/
+Where HF downloads go: $HF_HOME/hub, which is /data/disk1/$USER/hf_cache/hub on
+this server (HF_HOME is exported by run_all.sh and publish_v2.sh). It falls back
+to ~/.cache/huggingface/hub only when HF_HOME is unset.
 
 [DONE]
 """
@@ -59,6 +61,18 @@ python backend_api_server/scripts/upload_to_hf.py \
 ```
 
 The script only skips the weights upload in the sense that `upload_metrics_to_hf.py` exists as a lightweight option — it's not a replacement. If retrain and only push metrics, HF would show new metrics for old weights: inconsistent, so don't do that.
+
+[SUPERSEDED] Both backend scripts above were deleted; publishing now lives in the
+training repo so it does not need the backend checkout. The answer still holds,
+only the commands changed:
+
+```bash
+cd model_training
+./publish_v2.sh                          # all three winners to the v2 repos
+# equivalent single model, and the metrics-only refresh:
+python -m modeling.scripts.publish_to_hf --checkpoint <run> --repo-id <repo> --private
+python -m modeling.scripts.publish_to_hf --checkpoint <run> --repo-id <repo> --artifacts-only
+```
 
 What we are building is a hate-detection as a service platform. These statistics should be coming from the backend database based on the number and nature of posts/texts processed for specific user. They represent how many posts/texts have been processed via the backend api and their classification counts (n hate, n abusive, n normal).
 Therefore, we need authentication. Social media or text-content-based platforms will take our api, and call the necessary endpoints like "/predict", "/predict/batch", or other endpoint you think they should call. Maybe each "user" (ie. social media or content-based platform) will have soemthing like an API key (you'll know the best authentication means to adopt), and each call they make will carry this key for identifacation. Our backend service will keep track of these calls per "user" per language type. Data from these records will be used in building different parts of the dashboard. So that when the "user" logs into the dashboard, they'll be seing records only specific to them. Every api call from them (via code, postman, or when througuh the dashboard) updates their record on our backend server. The dashboard data, thay are unique to the users will be fethed from the db for each user, and for each language type. Design the implementaion of this system. Include plan to correct current dashboard details that are inaccurate for example the stats on the overview and other related data in other pages of the frontend. Make no mistakes.

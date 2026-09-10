@@ -7,11 +7,31 @@ import os
 import gradio as gr
 from transformers import pipeline
 
-MODELS = {
-    "Igbo": "chingsley/afro-xlmr-igbo-hate",
-    "Yoruba": "chingsley/afro-xlmr-yoruba-hate",
-    "Joint (Igbo + Yoruba)": "chingsley/afro-xlmr-joint-igbo-yoruba-hate",
+# Repo IDs follow the same convention as the backend: HF_MODEL_SET picks the
+# family, HF_MODEL_ID_<LANG>[_MERGED] overrides an individual repo. Set these in
+# the Space's Settings -> Variables to point the demo at the retrained models.
+DEFAULT_MODELS = {
+    "IGBO": "chingsley/afro-xlmr-igbo-hate",
+    "YORUBA": "chingsley/afro-xlmr-yoruba-hate",
+    "JOINT": "chingsley/afro-xlmr-joint-igbo-yoruba-hate",
 }
+LABELS = {
+    "IGBO": "Igbo",
+    "YORUBA": "Yoruba",
+    "JOINT": "Joint (Igbo + Yoruba)",
+}
+
+
+def _resolve_model_id(key: str) -> str:
+    model_set = os.getenv("HF_MODEL_SET", "").strip().lower()
+    if model_set in ("merged", "v2", "v2-merged"):
+        merged = os.getenv(f"HF_MODEL_ID_{key}_MERGED", "").strip()
+        if merged:
+            return merged
+    return os.getenv(f"HF_MODEL_ID_{key}", "").strip() or DEFAULT_MODELS[key]
+
+
+MODELS = {LABELS[key]: _resolve_model_id(key) for key in DEFAULT_MODELS}
 
 _pipelines: dict[str, object] = {}
 

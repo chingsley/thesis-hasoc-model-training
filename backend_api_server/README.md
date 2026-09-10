@@ -11,7 +11,7 @@ FastAPI inference service for the fine-tuned hate-speech classifiers.
 | **HF Inference Endpoints** | Managed GPU, no server ops | Pay-per-use hosted inference; you'd replace `ModelService` with HTTP calls to HF's endpoint. Overkill unless you need auto-scaling. |
 | **AWS SageMaker / GCP Vertex** | Production at scale | Heavy setup; not needed for a thesis dashboard. |
 
-**Per-language routing (v0.2):** The dashboard language selector (`igbo` / `yoruba`) picks the matching model. Configure `HF_MODEL_ID_IGBO`, `HF_MODEL_ID_YORUBA`, and optionally `HF_MODEL_ID_JOINT` (fallback only).
+**Per-language routing (v0.2):** The dashboard language selector (`igbo` / `yoruba`) picks the matching model. Configure `HF_MODEL_ID_IGBO`, `HF_MODEL_ID_YORUBA`, and optionally `HF_MODEL_ID_JOINT` (fallback only). After retraining, keep the original Hub IDs and add `HF_MODEL_ID_*_MERGED`; switch families with `HF_MODEL_SET=original|merged` and restart the API.
 
 | Repo | Role |
 |------|------|
@@ -26,22 +26,22 @@ FastAPI inference service for the fine-tuned hate-speech classifiers.
 ### 1. Upload checkpoint to Hugging Face (on the lab server)
 
 ```bash
-cd ~/thesis-hasoc-model-training
-source kc_train_venv/bin/activate
+cd ~/thesis-hasoc-model-training/model_training
+source ../kc_train_venv/bin/activate
 pip install huggingface-hub
 
 export HF_TOKEN=hf_...   # https://huggingface.co/settings/tokens
 
 # Best Igbo model (macro-F1 ≈ 0.86)
 CHECKPOINT=$(ls -td runs/afro_xlmr_base/igbo/* | head -1)
-python backend_api_server/scripts/upload_to_hf.py \
+python -m modeling.scripts.publish_to_hf \
   --checkpoint "$CHECKPOINT" \
   --repo-id yourusername/afro-xlmr-igbo-hate \
   --private
 
 # Optional: Yoruba model (macro-F1 ≈ 0.64–0.67)
 CHECKPOINT=$(ls -td runs/afro_xlmr_base/yoruba/* | head -1)
-python backend_api_server/scripts/upload_to_hf.py \
+python -m modeling.scripts.publish_to_hf \
   --checkpoint "$CHECKPOINT" \
   --repo-id yourusername/afro-xlmr-yoruba-hate \
   --private
@@ -75,7 +75,7 @@ HF_MODEL_ID_YORUBA=yourusername/afro-xlmr-yoruba-hate
 HF_MODEL_ID_JOINT=yourusername/afro-xlmr-joint-igbo-yoruba-hate
 
 # Optional local overrides; if unset, /metrics downloads test_metrics.json
-# from the same HF repo as the model (upload_to_hf.py pushes it there).
+# from the same HF repo as the model (modeling.scripts.publish_to_hf pushes it there).
 # METRICS_PATH_IGBO=../runs/afro_xlmr_base/igbo/20260515_143652/test_metrics.json
 # METRICS_PATH_YORUBA=../runs/afro_xlmr_base/yoruba/20260515_153329/test_metrics.json
 # METRICS_PATH_JOINT=../runs/afro_xlmr_joint/joint_igbo_yoruba/20260515_151540/test_metrics.json
@@ -178,7 +178,7 @@ Full reference with curl examples and sample responses: **[project_documentation
 
 ## Live data sources
 
-- **Models, metrics, posts** — Hugging Face repos (`HF_MODEL_ID_*`), cached in `~/.cache/huggingface`. `upload_to_hf.py` ships `test_metrics.json` and `predictions_test.csv` alongside the checkpoint.
+- **Models, metrics, posts** — Hugging Face repos (`HF_MODEL_ID_*`), cached in `~/.cache/huggingface`. `python -m modeling.scripts.publish_to_hf` ships `test_metrics.json` and `predictions_test.csv` alongside the checkpoint.
 - **Triage state, prediction logs, alerts, users, API keys, sessions** — local SQLite file (`DASHBOARD_DB_PATH`, default `backend_api_server/dashboard.db`; git-ignored). Volume/drift charts and overview stats reflect **real per-user API usage** and fill in as predictions are made.
 
 ## XAI dependencies (optional)

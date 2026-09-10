@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import { isValidElement, useLayoutEffect, useRef } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { USE_MOCK } from '@/lib/api/config'
+import { useActiveModel } from '@/hooks/use-active-model'
 import { usePageTitleStore } from '@/lib/store/page-title'
 import { cn } from '@/lib/utils'
 
@@ -16,6 +17,31 @@ export function DataSourceBadge({ className }: { className?: string }) {
       )}
     >
       mock
+    </Badge>
+  )
+}
+
+export function ModelSetBadge({ className }: { className?: string }) {
+  const { modelSet, isLive } = useActiveModel()
+  if (USE_MOCK || !isLive || !modelSet) return null
+  const isMerged = modelSet === 'merged'
+  return (
+    <Badge
+      variant="outline"
+      className={cn(
+        'font-mono text-[10px] tracking-wide uppercase',
+        isMerged
+          ? 'border-emerald-500/50 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400'
+          : 'border-[#625885]/40 bg-[#625885]/10 text-[#4a3f6e]',
+        className,
+      )}
+      title={
+        isMerged
+          ? 'Backend is serving merged-dataset models (HF_MODEL_SET=merged)'
+          : 'Backend is serving original-dataset models (HF_MODEL_SET=original)'
+      }
+    >
+      {isMerged ? 'merged' : 'original'}
     </Badge>
   )
 }
