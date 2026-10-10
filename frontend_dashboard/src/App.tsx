@@ -7,6 +7,7 @@ import { lazy, Suspense } from 'react'
 import { Loader2 } from 'lucide-react'
 
 const Login = lazy(() => import('@/pages/Login'))
+const ChangePassword = lazy(() => import('@/pages/ChangePassword'))
 const Overview = lazy(() => import('@/pages/Overview'))
 const Triage = lazy(() => import('@/pages/Triage'))
 const Explainability = lazy(() => import('@/pages/Explainability'))
@@ -14,6 +15,7 @@ const Analysis = lazy(() => import('@/pages/Analysis'))
 const Testing = lazy(() => import('@/pages/Testing'))
 const Performance = lazy(() => import('@/pages/Performance'))
 const Reports = lazy(() => import('@/pages/Reports'))
+const Settings = lazy(() => import('@/pages/Settings'))
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -39,6 +41,14 @@ export default function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/login" element={<Suspense fallback={<PageLoader />}><Login /></Suspense>} />
+            <Route
+              path="/change-password"
+              element={
+                <Suspense fallback={<PageLoader />}>
+                  <ChangePassword />
+                </Suspense>
+              }
+            />
             <Route element={<RequireAuth />}>
               <Route element={<DashboardLayout />}>
                 <Route index element={<Suspense fallback={<PageLoader />}><Overview /></Suspense>} />
@@ -48,6 +58,7 @@ export default function App() {
                 <Route path="testing" element={<Suspense fallback={<PageLoader />}><Testing /></Suspense>} />
                 <Route path="performance" element={<Suspense fallback={<PageLoader />}><Performance /></Suspense>} />
                 <Route path="reports" element={<Suspense fallback={<PageLoader />}><Reports /></Suspense>} />
+                <Route path="settings" element={<Suspense fallback={<PageLoader />}><Settings /></Suspense>} />
               </Route>
             </Route>
           </Routes>

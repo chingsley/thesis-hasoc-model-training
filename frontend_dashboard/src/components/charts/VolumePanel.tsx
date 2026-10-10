@@ -144,21 +144,19 @@ export function VolumePanel({ onVolumeChange, embedded = false }: VolumePanelPro
           </p>
         </div>
       ) : (
-        <VolumeChart data={volumeData!} range={range} chartStyle={chartStyle} />
+        <VolumeChart
+          data={volumeData!}
+          range={range}
+          chartStyle={chartStyle}
+          description={embedded ? volumeDescription : undefined}
+          toolbar={embedded ? toolbar : undefined}
+        />
       )}
     </>
   )
 
   if (embedded) {
-    return (
-      <div className="space-y-4">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-          <p className="text-xs text-[var(--hg-muted)]">{volumeDescription}</p>
-          {toolbar}
-        </div>
-        {body}
-      </div>
-    )
+    return body
   }
 
   return (
@@ -171,7 +169,7 @@ export function VolumePanel({ onVolumeChange, embedded = false }: VolumePanelPro
               aria-hidden
               className="mx-4 inline-block h-[0.85em] w-[3px] shrink-0 rounded-full bg-[var(--hg-border)]"
             />
-            <span className="text-base font-normal tracking-wide text-[#625885] uppercase">
+            <span className="text-base font-normal tracking-wide text-[var(--hg-brand)] uppercase">
               {language.charAt(0).toUpperCase()}
               {language.slice(1)}
             </span>

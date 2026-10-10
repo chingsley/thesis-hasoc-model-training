@@ -54,7 +54,8 @@ export function TriageStats({ bucket, posts }: TriageStatsProps) {
             key={item.label}
             className={cn(
               'relative flex min-h-[112px] items-stretch justify-between gap-4 px-5 py-5 md:px-6',
-              item.danger && 'bg-[#4a3f6e] text-white md:pr-6 lg:pr-8',
+              item.danger &&
+                'bg-[var(--hg-accent-surface)] text-white md:pr-6 lg:pr-8',
             )}
           >
             {index > 0 && !item.danger && (

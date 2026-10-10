@@ -10,6 +10,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { AlertsBell } from '@/components/alerts/AlertsBell'
+import { OrganizationSwitcher } from '@/components/layout/OrganizationSwitcher'
 import { useTitleChipProgress } from '@/hooks/use-title-chip-progress'
 import { useDashboardStore } from '@/lib/store/dashboard'
 import { usePageTitleStore } from '@/lib/store/page-title'
@@ -40,7 +41,7 @@ export function Header({ onMenuClick, scrollRootRef }: HeaderProps) {
   const chipVisible = Boolean(chipLabel) && progress > 0.01
 
   return (
-    <header ref={headerRef} className="sticky top-0 z-30 bg-[#eaebf4]">
+    <header ref={headerRef} className="sticky top-0 z-30 bg-[var(--hg-shell)]">
       <div className="relative h-16 w-full">
         <svg width={0} height={0} className="absolute" aria-hidden>
           <defs>
@@ -90,7 +91,7 @@ export function Header({ onMenuClick, scrollRootRef }: HeaderProps) {
               {chipLabel ? (
                 <div
                   className={cn(
-                    'inline-flex h-full min-w-[180px] items-center justify-center whitespace-nowrap bg-[#4a3f6e] px-3',
+                    'inline-flex h-full min-w-[180px] items-center justify-center whitespace-nowrap bg-[var(--hg-accent-surface)] px-3',
                     'rounded-none rounded-b-[16px]',
                     'text-[11px] font-semibold tracking-[0.08em] text-white uppercase',
                     'will-change-transform',
@@ -106,6 +107,7 @@ export function Header({ onMenuClick, scrollRootRef }: HeaderProps) {
           </div>
 
           <div className="flex flex-1 items-center justify-end gap-2 px-4 md:px-6 lg:px-8">
+            <OrganizationSwitcher />
             <Select
               value={language}
               onValueChange={(value) => {
@@ -120,8 +122,8 @@ export function Header({ onMenuClick, scrollRootRef }: HeaderProps) {
                   'w-36 rounded-[4px] border-[var(--hg-border)] bg-white text-xs font-medium text-black',
                   'data-[size=sm]:h-8 data-[size=sm]:rounded-[4px]',
                   'hover:border-[var(--hg-muted)] hover:bg-[var(--hg-soft)]',
-                  'focus-visible:border-[#625885] focus-visible:ring-[#625885]/25',
-                  'data-popup-open:border-[#625885] data-popup-open:bg-[var(--hg-soft)]',
+                  'focus-visible:border-[var(--hg-brand)] focus-visible:ring-[var(--hg-brand)]/25',
+                  'data-popup-open:border-[var(--hg-brand)] data-popup-open:bg-[var(--hg-soft)]',
                   '[&_svg]:text-[var(--hg-muted)]',
                 )}
               >

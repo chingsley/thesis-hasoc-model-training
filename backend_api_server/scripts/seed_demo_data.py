@@ -2,16 +2,14 @@
 
 Usage (from backend_api_server/, venv active):
 
-  python scripts/seed_demo_data.py            # seed; refuses to wipe existing data
-  python scripts/seed_demo_data.py --reset    # wipe the demo users' rows, then seed
+  python scripts/seed_demo_data.py                 # seed; refuses to wipe existing data
+  python scripts/seed_demo_data.py --reset         # wipe seed users' rows, then seed
+  python scripts/seed_demo_data.py --reset-db      # delete SQLite DB, re-run schema, seed
 
 Creates:
-  - admin@hateguard.local / hateguard123  (+ prints an API key once)
-  - demo@partner.local / partner123       (second user, proves per-user isolation)
-  - Curated predictions for triage/explainability, plus bulk volume across the
-    last ~90 days (feeds Overview 24h / 7d / 1m / 3m charts, drift, clouds,
-    clusters, alerts, Testing history)
-  - triage rows covering every bucket: pending / cleared / flagged / relabelled
+  - user1@test.com, user2@test.com, ... (shared password; API key printed once per new user)
+  - user1 gets curated predictions + triage + ~90d volume (charts, drift, alerts, etc.)
+  - user2 gets a small separate prediction row (per-user isolation smoke test)
 """
 
 from __future__ import annotations
@@ -28,10 +26,16 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from app import auth, db  # noqa: E402
 
-ADMIN_EMAIL = "admin@hateguard.local"
-ADMIN_PASSWORD = "hateguard123"
-DEMO_EMAIL = "demo@partner.local"
-DEMO_PASSWORD = "partner123"
+SEED_PASSWORD = "Password123@"
+
+# (email, full_name, organization_name, api_key_name)
+SEED_USERS: list[tuple[str, str, str, str]] = [
+    ("user1@test.com", "Ikadi Onafula", "Lagos Community Media", "dev"),
+    ("user2@test.com", "James Ikawi", "River State Digital Forum", "dev"),
+    ("platform@test.com", "Platform Admin", "HateGuard Platform", "platform"),
+]
+
+PRIMARY_EMAIL = SEED_USERS[0][0]
 
 # How far back bulk volume goes (matches the 3m chart window).
 HISTORY_DAYS = 90
@@ -130,30 +134,55 @@ def label_for_toxic(i: int) -> str:
     return "Hate" if i % 9 in (0, 2, 4, 6) else "Abuse"
 
 
-def ensure_user(email: str, password: str, org: str, key_name: str) -> tuple[int, str | None]:
+def ensure_user(
+    email: str, password: str, full_name: str, org: str, key_name: str
+) -> tuple[int, str | None]:
     existing = db.get_user_by_email(email)
     if existing is not None:
         print(f"  user exists: {email} (id={existing['id']})")
         return int(existing["id"]), None
-    user_id = db.create_user(email, auth.hash_password(password), org)
+    user_id = db.create_user(
+        email,
+        auth.hash_password(password),
+        org,
+        full_name=full_name,
+    )
+    user = db.get_user_by_id(user_id)
+    org_id = int(user["organization_id"])
     plaintext, prefix, key_hash = auth.new_api_key()
-    db.insert_api_key(user_id, key_name, prefix, key_hash)
-    print(f"  created user: {email} (id={user_id})")
+    db.insert_api_key(user_id, org_id, key_name, prefix, key_hash)
+    print(f"  created user: {full_name} <{email}> org={org!r} (id={user_id})")
     print(f"  API key ({key_name}, shown once): {plaintext}")
     return user_id, plaintext
 
 
 def wipe_user_rows(user_id: int) -> None:
+    user = db.get_user_by_id(user_id)
+    org_id = int(user["organization_id"]) if user else user_id
     conn = db.get_conn()
     with db._lock, conn:  # noqa: SLF001
-        conn.execute("DELETE FROM predictions WHERE user_id = ?", (user_id,))
+        conn.execute(
+            "DELETE FROM predictions WHERE organization_id = ? OR user_id = ?",
+            (org_id, user_id),
+        )
+        conn.execute("DELETE FROM triage WHERE post_id LIKE ?", (f"o{org_id}_pred_%",))
         conn.execute("DELETE FROM triage WHERE post_id LIKE ?", (f"u{user_id}_pred_%",))
+
+
+def delete_database_file() -> None:
+    """Remove all data (SQLite file or Postgres tables) for a fresh seed."""
+    db.wipe_all_tables()
+    if db.using_postgres():
+        print("Wiped all tables in PostgreSQL (DATABASE_URL).")
+    else:
+        print(f"Deleted database: {db.db_path()}")
 
 
 def _append_row(
     rows: list[dict],
     *,
     user_id: int,
+    organization_id: int,
     ts: datetime,
     language: str,
     text: str,
@@ -172,11 +201,14 @@ def _append_row(
             "prob_hate": probs["hate"],
             "source": source,
             "user_id": user_id,
+            "organization_id": organization_id,
         }
     )
 
 
-def seed_historical_volume(user_id: int, now: datetime, rows: list[dict]) -> int:
+def seed_historical_volume(
+    user_id: int, organization_id: int, now: datetime, rows: list[dict]
+) -> int:
     """Fill ~HISTORY_DAYS so 1m / 3m charts have signal. Unique text suffixes."""
     templates = TOXIC + NORMAL_TEXTS + BORDERLINE_TEXTS
     added = 0
@@ -211,6 +243,7 @@ def seed_historical_volume(user_id: int, now: datetime, rows: list[dict]) -> int
             _append_row(
                 rows,
                 user_id=user_id,
+                organization_id=organization_id,
                 ts=ts,
                 language=language,
                 text=text,
@@ -223,6 +256,8 @@ def seed_historical_volume(user_id: int, now: datetime, rows: list[dict]) -> int
 
 
 def seed_predictions(user_id: int) -> dict[str, int]:
+    user = db.get_user_by_id(user_id)
+    organization_id = int(user["organization_id"])
     now = datetime.now(timezone.utc)
     rows: list[dict] = []
 
@@ -236,6 +271,7 @@ def seed_predictions(user_id: int) -> dict[str, int]:
         _append_row(
             rows,
             user_id=user_id,
+            organization_id=organization_id,
             ts=ts,
             language=language,
             text=text,
@@ -251,6 +287,7 @@ def seed_predictions(user_id: int) -> dict[str, int]:
         _append_row(
             rows,
             user_id=user_id,
+            organization_id=organization_id,
             ts=now - timedelta(minutes=rng.randint(5, 45)),
             language="igbo" if "biafra" in text else "yoruba",
             text=text,
@@ -265,6 +302,7 @@ def seed_predictions(user_id: int) -> dict[str, int]:
         _append_row(
             rows,
             user_id=user_id,
+            organization_id=organization_id,
             ts=now - timedelta(days=rng.uniform(0.2, 3)),
             language=language,
             text=text,
@@ -278,6 +316,7 @@ def seed_predictions(user_id: int) -> dict[str, int]:
         _append_row(
             rows,
             user_id=user_id,
+            organization_id=organization_id,
             ts=now - timedelta(days=rng.uniform(0.1, 7)),
             language=language,
             text=text,
@@ -286,7 +325,7 @@ def seed_predictions(user_id: int) -> dict[str, int]:
             source="single" if i % 2 else "batch",
         )
 
-    hist = seed_historical_volume(user_id, now, rows)
+    hist = seed_historical_volume(user_id, organization_id, now, rows)
     print(f"  curated rows: {len(rows) - hist}, historical volume rows ({HISTORY_DAYS}d): {hist}")
 
     db.log_predictions(rows)
@@ -302,8 +341,11 @@ def seed_predictions(user_id: int) -> dict[str, int]:
 
 
 def seed_triage(user_id: int, id_map: dict[str, int]) -> None:
+    user = db.get_user_by_id(user_id)
+    org_id = int(user["organization_id"])
+
     def key(text: str) -> str:
-        return f"u{user_id}_pred_{id_map[text]}"
+        return f"o{org_id}_pred_{id_map[text]}"
 
     toxic_texts = [t for _, t in TOXIC]
 
@@ -328,63 +370,87 @@ def seed_triage(user_id: int, id_map: dict[str, int]) -> None:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Seed HateGuard demo data.")
-    parser.add_argument("--reset", action="store_true", help="wipe demo users' rows before seeding")
+    parser.add_argument("--reset", action="store_true", help="wipe seed users' rows before seeding")
+    parser.add_argument(
+        "--reset-db",
+        action="store_true",
+        help="delete the SQLite database file (schema re-applies on connect), then seed",
+    )
     args = parser.parse_args()
 
     load_dotenv()
 
-    admin = db.get_user_by_email(ADMIN_EMAIL)
-    if admin is not None and not args.reset:
-        conn = db.get_conn()
-        with db._lock:  # noqa: SLF001
-            n = conn.execute(
-                "SELECT COUNT(*) AS n FROM predictions WHERE user_id = ?", (admin["id"],)
-            ).fetchone()["n"]
-        if n > 0:
-            print(f"{ADMIN_EMAIL} already has {n} predictions. Re-run with --reset to wipe and reseed.")
-            return 1
+    if args.reset_db:
+        delete_database_file()
+    elif args.reset:
+        pass
+    else:
+        primary = db.get_user_by_email(PRIMARY_EMAIL)
+        if primary is not None:
+            conn = db.get_conn()
+            with db._lock:  # noqa: SLF001
+                n = conn.execute(
+                    "SELECT COUNT(*) AS n FROM predictions WHERE user_id = ?", (primary["id"],)
+                ).fetchone()["n"]
+            if n > 0:
+                print(
+                    f"{PRIMARY_EMAIL} already has {n} predictions. "
+                    "Re-run with --reset or --reset-db to wipe and reseed."
+                )
+                return 1
 
     print("Users:")
-    admin_id, _ = ensure_user(ADMIN_EMAIL, ADMIN_PASSWORD, "HateGuard Admin", "dev")
-    demo_id, _ = ensure_user(DEMO_EMAIL, DEMO_PASSWORD, "Partner Platform", "dev")
+    user_ids: list[int] = []
+    for email, full_name, org, key_name in SEED_USERS:
+        user_id, _ = ensure_user(email, SEED_PASSWORD, full_name, org, key_name)
+        user_ids.append(user_id)
 
-    if args.reset:
-        print("Wiping existing rows for both demo users...")
-        wipe_user_rows(admin_id)
-        wipe_user_rows(demo_id)
+    primary_id = user_ids[0]
+    secondary_id = user_ids[1] if len(user_ids) > 1 else None
 
-    print("Seeding predictions + triage (admin)...")
-    id_map = seed_predictions(admin_id)
-    seed_triage(admin_id, id_map)
+    if args.reset and not args.reset_db:
+        print("Wiping existing rows for seed users...")
+        for user_id in user_ids:
+            wipe_user_rows(user_id)
 
-    db.log_predictions(
-        [
-            {
-                "ts": datetime.now(timezone.utc).isoformat(),
-                "language": "igbo",
-                "text": "partner platform test post, ka anyi dobe",
-                "predicted_label": "Normal",
-                "prob_normal": 0.97,
-                "prob_abuse": 0.02,
-                "prob_hate": 0.01,
-                "source": "single",
-                "user_id": demo_id,
-            }
-        ]
-    )
+    print(f"Seeding predictions + triage ({PRIMARY_EMAIL})...")
+    id_map = seed_predictions(primary_id)
+    seed_triage(primary_id, id_map)
 
-    stats = db.overview_stats(admin_id, "igbo")
+    if secondary_id is not None:
+        secondary = db.get_user_by_id(secondary_id)
+        db.log_predictions(
+            [
+                {
+                    "ts": datetime.now(timezone.utc).isoformat(),
+                    "language": "igbo",
+                    "text": "user2 isolation test post, ka anyi dobe",
+                    "predicted_label": "Normal",
+                    "prob_normal": 0.97,
+                    "prob_abuse": 0.02,
+                    "prob_hate": 0.01,
+                    "source": "single",
+                    "user_id": secondary_id,
+                    "organization_id": int(secondary["organization_id"]),
+                }
+            ]
+        )
+
+    primary = db.get_user_by_id(primary_id)
+    stats = db.overview_stats(int(primary["organization_id"]), "igbo")
     conn = db.get_conn()
     with db._lock:  # noqa: SLF001
         total = conn.execute(
-            "SELECT COUNT(*) AS n FROM predictions WHERE user_id = ?", (admin_id,)
+            "SELECT COUNT(*) AS n FROM predictions WHERE user_id = ?", (primary_id,)
         ).fetchone()["n"]
         oldest = conn.execute(
-            "SELECT MIN(ts) AS ts FROM predictions WHERE user_id = ?", (admin_id,)
+            "SELECT MIN(ts) AS ts FROM predictions WHERE user_id = ?", (primary_id,)
         ).fetchone()["ts"]
-    print(f"\nDone. admin predictions: {total} (oldest {oldest})")
-    print(f"admin igbo stats: {stats}")
-    print("\nLogin:  admin@hateguard.local / hateguard123")
+    print(f"\nDone. {PRIMARY_EMAIL} predictions: {total} (oldest {oldest})")
+    print(f"{PRIMARY_EMAIL} igbo stats: {stats}")
+    print(f"\nLogins (password for all: {SEED_PASSWORD}):")
+    for email, full_name, org, _ in SEED_USERS:
+        print(f"  {full_name} <{email}> — {org}")
     print("What to check: Overview stats+volume (24h/7d/1m/3m), Triage (4 buckets),")
     print("Relabelled edit, Explainability, Analysis, Alerts, Reports export.")
     return 0

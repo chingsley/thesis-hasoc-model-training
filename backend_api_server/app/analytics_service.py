@@ -1,7 +1,7 @@
 """Live analytics: volume, drift, clusters, word cloud, alerts, incident report.
 
 Volume/drift/alerts are computed from the predictions log (real API usage)
-and are scoped per user. Clusters and the word cloud are computed from the
+and are scoped per organization. Clusters and the word cloud are computed from the
 live posts served by posts_service (shared model test-set view).
 """
 
@@ -62,7 +62,7 @@ def _parse_boundary(value: str | None, *, end_of_day: bool = False) -> datetime 
 
 def volume_by_hour(
     hours: int = VOLUME_HOURS,
-    user_id: int | None = None,
+    organization_id: int | None = None,
     language: str | None = None,
     since: str | None = None,
     until: str | None = None,
@@ -94,7 +94,7 @@ def volume_by_hour(
         start = end
 
     since_iso = start.isoformat()
-    rows = db.prediction_rows_since(since_iso, user_id=user_id)
+    rows = db.prediction_rows_since(since_iso, organization_id=organization_id)
     until_iso = (end + timedelta(hours=1)).isoformat()
     rows = [row for row in rows if row["ts"] < until_iso]
     if language:
@@ -123,10 +123,10 @@ def volume_by_hour(
 
 
 def drift_by_day(
-    days: int = DRIFT_DAYS, user_id: int | None = None, language: str | None = None
+    days: int = DRIFT_DAYS, organization_id: int | None = None, language: str | None = None
 ) -> list[dict[str, Any]]:
     since = (datetime.now(timezone.utc) - timedelta(days=days)).isoformat()
-    rows = db.prediction_rows_since(since, user_id=user_id)
+    rows = db.prediction_rows_since(since, organization_id=organization_id)
     if language:
         rows = [row for row in rows if row["language"] == language]
 
@@ -169,8 +169,10 @@ def word_cloud(language: str, limit: int = 40) -> list[dict[str, Any]]:
     return _word_cloud_from_posts(posts_service.get_posts(language), limit)
 
 
-def user_word_cloud(user_id: int, language: str, limit: int = 40) -> list[dict[str, Any]]:
-    return _word_cloud_from_posts(user_posts_service.list_user_posts(user_id, language), limit)
+def user_word_cloud(organization_id: int, language: str, limit: int = 40) -> list[dict[str, Any]]:
+    return _word_cloud_from_posts(
+        user_posts_service.list_org_posts(organization_id, language), limit
+    )
 
 
 # --- Model-measured toxic terms (leave-one-out word attribution) ---
@@ -185,7 +187,7 @@ _toxic_terms_cache: dict[tuple[int, str], tuple[tuple, list[dict[str, Any]]]] = 
 
 def user_toxic_terms(
     predict_fn: Callable[[list[str]], list[dict[str, Any]]],
-    user_id: int,
+    organization_id: int,
     language: str,
     limit: int = 40,
 ) -> list[dict[str, Any]]:
@@ -200,14 +202,14 @@ def user_toxic_terms(
     """
     posts = [
         post
-        for post in user_posts_service.list_user_posts(user_id, language)
+        for post in user_posts_service.list_org_posts(organization_id, language)
         if post["predicted_label"] in ("Hate", "Abuse")
     ][:TOXIC_TERMS_MAX_POSTS]
     if not posts:
         return []
 
     fingerprint = (len(posts), posts[0]["id"])
-    cache_key = (user_id, language)
+    cache_key = (organization_id, language)
     cached = _toxic_terms_cache.get(cache_key)
     if cached and cached[0] == fingerprint:
         return cached[1]
@@ -325,22 +327,24 @@ def clusters(language: str, max_clusters: int = 6) -> list[dict[str, Any]]:
     return _cluster_cache[key]
 
 
-def user_clusters(user_id: int, language: str, max_clusters: int = 6) -> list[dict[str, Any]]:
-    """Clusters over the user's own prediction log; recomputed per call (log grows)."""
-    return _clusters_from_posts(user_posts_service.list_user_posts(user_id, language), max_clusters)
+def user_clusters(organization_id: int, language: str, max_clusters: int = 6) -> list[dict[str, Any]]:
+    """Clusters over the org prediction log; recomputed per call (log grows)."""
+    return _clusters_from_posts(
+        user_posts_service.list_org_posts(organization_id, language), max_clusters
+    )
 
 
 def refresh_clusters() -> None:
     _cluster_cache.clear()
 
 
-def generate_alerts(user_id: int) -> None:
-    """Derive alerts from one user's recent prediction activity; deterministic ids dedup."""
+def generate_alerts(organization_id: int) -> None:
+    """Derive alerts from one org's recent prediction activity; deterministic ids dedup."""
     now = datetime.now(timezone.utc)
-    id_prefix = f"u{user_id}_"
+    id_prefix = f"o{organization_id}_"
 
     since_hour = (now - timedelta(hours=1)).isoformat()
-    rows = db.prediction_rows_since(since_hour, user_id=user_id)
+    rows = db.prediction_rows_since(since_hour, organization_id=organization_id)
     hate_rows = [row for row in rows if row["predicted_label"] == "Hate"]
     day_key = now.isoformat()[:13]
 
@@ -355,7 +359,8 @@ def generate_alerts(user_id: int) -> None:
                 "ts": now.isoformat(),
                 "read": 0,
                 "post_id": None,
-                "user_id": user_id,
+                "user_id": None,
+                "organization_id": organization_id,
             }
         )
 
@@ -375,12 +380,13 @@ def generate_alerts(user_id: int) -> None:
                     "ts": row["ts"],
                     "read": 0,
                     "post_id": None,
-                    "user_id": user_id,
+                    "user_id": None,
+                    "organization_id": organization_id,
                 }
             )
 
     since_week = (now - timedelta(days=7)).isoformat()
-    week_rows = db.prediction_rows_since(since_week, user_id=user_id)
+    week_rows = db.prediction_rows_since(since_week, organization_id=organization_id)
     today = now.date().isoformat()
     today_probs = [r["prob_hate"] for r in week_rows if r["ts"][:10] == today]
     prior_probs = [r["prob_hate"] for r in week_rows if r["ts"][:10] != today]
@@ -399,13 +405,14 @@ def generate_alerts(user_id: int) -> None:
                     "ts": now.isoformat(),
                     "read": 0,
                     "post_id": None,
-                    "user_id": user_id,
+                    "user_id": None,
+                    "organization_id": organization_id,
                 }
             )
 
 
-def list_alerts(user_id: int) -> list[dict[str, Any]]:
-    generate_alerts(user_id)
+def list_alerts(organization_id: int) -> list[dict[str, Any]]:
+    generate_alerts(organization_id)
     return [
         {
             "id": row["id"],
@@ -416,7 +423,7 @@ def list_alerts(user_id: int) -> list[dict[str, Any]]:
             "read": bool(row["read"]),
             **({"post_id": row["post_id"]} if row["post_id"] else {}),
         }
-        for row in db.list_alerts(user_id)
+        for row in db.list_alerts(organization_id)
     ]
 
 
@@ -452,6 +459,8 @@ def incidents_csv(language: str, start: str, end: str) -> str:
     return _incidents_csv_from_posts(posts_service.reported_posts(language), start, end)
 
 
-def user_incidents_csv(user_id: int, language: str, start: str, end: str) -> str:
-    """CSV of the user's own predictions marked 'reported', filtered by date."""
-    return _incidents_csv_from_posts(user_posts_service.user_reported_posts(user_id, language), start, end)
+def user_incidents_csv(organization_id: int, language: str, start: str, end: str) -> str:
+    """CSV of the org's predictions marked 'reported', filtered by date."""
+    return _incidents_csv_from_posts(
+        user_posts_service.org_reported_posts(organization_id, language), start, end
+    )

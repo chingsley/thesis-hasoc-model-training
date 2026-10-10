@@ -15,19 +15,18 @@ function cellStyle(value: number, max: number, isDiagonal: boolean): CSSProperti
     }
   }
   const t = Math.min(1, value / max)
-  if (isDiagonal) {
-    // Correct predictions: brand purple scale
-    const alpha = 0.12 + t * 0.78
-    return {
-      backgroundColor: `rgba(98, 88, 133, ${alpha})`,
-      color: t > 0.45 ? '#ffffff' : 'var(--hg-ink)',
-    }
-  }
-  // Misclassifications: soft red scale (alert accent, lighter than diagonal)
-  const alpha = 0.08 + t * 0.55
+  const accent = isDiagonal ? 'var(--hg-matrix-correct)' : 'var(--hg-matrix-error)'
+  const mix = isDiagonal ? 12 + t * 78 : 8 + t * 55
+  const threshold = isDiagonal ? 0.45 : 0.55
   return {
-    backgroundColor: `rgba(193, 0, 44, ${alpha})`,
-    color: t > 0.55 ? '#ffffff' : '#5a0014',
+    backgroundColor: `color-mix(in srgb, ${accent} ${mix}%, var(--hg-canvas))`,
+    color: t > threshold ? '#ffffff' : 'var(--hg-ink)',
+  }
+}
+
+function legendSwatch(accentVar: '--hg-matrix-correct' | '--hg-matrix-error', mix: number): CSSProperties {
+  return {
+    backgroundColor: `color-mix(in srgb, var(${accentVar}) ${mix}%, var(--hg-canvas))`,
   }
 }
 
@@ -97,11 +96,19 @@ export function ConfusionMatrix({ matrix }: ConfusionMatrixProps) {
 
       <div className="flex flex-wrap items-center gap-4 border-t border-[var(--hg-border)] pt-3 text-[11px] text-[var(--hg-muted)]">
         <span className="inline-flex items-center gap-1.5">
-          <span className="size-2.5 rounded-[2px] bg-[rgba(98,88,133,0.75)]" aria-hidden />
+          <span
+            className="size-2.5 rounded-[2px]"
+            style={legendSwatch('--hg-matrix-correct', 75)}
+            aria-hidden
+          />
           Correct (diagonal)
         </span>
         <span className="inline-flex items-center gap-1.5">
-          <span className="size-2.5 rounded-[2px] bg-[rgba(193,0,44,0.45)]" aria-hidden />
+          <span
+            className="size-2.5 rounded-[2px]"
+            style={legendSwatch('--hg-matrix-error', 45)}
+            aria-hidden
+          />
           Misclassified
         </span>
         <span className="text-[var(--hg-subtle)]">Darker = more examples</span>

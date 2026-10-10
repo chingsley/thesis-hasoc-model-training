@@ -180,19 +180,6 @@
   --sidebar-border: #e8edf5;
   --sidebar-ring: #625885;
 
-  /* Dashboard surfaces */
-  --hg-canvas: #f2f3f8;
-  --hg-border: #e8edf5;
-  /* Secondary body/description text — AA on white & canvas */
-  --hg-muted: #556478;
-  /* Captions, labels, inactive chrome — AA on white & canvas */
-  --hg-subtle: #5c6d84;
-  --hg-ink: #0f1c33;
-  --hg-brand: #625885;
-  --hg-secondary: #c1002c;
-  --hg-accent: var(--hg-brand);
-  --hg-soft: #d9d6f7;
-  --hg-soft-selected: #c4bff0;
   --hg-shadow: 0 1px 2px rgba(15, 28, 51, 0.04), 0 4px 16px rgba(15, 28, 51, 0.04);
 }
 
@@ -230,4 +217,113 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+}
+
+/* Login hero — faint cybersecurity emblem backdrop */
+.login-hero-cyber-svg {
+  opacity: 0.2;
+}
+
+@keyframes login-hero-cyber-ring-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.02);
+  }
+}
+
+@keyframes login-hero-cyber-scan-move {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(470px);
+  }
+}
+
+@keyframes login-hero-cyber-flow {
+  to {
+    stroke-dashoffset: -48;
+  }
+}
+
+@keyframes login-hero-cyber-node {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes login-hero-cyber-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.login-hero-cyber-emblem-faint {
+  opacity: 0.72;
+}
+
+.login-hero-cyber-lock-lit {
+  opacity: 1;
+}
+
+.login-hero-cyber-scan {
+  animation: login-hero-cyber-scan-move 6.5s linear infinite;
+}
+
+.login-hero-cyber-ring {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: login-hero-cyber-ring-pulse 6s ease-in-out infinite;
+}
+
+.login-hero-cyber-ring-delay {
+  animation-delay: 2s;
+}
+
+.login-hero-cyber-orbit {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: login-hero-cyber-spin 60s linear infinite;
+}
+
+.login-hero-cyber-orbit-dots {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: login-hero-cyber-spin 40s linear infinite;
+}
+
+.login-hero-cyber-flow {
+  animation: login-hero-cyber-flow 14s linear infinite;
+}
+
+.login-hero-cyber-flow-reverse {
+  animation-direction: reverse;
+  animation-duration: 18s;
+}
+
+.login-hero-cyber-node {
+  animation: login-hero-cyber-node 4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .login-hero-cyber-scan,
+  .login-hero-cyber-ring,
+  .login-hero-cyber-orbit,
+  .login-hero-cyber-orbit-dots,
+  .login-hero-cyber-flow,
+  .login-hero-cyber-node {
+    animation: none;
+  }
 }

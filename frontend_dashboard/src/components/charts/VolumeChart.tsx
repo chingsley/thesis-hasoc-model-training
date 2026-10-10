@@ -1,6 +1,8 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import type { VolumeDataPoint } from '@/lib/types'
 import type { ChartStyle, ResolvedVolumeRange } from '@/lib/volume-range'
+import { useThemeStore } from '@/lib/store/theme'
+import { readCssVar } from '@/lib/theme/cssVar'
 import { cn } from '@/lib/utils'
 import {
   LineChart,
@@ -24,10 +26,27 @@ export const VOLUME_SERIES = {
 
 type SeriesKey = keyof typeof VOLUME_SERIES
 
+function resolveVolumeSeries() {
+  return {
+    ...VOLUME_SERIES,
+    total: {
+      ...VOLUME_SERIES.total,
+      color: readCssVar('--chart-1', VOLUME_SERIES.total.color),
+    },
+    hate_count: {
+      ...VOLUME_SERIES.hate_count,
+      color: readCssVar('--hg-secondary', VOLUME_SERIES.hate_count.color),
+    },
+  }
+}
+
 interface VolumeChartProps {
   data: VolumeDataPoint[]
   range: ResolvedVolumeRange
   chartStyle?: ChartStyle
+  /** Shown under chart controls (embedded Analysis tab). */
+  description?: string
+  toolbar?: ReactNode
 }
 
 export type ChartPoint = {
@@ -154,10 +173,12 @@ function VolumeTooltip({
   active,
   payload,
   visible,
+  series,
 }: {
   active?: boolean
   payload?: Array<{ payload: ChartPoint }>
   visible: Set<SeriesKey>
+  series: ReturnType<typeof resolveVolumeSeries>
 }) {
   if (!active || !payload?.length) return null
   const row = payload[0].payload
@@ -176,16 +197,16 @@ function VolumeTooltip({
       <p className="mb-2 text-[11px] font-semibold tracking-wide text-[var(--hg-ink)]">{row.tooltip}</p>
       <div className="space-y-1.5">
         {rows.map(([key, value]) => {
-          const series = VOLUME_SERIES[key]
+          const meta = series[key]
           const isTotal = key === 'total'
           return (
             <div key={key} className="flex items-center justify-between gap-8">
               <span className="flex items-center gap-2 text-[11px] text-[var(--hg-muted)]">
                 <span
                   className="inline-block size-2 rounded-full"
-                  style={{ background: series.color }}
+                  style={{ background: meta.color }}
                 />
-                {series.label}
+                {meta.label}
               </span>
               <span
                 className={cn(
@@ -210,15 +231,17 @@ function SeriesLegend({
   keys,
   visible,
   onToggle,
+  series,
 }: {
   keys: SeriesKey[]
   visible: Set<SeriesKey>
   onToggle: (key: SeriesKey) => void
+  series: ReturnType<typeof resolveVolumeSeries>
 }) {
   return (
     <div className="flex flex-wrap items-center gap-1.5" role="group" aria-label="Series">
       {keys.map((key) => {
-        const series = VOLUME_SERIES[key]
+        const meta = series[key]
         const on = visible.has(key)
         return (
           <button
@@ -235,9 +258,9 @@ function SeriesLegend({
           >
             <span
               className="size-2 rounded-full"
-              style={{ background: on ? series.color : 'var(--hg-border)' }}
+              style={{ background: on ? meta.color : 'var(--hg-border)' }}
             />
-            {series.label}
+            {meta.label}
           </button>
         )
       })}
@@ -245,7 +268,13 @@ function SeriesLegend({
   )
 }
 
-export function VolumeKpiStrip({ points }: { points: ChartPoint[] }) {
+export function VolumeKpiStrip({
+  points,
+  className,
+}: {
+  points: ChartPoint[]
+  className?: string
+}) {
   const kpis = volumeKpis(points)
   const items = [
     { label: 'Peak', value: kpis.peakTotal.toLocaleString(), hint: kpis.peakLabel },
@@ -253,7 +282,12 @@ export function VolumeKpiStrip({ points }: { points: ChartPoint[] }) {
     { label: 'Avg / bucket', value: kpis.avgPerBucket.toLocaleString(), hint: 'mean volume' },
   ]
   return (
-    <div className="mb-4 flex flex-wrap gap-x-6 gap-y-2 border-b border-[var(--hg-border)] pb-3">
+    <div
+      className={cn(
+        'flex flex-wrap gap-x-6 gap-y-2 border-b border-[var(--hg-border)] pb-3',
+        className,
+      )}
+    >
       {items.map((item) => (
         <div key={item.label} className="min-w-0">
           <p className="text-[10px] font-medium tracking-wide text-[var(--hg-subtle)] uppercase">
@@ -267,7 +301,15 @@ export function VolumeKpiStrip({ points }: { points: ChartPoint[] }) {
   )
 }
 
-export function VolumeChart({ data, range, chartStyle = 'line' }: VolumeChartProps) {
+export function VolumeChart({
+  data,
+  range,
+  chartStyle = 'line',
+  description,
+  toolbar,
+}: VolumeChartProps) {
+  const themeId = useThemeStore((s) => s.themeId)
+  const series = useMemo(() => resolveVolumeSeries(), [themeId])
   const formatted = useMemo(() => toChartPoints(data, range), [data, range])
   const interval = tickInterval(formatted.length, range)
   const legendKeys = chartStyle === 'stacked' ? STACK_KEYS : LINE_KEYS
@@ -320,32 +362,59 @@ export function VolumeChart({ data, range, chartStyle = 'line' }: VolumeChartPro
       />
       <Tooltip
         cursor={{ stroke: '#c4bff0', strokeWidth: 1, strokeDasharray: '4 4' }}
-        content={<VolumeTooltip visible={visible} />}
+        content={<VolumeTooltip visible={visible} series={series} />}
       />
     </>
   )
 
   return (
     <div className="animate-in fade-in duration-300">
-      <div className="mb-3 flex items-center justify-between gap-3">
-        <SeriesLegend keys={legendKeys} visible={visible} onToggle={toggle} />
-      </div>
-      <VolumeKpiStrip points={formatted} />
+      {toolbar ? (
+        <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div className="min-w-0 flex-1 space-y-3">
+            <SeriesLegend
+              keys={legendKeys}
+              visible={visible}
+              onToggle={toggle}
+              series={series}
+            />
+            <VolumeKpiStrip points={formatted} className="mb-0" />
+          </div>
+          <div className="flex shrink-0 flex-col items-stretch gap-2 sm:items-end">
+            {toolbar}
+            {description ? (
+              <p className="text-right text-xs text-[var(--hg-muted)]">{description}</p>
+            ) : null}
+          </div>
+        </div>
+      ) : (
+        <>
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <SeriesLegend
+              keys={legendKeys}
+              visible={visible}
+              onToggle={toggle}
+              series={series}
+            />
+          </div>
+          <VolumeKpiStrip points={formatted} className="mb-4" />
+        </>
+      )}
       <ResponsiveContainer width="100%" height={320}>
         {chartStyle === 'stacked' ? (
           <AreaChart data={formatted} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
             <defs>
               <linearGradient id="vol-normal" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor={VOLUME_SERIES.normal_count.color} stopOpacity={0.45} />
-                <stop offset="100%" stopColor={VOLUME_SERIES.normal_count.color} stopOpacity={0.05} />
+                <stop offset="0%" stopColor={series.normal_count.color} stopOpacity={0.45} />
+                <stop offset="100%" stopColor={series.normal_count.color} stopOpacity={0.05} />
               </linearGradient>
               <linearGradient id="vol-abuse" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor={VOLUME_SERIES.abuse_count.color} stopOpacity={0.5} />
-                <stop offset="100%" stopColor={VOLUME_SERIES.abuse_count.color} stopOpacity={0.06} />
+                <stop offset="0%" stopColor={series.abuse_count.color} stopOpacity={0.5} />
+                <stop offset="100%" stopColor={series.abuse_count.color} stopOpacity={0.06} />
               </linearGradient>
               <linearGradient id="vol-hate" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor={VOLUME_SERIES.hate_count.color} stopOpacity={0.55} />
-                <stop offset="100%" stopColor={VOLUME_SERIES.hate_count.color} stopOpacity={0.08} />
+                <stop offset="0%" stopColor={series.hate_count.color} stopOpacity={0.55} />
+                <stop offset="100%" stopColor={series.hate_count.color} stopOpacity={0.08} />
               </linearGradient>
             </defs>
             {shared}
@@ -354,7 +423,7 @@ export function VolumeChart({ data, range, chartStyle = 'line' }: VolumeChartPro
                 type="monotone"
                 dataKey="normal_count"
                 stackId="1"
-                stroke={VOLUME_SERIES.normal_count.color}
+                stroke={series.normal_count.color}
                 strokeWidth={1.5}
                 fill="url(#vol-normal)"
                 name="Normal"
@@ -367,7 +436,7 @@ export function VolumeChart({ data, range, chartStyle = 'line' }: VolumeChartPro
                 type="monotone"
                 dataKey="abuse_count"
                 stackId="1"
-                stroke={VOLUME_SERIES.abuse_count.color}
+                stroke={series.abuse_count.color}
                 strokeWidth={1.5}
                 fill="url(#vol-abuse)"
                 name="Abuse"
@@ -380,7 +449,7 @@ export function VolumeChart({ data, range, chartStyle = 'line' }: VolumeChartPro
                 type="monotone"
                 dataKey="hate_count"
                 stackId="1"
-                stroke={VOLUME_SERIES.hate_count.color}
+                stroke={series.hate_count.color}
                 strokeWidth={1.5}
                 fill="url(#vol-hate)"
                 name="Hate"
@@ -396,7 +465,7 @@ export function VolumeChart({ data, range, chartStyle = 'line' }: VolumeChartPro
               <Line
                 type="monotone"
                 dataKey="normal_count"
-                stroke={VOLUME_SERIES.normal_count.color}
+                stroke={series.normal_count.color}
                 strokeWidth={1.5}
                 strokeOpacity={0.85}
                 dot={false}
@@ -410,7 +479,7 @@ export function VolumeChart({ data, range, chartStyle = 'line' }: VolumeChartPro
               <Line
                 type="monotone"
                 dataKey="abuse_count"
-                stroke={VOLUME_SERIES.abuse_count.color}
+                stroke={series.abuse_count.color}
                 strokeWidth={1.5}
                 strokeOpacity={0.9}
                 dot={false}
@@ -424,7 +493,7 @@ export function VolumeChart({ data, range, chartStyle = 'line' }: VolumeChartPro
               <Line
                 type="monotone"
                 dataKey="hate_count"
-                stroke={VOLUME_SERIES.hate_count.color}
+                stroke={series.hate_count.color}
                 strokeWidth={1.75}
                 dot={false}
                 activeDot={{ r: 3.5, strokeWidth: 0 }}
@@ -437,10 +506,10 @@ export function VolumeChart({ data, range, chartStyle = 'line' }: VolumeChartPro
               <Line
                 type="monotone"
                 dataKey="total"
-                stroke={VOLUME_SERIES.total.color}
+                stroke={series.total.color}
                 strokeWidth={2.5}
                 dot={false}
-                activeDot={{ r: 4, strokeWidth: 0, fill: VOLUME_SERIES.total.color }}
+                activeDot={{ r: 4, strokeWidth: 0, fill: series.total.color }}
                 name="Total"
                 isAnimationActive
                 animationDuration={280}

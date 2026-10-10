@@ -119,26 +119,57 @@ Vite proxies `/api/*` → `http://localhost:8080/*`. Open **Testing** and **Perf
 
 Set `VITE_USE_MOCK=true` in `.env` to use mock data without a backend.
 
-## Authentication & per-user tracking
+## Authentication & organization-scoped data
 
-Every endpoint except `GET /health` requires credentials. Two credential types, both resolving to a user account:
+**Database:**
 
-- **API key** (machine clients — social-media/content platforms calling the API from code):
-  send `X-API-Key: hgk_...`. Keys are created per user, shown once in plaintext, stored hashed, and revocable.
-- **Session token** (dashboard login): `POST /auth/login` with email + password returns a Bearer token
-  (default lifetime `SESSION_TTL_HOURS=168`). The dashboard sends it as `Authorization: Bearer <token>`.
+- **PostgreSQL** — set `DATABASE_URL` (or `POSTGRES_URL`) in `.env` (Neon, Vercel Postgres, local Docker).
+  Connect with **Postico** using the same URL. Tables are created on first API start.
+- **SQLite** (default when `DATABASE_URL` is unset) — file `dashboard.db` in this folder (`DASHBOARD_DB_PATH` to override).
 
-Accounts are **admin-created** (no public signup):
+The **dashboard UI** can deploy to Vercel; this **FastAPI + PyTorch API** needs a separate host (Railway, Fly.io,
+Render, a VM, etc.) because of model size and cold-start limits. Point the UI at that API and use a hosted Postgres
+both can reach.
+
+**API key admins:** only emails in `API_KEY_ADMIN_EMAILS` (default `user1@test.com`) can create/revoke keys in Settings.
+Other users can still use the dashboard; integrators use keys an admin creates via Settings or `scripts/create_user.py`.
+
+Every endpoint except `GET /health` requires credentials:
+
+- **API key** (machine clients): header `X-API-Key: hgk_...`. Keys belong to an **organization** (not a single
+  human user). The plaintext key is shown once at creation; only a SHA-256 hash is stored. Keys can be revoked
+  from Settings in the dashboard.
+- **Session token** (dashboard): `POST /auth/login` → `Authorization: Bearer <token>` (`SESSION_TTL_HOURS`, default 168).
+
+**Onboarding (no public signup):**
 
 ```bash
+# Immediate account + optional org API key
 python scripts/create_user.py --email ops@platform.com --org "Platform X" --key-name prod
+
+# Invite-only: whitelist email + default password; account created on first login
+python scripts/invite_user.py --email reviewer@partner.com --org "Partner Org"
 ```
 
-Every `/predict` and `/predict/batch` call is logged to SQLite **with the caller's user_id and language**.
-Per-user dashboards are built from those rows: `GET /stats/overview`, `/analytics/volume`,
-`/analytics/drift`, `/alerts`, and the `/predictions*` endpoints each return data for the
-authenticated user only (pass `language=` to filter). Triage Queue, Explainability, Analysis,
-and Reports in the dashboard are all driven by `/predictions*` — the user's own processed texts.
+**Dashboard (Settings → Team invites):** users listed in `INVITE_ADMIN_EMAILS` (default: same as
+`API_KEY_ADMIN_EMAILS`) can invite by email into **their** organization; the API returns a one-time
+temporary password to copy and share.
+
+**Platform admins** (`PLATFORM_ADMIN_EMAILS`, default `platform@test.com` from seed) can create
+organizations, switch the active org from the header, and invite users to any org. Demo login:
+`platform@test.com` / `Password123@` (after seed).
+
+Invited users must change their password before using the dashboard (`POST /auth/change-password`).
+
+Demo seed (prints API keys once per new user):
+
+```bash
+python scripts/seed_demo_data.py --reset-db
+```
+
+Every `/predict` call is logged with **organization_id** (and user_id for audit). Dashboard and API analytics
+(`/stats/overview`, `/predictions*`, `/analytics/*`, `/alerts`) show data for the **caller's organization** —
+teammates in the same org see the same triage queue and volume charts.
 Dashboard Testing Tools calls are attributed to the logged-in user the same way.
 The older `/posts*` endpoints serve the shared model test set (evaluation view) and remain
 available, but the dashboard no longer uses them.
@@ -150,11 +181,12 @@ Full reference with curl examples and sample responses: **[project_documentation
 | Endpoint | Auth | Description |
 |----------|------|-------------|
 | `GET /health` | public | Loaded model ids per language + device |
-| `POST /auth/login` | public | Email + password → session token |
+| `POST /auth/login` | public | Email + password → session token (invite-first login supported) |
+| `POST /auth/change-password` | session | Set new password (required after invite) |
 | `POST /auth/logout` / `GET /auth/me` | session | End session / current user info |
-| `GET/POST /auth/keys`, `DELETE /auth/keys/{id}` | session | List / create / revoke own API keys |
-| `GET /stats/overview?language=` | key or session | Per-user classification counts (total/normal/abuse/hate) |
-| `GET /predictions?language=` | key or session | The caller's own processed texts (prediction log) as posts |
+| `GET/POST /auth/keys`, `DELETE /auth/keys/{id}` | session | List / create / revoke **organization** API keys |
+| `GET /stats/overview?language=` | key or session | Per-organization classification counts |
+| `GET /predictions?language=` | key or session | Organization prediction log as posts |
 | `POST /predictions/{id}/flag` / `POST /predictions/{id}/triage` | key or session | Flag/triage one of the caller's predictions |
 | `GET /predictions/wordcloud?language=` | key or session | Toxic-term frequencies from the caller's Hate/Abuse texts |
 | `GET /predictions/toxic-terms?language=` | key or session | Words ranked by model-measured toxicity (leave-one-out) |

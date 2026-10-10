@@ -123,7 +123,14 @@ class LoginRequest(BaseModel):
 class UserInfo(BaseModel):
     id: int
     email: str
+    name: str = ""
     org_name: str
+    organization_id: int
+    home_organization_id: int
+    is_platform_admin: bool = False
+    must_change_password: bool = False
+    can_manage_api_keys: bool = False
+    can_invite_users: bool = False
 
 
 class LoginResponse(BaseModel):
@@ -131,8 +138,14 @@ class LoginResponse(BaseModel):
     user: UserInfo
 
 
+class ChangePasswordRequest(BaseModel):
+    current_password: str = Field(min_length=1, max_length=256)
+    new_password: str = Field(min_length=8, max_length=256)
+
+
 class ApiKeyCreateRequest(BaseModel):
-    name: str = Field(default="", max_length=120)
+    name: str = Field(min_length=1, max_length=120)
+    organization_id: int | None = Field(default=None, ge=1)
 
 
 class ApiKeyInfo(BaseModel):
@@ -147,6 +160,36 @@ class ApiKeyInfo(BaseModel):
 class ApiKeyCreatedResponse(BaseModel):
     key: ApiKeyInfo
     api_key: str  # plaintext, returned exactly once at creation
+
+
+class OrganizationInfo(BaseModel):
+    id: int
+    name: str
+    created_at: str
+
+
+class OrganizationCreateRequest(BaseModel):
+    name: str = Field(min_length=1, max_length=200)
+
+
+class SessionOrganizationRequest(BaseModel):
+    organization_id: int = Field(ge=1)
+
+
+class InviteCreateRequest(BaseModel):
+    email: str = Field(min_length=3, max_length=320)
+    organization_id: int | None = Field(default=None, ge=1)
+
+
+class InviteInfo(BaseModel):
+    id: int
+    email: str
+    created_at: str
+
+
+class InviteCreatedResponse(BaseModel):
+    invite: InviteInfo
+    temporary_password: str  # plaintext, returned exactly once at creation
 
 
 class OverviewStatsResponse(BaseModel):

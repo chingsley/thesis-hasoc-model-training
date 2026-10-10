@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { cn } from '@/lib/utils'
+import { useEffect, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { cn } from '@/lib/utils';
 import {
   LayoutDashboard,
   AlertTriangle,
@@ -9,24 +9,26 @@ import {
   Beaker,
   Gauge,
   FileText,
+  Settings,
   LogOut,
   PanelLeftClose,
   X,
   type LucideIcon,
-} from 'lucide-react'
-import { useAuthStore } from '@/lib/store/auth'
-import { logout } from '@/lib/api/client'
-import { Button } from '@/components/ui/button'
-import { ScrollArea } from '@/components/ui/scroll-area'
+} from 'lucide-react';
+import { HateGuardLogomark } from '@/components/brand/HateGuardLogomark';
+import { useAuthStore } from '@/lib/store/auth';
+import { logout } from '@/lib/api/client';
+import { Button } from '@/components/ui/button';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from '@/components/ui/tooltip'
+} from '@/components/ui/tooltip';
 
-type NavItem = { to: string; label: string; icon: LucideIcon }
+type NavItem = { to: string; label: string; icon: LucideIcon; };
 
-type NavSection = { title: string; items: NavItem[] }
+type NavSection = { title: string; items: NavItem[]; };
 
 const navSections: NavSection[] = [
   {
@@ -49,25 +51,26 @@ const navSections: NavSection[] = [
     items: [
       { to: '/testing', label: 'Testing Tools', icon: Beaker },
       { to: '/reports', label: 'Reports', icon: FileText },
+      { to: '/settings', label: 'Settings', icon: Settings },
     ],
   },
-]
+];
 
-const COLLAPSED_KEY = 'hg-sidebar-collapsed'
+const COLLAPSED_KEY = 'hg-sidebar-collapsed';
 const SIDEBAR_EASE =
-  'transition-[width,padding,gap,opacity,max-width,margin,transform] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]'
+  'transition-[width,padding,gap,opacity,max-width,margin,transform] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]';
 
 function readCollapsed(): boolean {
   try {
-    return localStorage.getItem(COLLAPSED_KEY) === '1'
+    return localStorage.getItem(COLLAPSED_KEY) === '1';
   } catch {
-    return false
+    return false;
   }
 }
 
 interface SidebarProps {
-  mobileOpen: boolean
-  onMobileClose: () => void
+  mobileOpen: boolean;
+  onMobileClose: () => void;
 }
 
 function NavLinkItem({
@@ -76,26 +79,26 @@ function NavLinkItem({
   collapsed,
   onNavigate,
 }: {
-  item: NavItem
-  active: boolean
-  collapsed: boolean
-  onNavigate: () => void
+  item: NavItem;
+  active: boolean;
+  collapsed: boolean;
+  onNavigate: () => void;
 }) {
   const linkClass = cn(
     // Same padding & alignment in both states so icons never shift.
     'relative flex cursor-pointer items-center px-6 py-2.5 text-sm',
     SIDEBAR_EASE,
     active
-      ? 'bg-[var(--hg-soft)] font-semibold text-black'
-      : 'font-normal text-[var(--hg-muted)] hover:bg-[#eef1f6] hover:text-[var(--hg-ink)]',
-  )
+      ? 'bg-[var(--hg-soft)] font-semibold text-[var(--hg-nav-active-fg)]'
+      : 'font-normal text-[var(--hg-muted)] hover:bg-[var(--hg-sidebar-hover)] hover:text-[var(--hg-ink)]',
+  );
 
   const body = (
     <>
       <item.icon
         className={cn(
           'h-[18px] w-[18px] shrink-0 stroke-[1.75]',
-          active ? 'text-black' : 'text-[var(--hg-subtle)]',
+          active ? 'text-[var(--hg-nav-active-fg)]' : 'text-[var(--hg-subtle)]',
         )}
       />
       <span
@@ -110,7 +113,7 @@ function NavLinkItem({
         {item.label}
       </span>
     </>
-  )
+  );
 
   return (
     <Tooltip>
@@ -135,31 +138,31 @@ function NavLinkItem({
         {item.label}
       </TooltipContent>
     </Tooltip>
-  )
+  );
 }
 
 export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const user = useAuthStore((s) => s.user)
-  const clearAuth = useAuthStore((s) => s.clear)
-  const [collapsed, setCollapsed] = useState(readCollapsed)
+  const location = useLocation();
+  const navigate = useNavigate();
+  const user = useAuthStore((s) => s.user);
+  const clearAuth = useAuthStore((s) => s.clear);
+  const [collapsed, setCollapsed] = useState(readCollapsed);
 
   useEffect(() => {
     try {
-      localStorage.setItem(COLLAPSED_KEY, collapsed ? '1' : '0')
+      localStorage.setItem(COLLAPSED_KEY, collapsed ? '1' : '0');
     } catch {
       /* ignore */
     }
-  }, [collapsed])
+  }, [collapsed]);
 
   const handleLogout = async () => {
-    await logout()
-    clearAuth()
-    navigate('/login')
-  }
+    await logout();
+    clearAuth();
+    navigate('/login');
+  };
 
-  const toggleCollapsed = () => setCollapsed((v) => !v)
+  const toggleCollapsed = () => setCollapsed((v) => !v);
 
   return (
     <>
@@ -200,13 +203,7 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
             title={collapsed ? 'Expand sidebar' : undefined}
             tabIndex={collapsed ? 0 : -1}
           >
-            <img
-              src="/sidebar-logomark.png"
-              alt=""
-              width={56}
-              height={49}
-              className="shrink-0"
-            />
+            <HateGuardLogomark size={40} className="h-10 w-10 text-primary" />
           </button>
 
           <h1
@@ -268,7 +265,7 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
                 </p>
                 <ul className="space-y-0.5">
                   {section.items.map((item) => {
-                    const active = location.pathname === item.to
+                    const active = location.pathname === item.to;
                     return (
                       <li key={item.to} className="relative">
                         <NavLinkItem
@@ -278,7 +275,7 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
                           onNavigate={onMobileClose}
                         />
                       </li>
-                    )
+                    );
                   })}
                 </ul>
               </div>
@@ -293,16 +290,21 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
               SIDEBAR_EASE,
             )}
           >
-            <span
+            <div
               className={cn(
-                'min-w-0 flex-1 truncate text-sm text-[var(--hg-muted)]',
+                'min-w-0 flex-1 overflow-hidden',
                 SIDEBAR_EASE,
                 collapsed ? 'max-w-0 opacity-0' : 'max-w-[12rem] opacity-100',
               )}
-              title={user.email}
+              title={`${user.name || user.email} · ${user.org_name}`}
             >
-              {user.org_name || user.email}
-            </span>
+              <p className="truncate text-sm font-medium text-[var(--hg-ink)]">
+                {user.name || user.email}
+              </p>
+              {user.org_name ? (
+                <p className="truncate text-xs text-[var(--hg-muted)]">{user.org_name}</p>
+              ) : null}
+            </div>
             <Tooltip>
               <TooltipTrigger
                 delay={collapsed ? 250 : 10_000}
@@ -332,5 +334,5 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
         )}
       </aside>
     </>
-  )
+  );
 }

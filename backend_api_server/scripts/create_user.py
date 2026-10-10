@@ -25,9 +25,15 @@ from app import auth, db  # noqa: E402
 def main() -> int:
     parser = argparse.ArgumentParser(description="Create a HateGuard dashboard user (admin-only).")
     parser.add_argument("--email", required=True, help="Login email (unique)")
-    parser.add_argument("--org", default="", help="Organisation / platform name")
+    parser.add_argument("--name", default="", help="User's full name (shown in the dashboard)")
+    parser.add_argument("--org", default="", help="Organization name (tenant / platform client)")
     parser.add_argument("--password", default=None, help="Login password (prompted if omitted)")
     parser.add_argument("--key-name", default=None, help="Also create an API key with this name")
+    parser.add_argument(
+        "--must-change-password",
+        action="store_true",
+        help="Require a password change on first dashboard login",
+    )
     args = parser.parse_args()
 
     load_dotenv()
@@ -42,12 +48,20 @@ def main() -> int:
         print(f"error: user with email {email} already exists", file=sys.stderr)
         return 1
 
-    user_id = db.create_user(email, auth.hash_password(password), args.org)
-    print(f"Created user id={user_id} email={email} org={args.org!r}")
+    user_id = db.create_user(
+        email,
+        auth.hash_password(password),
+        args.org,
+        full_name=args.name,
+        must_change_password=args.must_change_password,
+    )
+    user = db.get_user_by_id(user_id)
+    org_id = int(user["organization_id"]) if user else 0
+    print(f"Created user id={user_id} email={email} org={args.org!r} organization_id={org_id}")
 
     if args.key_name is not None:
         plaintext, prefix, key_hash = auth.new_api_key()
-        key_id = db.insert_api_key(user_id, args.key_name, prefix, key_hash)
+        key_id = db.insert_api_key(user_id, org_id, args.key_name, prefix, key_hash)
         print(f"Created API key id={key_id} name={args.key_name!r} prefix={prefix}")
         print("\nAPI key (shown once — store it somewhere safe):\n")
         print(f"  {plaintext}\n")

@@ -32,7 +32,7 @@ export function ModelSetBadge({ className }: { className?: string }) {
         'font-mono text-[10px] tracking-wide uppercase',
         isMerged
           ? 'border-emerald-500/50 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400'
-          : 'border-[#625885]/40 bg-[#625885]/10 text-[#4a3f6e]',
+          : 'border-[var(--hg-brand)]/40 bg-[var(--hg-brand)]/10 text-[var(--hg-accent-surface)]',
         className,
       )}
       title={

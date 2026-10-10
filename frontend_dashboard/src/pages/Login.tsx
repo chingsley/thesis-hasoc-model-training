@@ -1,4 +1,4 @@
-import { useState, type CSSProperties } from 'react';
+import { useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -7,6 +7,8 @@ import { Label } from '@/components/ui/label';
 import { login } from '@/lib/api/client';
 import { ApiError } from '@/lib/api/http';
 import { useAuthStore } from '@/lib/store/auth';
+import { HateGuardLogomark } from '@/components/brand/HateGuardLogomark';
+import { LoginHeroCyberBackground } from '@/components/auth/LoginHeroCyberBackground';
 
 function errorDetail(err: unknown): string {
   if (err instanceof ApiError) {
@@ -42,7 +44,7 @@ export default function Login() {
     try {
       const res = await login(email, password);
       setAuth(res.token, res.user);
-      navigate('/');
+      navigate(res.user.must_change_password ? '/change-password' : '/');
     } catch (err) {
       setError(errorDetail(err));
     } finally {
@@ -51,31 +53,18 @@ export default function Login() {
   };
 
   return (
-    <div
-      className="flex min-h-screen bg-background"
-      style={
-        {
-          // Keep login on the original navy/blue palette
-          '--background': '#ffffff',
-          '--ring': '#2c64f1',
-          '--hg-secondary': '#2c64f1',
-          '--hg-accent': '#2c64f1',
-        } as CSSProperties
-      }
-    >      {/* Brand panel — HateGuard navy (#19305a) */}
-      <div className="hidden lg:flex lg:w-1/2 xl:w-3/5 flex-col justify-between bg-gradient-to-br from-[#24468a] via-[#19305a] to-[#0e1c38] p-12 text-white">
-        <div className="flex items-center gap-3">
-          <img
-            src="/logomark.png"
-            alt=""
-            width={40}
-            height={40}
-            className="h-10 w-10 object-contain"
-          />
+    <div className="flex min-h-screen bg-background">
+      <div
+        className="relative hidden overflow-hidden lg:flex lg:w-1/2 xl:w-3/5 flex-col justify-between p-12 text-white [background:linear-gradient(135deg,var(--login-hero-highlight,var(--login-hero-from))_0%,var(--login-hero-from)_16%,var(--login-hero-via)_42%,var(--login-hero-to)_100%)]"
+      >
+        <LoginHeroCyberBackground />
+
+        <div className="relative z-10 flex items-center gap-3">
+          <HateGuardLogomark size={40} className="h-10 w-10 text-white" />
           <span className="text-2xl font-semibold tracking-tight">HateGuard</span>
         </div>
 
-        <div className="space-y-6 max-w-lg">
+        <div className="relative z-10 space-y-6 max-w-lg">
           <p className="text-sm font-medium uppercase tracking-widest text-white/80">
             Hate detection as a service
           </p>
@@ -88,7 +77,7 @@ export default function Login() {
           </p>
         </div>
 
-        <p className="text-sm text-white/70">© 2026 HateGuard</p>
+        <p className="relative z-10 text-sm text-white/70">© 2026 HateGuard</p>
       </div>
 
       {/* Form panel */}
@@ -96,13 +85,7 @@ export default function Login() {
         <div className="w-full max-w-md space-y-8">
           <div className="space-y-2">
             <div className="mb-6 flex items-center gap-2 lg:hidden">
-              <img
-                src="/logomark.png"
-                alt=""
-                width={28}
-                height={28}
-                className="h-7 w-7 object-contain"
-              />
+              <HateGuardLogomark size={28} className="h-7 w-7 text-primary" />
               <span className="text-xl font-semibold">HateGuard</span>
             </div>
             <p className="text-sm font-medium uppercase tracking-widest text-muted-foreground">

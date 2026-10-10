@@ -1,134 +1,34 @@
-"""SQLite persistence for triage state, prediction logs, and alerts.
+"""Persistence for triage, predictions, auth, and alerts.
 
-Uses stdlib sqlite3 only. The DB file location is set with DASHBOARD_DB_PATH
-(default: dashboard.db next to the backend package).
+SQLite when `DATABASE_URL` is unset (`DASHBOARD_DB_PATH` / `dashboard.db`).
+PostgreSQL when `DATABASE_URL` (or `POSTGRES_URL`) is set — use with Neon, Vercel Postgres, or local Postico.
 """
 
 from __future__ import annotations
 
-import os
-import sqlite3
-import threading
 from datetime import datetime, timedelta, timezone
-from pathlib import Path
 from typing import Any
 
-_DEFAULT_DB = Path(__file__).resolve().parent.parent / "dashboard.db"
+from .db_connect import (
+    _lock,
+    db_path,
+    get_conn,
+    reset_conn_for_testing,
+    using_postgres,
+    wipe_all_tables,
+)
 
-_lock = threading.RLock()  # re-entrant: some helpers call each other while holding it
-_conn: sqlite3.Connection | None = None
-
-SCHEMA = """
-CREATE TABLE IF NOT EXISTS predictions (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  ts TEXT NOT NULL,
-  language TEXT NOT NULL,
-  text TEXT NOT NULL,
-  predicted_label TEXT NOT NULL,
-  prob_normal REAL NOT NULL,
-  prob_abuse REAL NOT NULL,
-  prob_hate REAL NOT NULL,
-  source TEXT NOT NULL
-);
-CREATE TABLE IF NOT EXISTS triage (
-  post_id TEXT PRIMARY KEY,
-  flagged INTEGER NOT NULL DEFAULT 0,
-  status TEXT NOT NULL DEFAULT 'new',
-  updated_at TEXT NOT NULL
-);
-CREATE TABLE IF NOT EXISTS alerts (
-  id TEXT PRIMARY KEY,
-  type TEXT NOT NULL,
-  message TEXT NOT NULL,
-  severity TEXT NOT NULL,
-  ts TEXT NOT NULL,
-  read INTEGER NOT NULL DEFAULT 0,
-  post_id TEXT
-);
-CREATE TABLE IF NOT EXISTS users (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  email TEXT NOT NULL UNIQUE,
-  password_hash TEXT NOT NULL,
-  org_name TEXT NOT NULL DEFAULT '',
-  is_active INTEGER NOT NULL DEFAULT 1,
-  created_at TEXT NOT NULL
-);
-CREATE TABLE IF NOT EXISTS api_keys (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  user_id INTEGER NOT NULL REFERENCES users(id),
-  name TEXT NOT NULL DEFAULT '',
-  prefix TEXT NOT NULL,
-  key_hash TEXT NOT NULL UNIQUE,
-  created_at TEXT NOT NULL,
-  last_used_at TEXT,
-  revoked_at TEXT
-);
-CREATE TABLE IF NOT EXISTS sessions (
-  token_hash TEXT PRIMARY KEY,
-  user_id INTEGER NOT NULL REFERENCES users(id),
-  created_at TEXT NOT NULL,
-  expires_at TEXT NOT NULL
-);
-CREATE TABLE IF NOT EXISTS explanations (
-  cache_key TEXT PRIMARY KEY,
-  language TEXT NOT NULL,
-  payload TEXT NOT NULL,
-  created_at TEXT NOT NULL
-);
+_USER_SELECT = """
+SELECT users.id, users.email, users.password_hash, users.full_name, users.org_name,
+       users.organization_id, users.must_change_password, users.is_active, users.created_at,
+       organizations.name AS organization_name
+FROM users
+LEFT JOIN organizations ON organizations.id = users.organization_id
 """
-
-
-def _migrate(conn: sqlite3.Connection) -> None:
-    """Add columns/indexes introduced after the original schema (idempotent)."""
-    pred_cols = {row[1] for row in conn.execute("PRAGMA table_info(predictions)")}
-    if "user_id" not in pred_cols:
-        conn.execute("ALTER TABLE predictions ADD COLUMN user_id INTEGER")
-    alert_cols = {row[1] for row in conn.execute("PRAGMA table_info(alerts)")}
-    if "user_id" not in alert_cols:
-        conn.execute("ALTER TABLE alerts ADD COLUMN user_id INTEGER")
-    conn.execute(
-        "CREATE INDEX IF NOT EXISTS idx_predictions_user_lang ON predictions(user_id, language)"
-    )
-    triage_cols = {row[1] for row in conn.execute("PRAGMA table_info(triage)")}
-    if "manual_label" not in triage_cols:
-        conn.execute("ALTER TABLE triage ADD COLUMN manual_label TEXT")
-    # The triage-history feature was removed; drop its table where it exists.
-    conn.execute("DROP TABLE IF EXISTS triage_events")
-    # Status vocabulary: new->pending, reviewed->cleared, reported->flagged
-    conn.execute("UPDATE triage SET status = 'pending' WHERE status = 'new'")
-    conn.execute("UPDATE triage SET status = 'cleared' WHERE status = 'reviewed'")
-    conn.execute("UPDATE triage SET status = 'flagged' WHERE status = 'reported'")
-    conn.execute("UPDATE triage SET flagged = CASE WHEN status = 'flagged' THEN 1 ELSE 0 END")
 
 
 def utc_now() -> str:
     return datetime.now(timezone.utc).isoformat()
-
-
-def db_path() -> Path:
-    raw = os.getenv("DASHBOARD_DB_PATH", "").strip()
-    return Path(raw).expanduser().resolve() if raw else _DEFAULT_DB
-
-
-def get_conn() -> sqlite3.Connection:
-    global _conn
-    if _conn is None:
-        path = db_path()
-        path.parent.mkdir(parents=True, exist_ok=True)
-        _conn = sqlite3.connect(str(path), check_same_thread=False)
-        _conn.row_factory = sqlite3.Row
-        with _lock, _conn:
-            _conn.executescript(SCHEMA)
-            _migrate(_conn)
-    return _conn
-
-
-def reset_conn_for_testing() -> None:
-    global _conn
-    with _lock:
-        if _conn is not None:
-            _conn.close()
-        _conn = None
 
 
 def log_predictions(rows: list[dict[str, Any]]) -> None:
@@ -138,9 +38,9 @@ def log_predictions(rows: list[dict[str, Any]]) -> None:
     with _lock, conn:
         conn.executemany(
             "INSERT INTO predictions (ts, language, text, predicted_label,"
-            " prob_normal, prob_abuse, prob_hate, source, user_id)"
+            " prob_normal, prob_abuse, prob_hate, source, user_id, organization_id)"
             " VALUES (:ts, :language, :text, :predicted_label,"
-            " :prob_normal, :prob_abuse, :prob_hate, :source, :user_id)",
+            " :prob_normal, :prob_abuse, :prob_hate, :source, :user_id, :organization_id)",
             rows,
         )
 
@@ -204,16 +104,18 @@ def list_flagged_post_ids() -> list[str]:
     return [row["post_id"] for row in rows]
 
 
-def prediction_rows_since(since_iso: str, user_id: int | None = None) -> list[dict[str, Any]]:
+def prediction_rows_since(
+    since_iso: str, organization_id: int | None = None
+) -> list[dict[str, Any]]:
     conn = get_conn()
     query = (
         "SELECT ts, language, text, predicted_label, prob_normal, prob_abuse, prob_hate"
         " FROM predictions WHERE ts >= ?"
     )
     params: list[Any] = [since_iso]
-    if user_id is not None:
-        query += " AND user_id = ?"
-        params.append(user_id)
+    if organization_id is not None:
+        query += " AND organization_id = ?"
+        params.append(organization_id)
     query += " ORDER BY ts"
     with _lock:
         rows = conn.execute(query, params).fetchall()
@@ -221,13 +123,28 @@ def prediction_rows_since(since_iso: str, user_id: int | None = None) -> list[di
 
 
 def insert_alert(alert: dict[str, Any]) -> None:
+    row = dict(alert)
+    if "read" in row:
+        row["is_read"] = row.pop("read")
     conn = get_conn()
     with _lock, conn:
-        conn.execute(
-            "INSERT OR IGNORE INTO alerts (id, type, message, severity, ts, read, post_id, user_id)"
-            " VALUES (:id, :type, :message, :severity, :ts, :read, :post_id, :user_id)",
-            alert,
-        )
+        if using_postgres():
+            conn.execute(
+                "INSERT INTO alerts (id, type, message, severity, ts, is_read, post_id,"
+                " user_id, organization_id)"
+                " VALUES (%(id)s, %(type)s, %(message)s, %(severity)s, %(ts)s, %(is_read)s,"
+                " %(post_id)s, %(user_id)s, %(organization_id)s)"
+                " ON CONFLICT (id) DO NOTHING",
+                row,
+            )
+        else:
+            conn.execute(
+                "INSERT OR IGNORE INTO alerts (id, type, message, severity, ts, is_read, post_id,"
+                " user_id, organization_id)"
+                " VALUES (:id, :type, :message, :severity, :ts, :is_read, :post_id,"
+                " :user_id, :organization_id)",
+                row,
+            )
 
 
 def alert_exists(alert_id: str) -> bool:
@@ -237,50 +154,217 @@ def alert_exists(alert_id: str) -> bool:
     return row is not None
 
 
-def list_alerts(user_id: int) -> list[dict[str, Any]]:
+def list_alerts(organization_id: int) -> list[dict[str, Any]]:
     conn = get_conn()
     with _lock:
         rows = conn.execute(
-            "SELECT id, type, message, severity, ts, read, post_id FROM alerts"
-            " WHERE user_id = ? ORDER BY ts DESC LIMIT 200",
-            (user_id,),
+            "SELECT id, type, message, severity, ts, is_read AS read, post_id FROM alerts"
+            " WHERE organization_id = ? ORDER BY ts DESC LIMIT 200",
+            (organization_id,),
         ).fetchall()
     return [dict(row) for row in rows]
 
 
-def mark_alert_read(alert_id: str, user_id: int) -> bool:
+def mark_alert_read(alert_id: str, organization_id: int) -> bool:
     conn = get_conn()
     with _lock, conn:
         cursor = conn.execute(
-            "UPDATE alerts SET read = 1 WHERE id = ? AND user_id = ?", (alert_id, user_id)
+            "UPDATE alerts SET is_read = 1 WHERE id = ? AND organization_id = ?",
+            (alert_id, organization_id),
         )
     return cursor.rowcount > 0
 
 
-# --- Users, sessions, API keys, per-user stats ---
+# --- Organizations, users, sessions, API keys ---
 
 
-def create_user(email: str, password_hash: str, org_name: str = "") -> int:
+def create_organization(name: str) -> int:
+    conn = get_conn()
+    clean = name.strip()
+    with _lock, conn:
+        existing = conn.execute(
+            "SELECT id FROM organizations WHERE name = ?", (clean,)
+        ).fetchone()
+        if existing is not None:
+            return int(existing["id"])
+        cursor = conn.execute(
+            "INSERT INTO organizations (name, created_at) VALUES (?, ?) RETURNING id",
+            (clean, utc_now()),
+        )
+        row = cursor.fetchone()
+    return int(row["id"]) if row else int(cursor.lastrowid)
+
+
+def create_organization_unique(name: str) -> int | None:
+    """Insert a new organization; return None if the name already exists."""
+    conn = get_conn()
+    clean = name.strip()
+    if not clean:
+        return None
+    with _lock, conn:
+        existing = conn.execute(
+            "SELECT id FROM organizations WHERE name = ?", (clean,)
+        ).fetchone()
+        if existing is not None:
+            return None
+        cursor = conn.execute(
+            "INSERT INTO organizations (name, created_at) VALUES (?, ?) RETURNING id",
+            (clean, utc_now()),
+        )
+        row = cursor.fetchone()
+    return int(row["id"]) if row else int(cursor.lastrowid)
+
+
+def list_organizations() -> list[dict[str, Any]]:
+    conn = get_conn()
+    with _lock:
+        rows = conn.execute(
+            "SELECT id, name, created_at FROM organizations ORDER BY name"
+        ).fetchall()
+    return [dict(r) for r in rows]
+
+
+def get_organization(organization_id: int) -> dict[str, Any] | None:
+    conn = get_conn()
+    with _lock:
+        row = conn.execute(
+            "SELECT id, name, created_at FROM organizations WHERE id = ?",
+            (organization_id,),
+        ).fetchone()
+    return dict(row) if row is not None else None
+
+
+def create_user(
+    email: str,
+    password_hash: str,
+    org_name: str = "",
+    *,
+    full_name: str = "",
+    organization_id: int | None = None,
+    must_change_password: bool = False,
+) -> int:
+    clean_email = email.strip().lower()
+    clean_org = org_name.strip()
+    clean_name = full_name.strip()
+    if organization_id is None:
+        organization_id = create_organization(clean_org or f"org-{clean_email}")
+    conn = get_conn()
+    with _lock, conn:
+        org = get_organization(organization_id)
+        display_org = clean_org or (org["name"] if org else "")
+        cursor = conn.execute(
+            "INSERT INTO users (email, password_hash, full_name, org_name, organization_id,"
+            " must_change_password, is_active, created_at)"
+            " VALUES (?, ?, ?, ?, ?, ?, 1, ?) RETURNING id",
+            (
+                clean_email,
+                password_hash,
+                clean_name,
+                display_org,
+                organization_id,
+                int(must_change_password),
+                utc_now(),
+            ),
+        )
+        row = cursor.fetchone()
+    return int(row["id"]) if row else int(cursor.lastrowid)
+
+
+def create_invite(email: str, organization_id: int, password_hash: str) -> int:
     conn = get_conn()
     with _lock, conn:
         cursor = conn.execute(
-            "INSERT INTO users (email, password_hash, org_name, is_active, created_at)"
-            " VALUES (?, ?, ?, 1, ?)",
-            (email.strip().lower(), password_hash, org_name.strip(), utc_now()),
+            "INSERT INTO invites (email, organization_id, password_hash, created_at)"
+            " VALUES (?, ?, ?, ?) RETURNING id",
+            (email.strip().lower(), organization_id, password_hash, utc_now()),
         )
-    return int(cursor.lastrowid)
+        row = cursor.fetchone()
+    return int(row["id"]) if row else int(cursor.lastrowid)
 
 
-def _user_dict(row: sqlite3.Row | None) -> dict[str, Any] | None:
+def get_active_invite(email: str) -> dict[str, Any] | None:
+    conn = get_conn()
+    with _lock:
+        row = conn.execute(
+            "SELECT id, email, organization_id, password_hash, created_at"
+            " FROM invites WHERE email = ? AND consumed_at IS NULL AND revoked_at IS NULL",
+            (email.strip().lower(),),
+        ).fetchone()
     return dict(row) if row is not None else None
+
+
+def consume_invite(invite_id: int) -> None:
+    conn = get_conn()
+    with _lock, conn:
+        conn.execute(
+            "UPDATE invites SET consumed_at = ? WHERE id = ?", (utc_now(), invite_id)
+        )
+
+
+def list_pending_invites(organization_id: int) -> list[dict[str, Any]]:
+    conn = get_conn()
+    with _lock:
+        rows = conn.execute(
+            "SELECT id, email, created_at FROM invites"
+            " WHERE organization_id = ? AND consumed_at IS NULL AND revoked_at IS NULL"
+            " ORDER BY created_at DESC",
+            (organization_id,),
+        ).fetchall()
+    return [dict(r) for r in rows]
+
+
+def revoke_invite(invite_id: int, organization_id: int) -> bool:
+    conn = get_conn()
+    with _lock, conn:
+        cursor = conn.execute(
+            "UPDATE invites SET revoked_at = ?"
+            " WHERE id = ? AND organization_id = ?"
+            " AND consumed_at IS NULL AND revoked_at IS NULL",
+            (utc_now(), invite_id, organization_id),
+        )
+    return cursor.rowcount > 0
+
+
+def accept_invite_and_create_user(email: str) -> int | None:
+    """Create a user from an active invite (password must already be verified)."""
+    invite = get_active_invite(email)
+    if invite is None:
+        return None
+    if get_user_by_email(email) is not None:
+        consume_invite(int(invite["id"]))
+        return None
+    org = get_organization(int(invite["organization_id"]))
+    org_name = org["name"] if org else ""
+    user_id = create_user(
+        email,
+        invite["password_hash"],
+        org_name,
+        full_name="",
+        organization_id=int(invite["organization_id"]),
+        must_change_password=True,
+    )
+    consume_invite(int(invite["id"]))
+    return user_id
+
+
+def update_user_password(user_id: int, password_hash: str, *, clear_must_change: bool = True) -> None:
+    conn = get_conn()
+    with _lock, conn:
+        conn.execute(
+            "UPDATE users SET password_hash = ?, must_change_password = ? WHERE id = ?",
+            (password_hash, 0 if clear_must_change else 1, user_id),
+        )
+
+
+def _user_dict(row: dict[str, Any] | None) -> dict[str, Any] | None:
+    return row
 
 
 def get_user_by_email(email: str) -> dict[str, Any] | None:
     conn = get_conn()
     with _lock:
         row = conn.execute(
-            "SELECT id, email, password_hash, org_name, is_active, created_at FROM users"
-            " WHERE email = ?",
+            f"{_USER_SELECT} WHERE users.email = ?",
             (email.strip().lower(),),
         ).fetchone()
     return _user_dict(row)
@@ -290,7 +374,7 @@ def get_user_by_id(user_id: int) -> dict[str, Any] | None:
     conn = get_conn()
     with _lock:
         row = conn.execute(
-            "SELECT id, email, password_hash, org_name, is_active, created_at FROM users WHERE id = ?",
+            f"{_USER_SELECT} WHERE users.id = ?",
             (user_id,),
         ).fetchone()
     return _user_dict(row)
@@ -309,21 +393,41 @@ def create_session(user_id: int, token_hash: str, ttl_hours: int) -> None:
 
 def get_user_by_session(token_hash: str) -> dict[str, Any] | None:
     """Return the active user for a session token hash, or None if invalid/expired."""
+    from .auth import apply_session_organization
+
     conn = get_conn()
     with _lock:
         row = conn.execute(
-            "SELECT user_id, expires_at FROM sessions WHERE token_hash = ?", (token_hash,)
+            "SELECT user_id, expires_at, active_organization_id FROM sessions"
+            " WHERE token_hash = ?",
+            (token_hash,),
         ).fetchone()
         if row is None:
             return None
         if row["expires_at"] <= utc_now():
-            with conn:
-                conn.execute("DELETE FROM sessions WHERE token_hash = ?", (token_hash,))
+            conn.execute("DELETE FROM sessions WHERE token_hash = ?", (token_hash,))
             return None
         user = get_user_by_id(int(row["user_id"]))
     if user is None or not user["is_active"]:
         return None
-    return user
+    active_org = row["active_organization_id"]
+    active_id = int(active_org) if active_org is not None else None
+    return apply_session_organization(user, active_id)
+
+
+def set_session_active_organization(token_hash: str, organization_id: int) -> bool:
+    conn = get_conn()
+    with _lock, conn:
+        exists = conn.execute(
+            "SELECT 1 FROM organizations WHERE id = ?", (organization_id,)
+        ).fetchone()
+        if exists is None:
+            return False
+        cursor = conn.execute(
+            "UPDATE sessions SET active_organization_id = ? WHERE token_hash = ?",
+            (organization_id, token_hash),
+        )
+    return cursor.rowcount > 0
 
 
 def delete_session(token_hash: str) -> None:
@@ -332,50 +436,58 @@ def delete_session(token_hash: str) -> None:
         conn.execute("DELETE FROM sessions WHERE token_hash = ?", (token_hash,))
 
 
-def insert_api_key(user_id: int, name: str, prefix: str, key_hash: str) -> int:
+def insert_api_key(
+    user_id: int, organization_id: int, name: str, prefix: str, key_hash: str
+) -> int:
     conn = get_conn()
     with _lock, conn:
         cursor = conn.execute(
-            "INSERT INTO api_keys (user_id, name, prefix, key_hash, created_at)"
-            " VALUES (?, ?, ?, ?, ?)",
-            (user_id, name.strip(), prefix, key_hash, utc_now()),
+            "INSERT INTO api_keys (user_id, organization_id, name, prefix, key_hash, created_at)"
+            " VALUES (?, ?, ?, ?, ?, ?) RETURNING id",
+            (user_id, organization_id, name.strip(), prefix, key_hash, utc_now()),
         )
-    return int(cursor.lastrowid)
+        row = cursor.fetchone()
+    return int(row["id"]) if row else int(cursor.lastrowid)
 
 
-def list_api_keys(user_id: int) -> list[dict[str, Any]]:
+def list_api_keys(organization_id: int) -> list[dict[str, Any]]:
     conn = get_conn()
     with _lock:
         rows = conn.execute(
             "SELECT id, name, prefix, created_at, last_used_at, revoked_at FROM api_keys"
-            " WHERE user_id = ? ORDER BY id",
-            (user_id,),
+            " WHERE organization_id = ? ORDER BY id",
+            (organization_id,),
         ).fetchall()
     return [dict(row) for row in rows]
 
 
-def revoke_api_key(key_id: int, user_id: int) -> bool:
+def revoke_api_key(key_id: int, organization_id: int) -> bool:
     conn = get_conn()
     with _lock, conn:
         cursor = conn.execute(
-            "UPDATE api_keys SET revoked_at = ? WHERE id = ? AND user_id = ? AND revoked_at IS NULL",
-            (utc_now(), key_id, user_id),
+            "UPDATE api_keys SET revoked_at = ? WHERE id = ? AND organization_id = ?"
+            " AND revoked_at IS NULL",
+            (utc_now(), key_id, organization_id),
         )
     return cursor.rowcount > 0
 
 
 def get_user_by_api_key_hash(key_hash: str) -> dict[str, Any] | None:
-    """Return the active user owning a non-revoked key, or None."""
+    """Resolve API key to the owning user, with organization_id set to the key's org."""
     conn = get_conn()
     with _lock:
         row = conn.execute(
-            "SELECT user_id FROM api_keys WHERE key_hash = ? AND revoked_at IS NULL", (key_hash,)
+            "SELECT user_id, organization_id FROM api_keys"
+            " WHERE key_hash = ? AND revoked_at IS NULL",
+            (key_hash,),
         ).fetchone()
         if row is None:
             return None
         user = get_user_by_id(int(row["user_id"]))
     if user is None or not user["is_active"]:
         return None
+    user["organization_id"] = int(row["organization_id"])
+    user["auth_via"] = "api_key"
     return user
 
 
@@ -387,13 +499,13 @@ def touch_api_key(key_hash: str) -> None:
         )
 
 
-def overview_stats(user_id: int, language: str) -> dict[str, Any]:
+def overview_stats(organization_id: int, language: str) -> dict[str, Any]:
     conn = get_conn()
     with _lock:
         rows = conn.execute(
             "SELECT predicted_label, COUNT(*) AS n FROM predictions"
-            " WHERE user_id = ? AND language = ? GROUP BY predicted_label",
-            (user_id, language),
+            " WHERE organization_id = ? AND language = ? GROUP BY predicted_label",
+            (organization_id, language),
         ).fetchall()
     counts = {row["predicted_label"]: int(row["n"]) for row in rows}
     normal = counts.get("Normal", 0)
@@ -408,8 +520,8 @@ def overview_stats(user_id: int, language: str) -> dict[str, Any]:
     }
 
 
-def user_prediction_rows(
-    user_id: int,
+def org_prediction_rows(
+    organization_id: int,
     language: str,
     limit: int = 500,
     offset: int = 0,
@@ -420,9 +532,9 @@ def user_prediction_rows(
     conn = get_conn()
     query = (
         "SELECT id, ts, language, text, predicted_label, prob_normal, prob_abuse, prob_hate,"
-        " source FROM predictions WHERE user_id = ? AND language = ?"
+        " source FROM predictions WHERE organization_id = ? AND language = ?"
     )
-    params: list[Any] = [user_id, language]
+    params: list[Any] = [organization_id, language]
     if hate_min is not None:
         query += " AND prob_hate >= ?"
         params.append(hate_min)
@@ -440,13 +552,13 @@ def user_prediction_rows(
     return [dict(row) for row in rows]
 
 
-def get_prediction_for_user(prediction_id: int, user_id: int) -> dict[str, Any] | None:
+def get_prediction_for_org(prediction_id: int, organization_id: int) -> dict[str, Any] | None:
     conn = get_conn()
     with _lock:
         row = conn.execute(
             "SELECT id, ts, language, text, predicted_label, prob_normal, prob_abuse, prob_hate,"
-            " source FROM predictions WHERE id = ? AND user_id = ?",
-            (prediction_id, user_id),
+            " source FROM predictions WHERE id = ? AND organization_id = ?",
+            (prediction_id, organization_id),
         ).fetchone()
     return dict(row) if row is not None else None
 
@@ -470,8 +582,19 @@ def save_cached_explanation(cache_key: str, language: str, payload: dict[str, An
 
     conn = get_conn()
     with _lock, conn:
-        conn.execute(
-            "INSERT OR REPLACE INTO explanations (cache_key, language, payload, created_at)"
-            " VALUES (?, ?, ?, ?)",
-            (cache_key, language, json.dumps(payload), utc_now()),
-        )
+        if using_postgres():
+            conn.execute(
+                "INSERT INTO explanations (cache_key, language, payload, created_at)"
+                " VALUES (?, ?, ?, ?)"
+                " ON CONFLICT (cache_key) DO UPDATE SET"
+                " language = EXCLUDED.language,"
+                " payload = EXCLUDED.payload,"
+                " created_at = EXCLUDED.created_at",
+                (cache_key, language, json.dumps(payload), utc_now()),
+            )
+        else:
+            conn.execute(
+                "INSERT OR REPLACE INTO explanations (cache_key, language, payload, created_at)"
+                " VALUES (?, ?, ?, ?)",
+                (cache_key, language, json.dumps(payload), utc_now()),
+            )

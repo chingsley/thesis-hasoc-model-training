@@ -141,7 +141,7 @@ export default function Performance() {
                 className={cn(
                   'relative flex min-h-[112px] items-stretch px-5 py-5 md:px-6',
                   tile.accent
-                    ? 'bg-[#4a3f6e] text-white'
+                    ? 'bg-[var(--hg-accent-surface)] text-white'
                     : 'border-b border-[var(--hg-border)]',
                   !tile.accent && index >= 6 && 'border-b-0',
                   !tile.accent && index >= 4 && 'md:border-b-0',

@@ -5,6 +5,7 @@ import { Header } from './Header'
 import { useAlerts } from '@/hooks/use-alerts'
 import { AlertToast } from '@/components/alerts/AlertToast'
 import { Toaster } from '@/components/ui/sonner'
+import { SessionUserSync } from '@/components/auth/SessionUserSync'
 
 export function DashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -12,7 +13,8 @@ export function DashboardLayout() {
   useAlerts()
 
   return (
-    <div className="flex h-screen overflow-hidden bg-[#eaebf4]">
+    <div className="flex h-screen overflow-hidden bg-[var(--hg-shell)]">
+      <SessionUserSync />
       <Sidebar mobileOpen={sidebarOpen} onMobileClose={() => setSidebarOpen(false)} />
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
         <Header onMenuClick={() => setSidebarOpen(true)} scrollRootRef={mainRef} />

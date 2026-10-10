@@ -1,0 +1,190 @@
+/* Color themes — set document.documentElement.dataset.hgTheme (see lib/theme/applyTheme.ts) */
+
+[data-hg-theme='classic'],
+html:not([data-hg-theme]) {
+  --background: #ffffff;
+  --foreground: #0f1c33;
+  --primary: #4a3f6e;
+  --primary-foreground: #ffffff;
+  --ring: #4a3f6e;
+  --border: #e8edf5;
+  --input: #e8edf5;
+  --muted: #f4f6f9;
+  --muted-foreground: #556478;
+  --accent: #eef1f6;
+  --accent-foreground: #0f1c33;
+  --secondary: #f4f6f9;
+  --secondary-foreground: #0f1c33;
+  --card: #ffffff;
+  --card-foreground: #0f1c33;
+  --popover: #ffffff;
+  --popover-foreground: #0f1c33;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #0f1c33;
+  --sidebar-primary: #4a3f6e;
+  --sidebar-accent: #eef1f6;
+  --sidebar-border: #e8edf5;
+  --sidebar-ring: #625885;
+  --chart-1: #625885;
+  --chart-5: #4a3f6e;
+
+  --hg-shell: #eaebf4;
+  --hg-canvas: #f2f3f8;
+  --hg-border: #e8edf5;
+  --hg-muted: #556478;
+  --hg-subtle: #5c6d84;
+  --hg-ink: #0f1c33;
+  --hg-brand: #625885;
+  --hg-secondary: #c1002c;
+  --hg-accent: #625885;
+  --hg-soft: #d9d6f7;
+  --hg-soft-selected: #c4bff0;
+  --hg-nav-active-fg: #0f1c33;
+  --hg-accent-surface: #4a3f6e;
+  --hg-accent-surface-hover: #3d355c;
+  --hg-chart-bar-muted: #dbe4f5;
+  --hg-sidebar-hover: #eef1f6;
+  --hg-matrix-correct: var(--hg-brand);
+  --hg-matrix-error: #c1002c;
+  /* Login hero: same purple as primary button; highlight only at top-left */
+  --hg-btn-primary-bg: var(--hg-accent-surface-hover);
+  --hg-btn-primary-bg-hover: #322d4a;
+
+  --login-hero-highlight: var(--hg-btn-primary-bg);
+  --login-hero-from: var(--hg-btn-primary-bg);
+  --login-hero-via: #383052;
+  --login-hero-to: var(--hg-btn-primary-bg-hover);
+  --hg-btn-primary-border: transparent;
+  --hg-btn-primary-shadow: none;
+  --hg-btn-secondary-bg: #ffffff;
+  --hg-btn-secondary-bg-hover: color-mix(in srgb, var(--primary) 5%, white);
+  --hg-btn-secondary-border: var(--primary);
+  --hg-btn-secondary-text: var(--primary);
+  --hg-btn-secondary-shadow: none;
+}
+
+[data-hg-theme='sky'] {
+  --background: #ffffff;
+  --foreground: #0f1c33;
+  /* Login panel navy — primary actions across the app */
+  --primary: #19305a;
+  --primary-foreground: #ffffff;
+  --ring: #38bdf8;
+  --border: #dbe4ef;
+  --input: #dbe4ef;
+  --muted: #eef4fa;
+  --muted-foreground: #556478;
+  --accent: #e0f2fe;
+  --accent-foreground: #0f1c33;
+  --secondary: #edf1f5;
+  --secondary-foreground: #0f1c33;
+  --card: #ffffff;
+  --card-foreground: #0f1c33;
+  --popover: #ffffff;
+  --popover-foreground: #0f1c33;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #0f1c33;
+  --sidebar-primary: #19305a;
+  --sidebar-accent: #edf1f5;
+  --sidebar-border: #dbe4ef;
+  --sidebar-ring: #38bdf8;
+  --chart-1: #0284c7;
+  --chart-5: #19305a;
+
+  --hg-shell: #f6f9fc;
+  --hg-canvas: #eef4fa;
+  --hg-border: #dbe4ef;
+  --hg-muted: #556478;
+  --hg-subtle: #5c6d84;
+  --hg-ink: #0f1c33;
+  --hg-brand: #19305a;
+  --hg-secondary: #19305a;
+  --hg-accent: #0284c7;
+  --hg-soft: #edf1f5;
+  --hg-soft-selected: #dbe4ef;
+  --hg-nav-active-fg: #0369a1;
+  --hg-accent-surface: #19305a;
+  --hg-accent-surface-hover: #0e1c38;
+  --hg-chart-bar-muted: #bfdbfe;
+  --hg-sidebar-hover: #e8f4fc;
+  --hg-matrix-correct: var(--hg-brand);
+  --hg-matrix-error: #c1002c;
+  --login-hero-from: #24468a;
+  --login-hero-via: #19305a;
+  --login-hero-to: #0e1c38;
+
+  --hg-btn-primary-bg: var(--primary);
+  --hg-btn-primary-bg-hover: #0e1c38;
+  --hg-btn-primary-border: transparent;
+  --hg-btn-primary-shadow: none;
+  --hg-btn-secondary-bg: #ffffff;
+  --hg-btn-secondary-bg-hover: color-mix(in srgb, var(--primary) 6%, white);
+  --hg-btn-secondary-border: var(--primary);
+  --hg-btn-secondary-text: var(--primary);
+  --hg-btn-secondary-shadow: none;
+}
+
+[data-hg-theme='noir'] {
+  --background: #ffffff;
+  --foreground: #1c2733;
+  --primary: #2c2c2c;
+  --primary-foreground: #ffffff;
+  --ring: #525252;
+  --border: #d9dee3;
+  --input: #d9dee3;
+  --muted: #f4f7fb;
+  --muted-foreground: #6b7684;
+  --accent: #f3f4f6;
+  --accent-foreground: #1c2733;
+  --secondary: #f4f7fb;
+  --secondary-foreground: #1c2733;
+  --card: #ffffff;
+  --card-foreground: #1c2733;
+  --popover: #ffffff;
+  --popover-foreground: #1c2733;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #1c2733;
+  --sidebar-primary: #2c2c2c;
+  --sidebar-accent: #f3f4f6;
+  --sidebar-border: #d9dee3;
+  --sidebar-ring: #525252;
+  --chart-1: #404040;
+  --chart-5: #171717;
+
+  --hg-shell: #f5f7fa;
+  --hg-canvas: #f4f7fb;
+  --hg-border: #d9dee3;
+  --hg-muted: #6b7684;
+  --hg-subtle: #5b6773;
+  --hg-ink: #1c2733;
+  --hg-brand: #282828;
+  --hg-secondary: #282828;
+  --hg-accent: #282828;
+  --hg-soft: #e8e8e8;
+  --hg-soft-selected: #d4d4d4;
+  --hg-nav-active-fg: #1c2733;
+  --hg-accent-surface: #282828;
+  --hg-accent-surface-hover: #171717;
+  --hg-chart-bar-muted: #d4d4d4;
+  --hg-sidebar-hover: #f3f4f6;
+  --hg-matrix-correct: var(--hg-brand);
+  --hg-matrix-error: #c1002c;
+  --login-hero-from: #525252;
+  --login-hero-via: #2c2c2c;
+  --login-hero-to: #171717;
+
+  /* Carnductor ui/src/theme/primary.css */
+  --hg-btn-primary-bg: linear-gradient(to top, #171717, #525252);
+  --hg-btn-primary-bg-hover: linear-gradient(to top, #1f1f1f, #5a5a5a);
+  --hg-btn-primary-border: #404040;
+  --hg-btn-primary-shadow:
+    0 10px 15px -3px rgba(23, 23, 23, 0.28),
+    0 4px 6px -4px rgba(23, 23, 23, 0.22);
+  --hg-btn-secondary-bg: linear-gradient(to top, #f5f5f5, #d4d4d4);
+  --hg-btn-secondary-bg-hover: linear-gradient(to top, #fafafa, #dbdbdb);
+  --hg-btn-secondary-border: #a3a3a3;
+  --hg-btn-secondary-text: #000000;
+  --hg-btn-secondary-shadow:
+    0 10px 15px -3px rgba(115, 115, 115, 0.35),
+    0 4px 6px -4px rgba(115, 115, 115, 0.25);
+}

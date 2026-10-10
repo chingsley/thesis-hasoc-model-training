@@ -11,6 +11,11 @@ import type {
   Label,
   User,
   LoginResponse,
+  ApiKeyInfo,
+  ApiKeyCreatedResponse,
+  InviteCreatedResponse,
+  InviteInfo,
+  OrganizationInfo,
   OverviewStats,
   XaiMethod,
   TriageStatus,
@@ -101,6 +106,79 @@ export async function logout(): Promise<void> {
 
 export async function fetchMe(): Promise<User> {
   return apiFetch<User>('/auth/me');
+}
+
+export async function changePassword(
+  currentPassword: string,
+  newPassword: string
+): Promise<User> {
+  return apiFetch<User>('/auth/change-password', {
+    method: 'POST',
+    body: JSON.stringify({
+      current_password: currentPassword,
+      new_password: newPassword,
+    }),
+  });
+}
+
+export async function fetchApiKeys(): Promise<ApiKeyInfo[]> {
+  return apiFetch<ApiKeyInfo[]>('/auth/keys');
+}
+
+export async function createApiKey(
+  name: string,
+  organizationId?: number,
+): Promise<ApiKeyCreatedResponse> {
+  return apiFetch<ApiKeyCreatedResponse>('/auth/keys', {
+    method: 'POST',
+    body: JSON.stringify({
+      name,
+      ...(organizationId != null ? { organization_id: organizationId } : {}),
+    }),
+  });
+}
+
+export async function revokeApiKey(keyId: number): Promise<void> {
+  await apiFetch<{ status: string }>(`/auth/keys/${keyId}`, { method: 'DELETE' });
+}
+
+export async function fetchUserInvites(): Promise<InviteInfo[]> {
+  return apiFetch<InviteInfo[]>('/auth/invites');
+}
+
+export async function createUserInvite(
+  email: string,
+  organizationId?: number,
+): Promise<InviteCreatedResponse> {
+  return apiFetch<InviteCreatedResponse>('/auth/invites', {
+    method: 'POST',
+    body: JSON.stringify({
+      email,
+      ...(organizationId != null ? { organization_id: organizationId } : {}),
+    }),
+  });
+}
+
+export async function revokeUserInvite(inviteId: number): Promise<void> {
+  await apiFetch<{ status: string }>(`/auth/invites/${inviteId}`, { method: 'DELETE' });
+}
+
+export async function fetchOrganizations(): Promise<OrganizationInfo[]> {
+  return apiFetch<OrganizationInfo[]>('/auth/organizations');
+}
+
+export async function createOrganization(name: string): Promise<OrganizationInfo> {
+  return apiFetch<OrganizationInfo>('/auth/organizations', {
+    method: 'POST',
+    body: JSON.stringify({ name }),
+  });
+}
+
+export async function setActiveOrganization(organizationId: number): Promise<User> {
+  return apiFetch<User>('/auth/session/organization', {
+    method: 'POST',
+    body: JSON.stringify({ organization_id: organizationId }),
+  });
 }
 
 export async function fetchOverviewStats(language: Language): Promise<OverviewStats> {

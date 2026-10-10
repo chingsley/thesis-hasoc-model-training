@@ -143,7 +143,31 @@ export interface BatchResult {
 export interface User {
   id: number
   email: string
+  name: string
   org_name: string
+  organization_id: number
+  home_organization_id: number
+  is_platform_admin: boolean
+  must_change_password: boolean
+  can_manage_api_keys: boolean
+  can_invite_users: boolean
+}
+
+export interface OrganizationInfo {
+  id: number
+  name: string
+  created_at: string
+}
+
+export interface InviteInfo {
+  id: number
+  email: string
+  created_at: string
+}
+
+export interface InviteCreatedResponse {
+  invite: InviteInfo
+  temporary_password: string
 }
 
 export interface LoginResponse {
@@ -166,6 +190,11 @@ export interface ApiKeyInfo {
   created_at: string
   last_used_at: string | null
   revoked_at: string | null
+}
+
+export interface ApiKeyCreatedResponse {
+  key: ApiKeyInfo
+  api_key: string
 }
 
 export interface AlertItem {

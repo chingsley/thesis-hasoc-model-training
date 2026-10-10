@@ -1,8 +1,8 @@
-"""Per-user posts: the authenticated user's own processed texts from the prediction log.
+"""Organization-scoped posts from the prediction log.
 
 Source of truth: the `predictions` table (rows logged by /predict and /predict/batch
-with the caller's user_id). Post ids are `pred_<prediction id>`; triage state is stored
-in the shared triage table under namespaced keys `u<user_id>_pred_<prediction id>`.
+with the caller's organization_id). Post ids are `pred_<prediction id>`; triage state
+is stored under `o<organization_id>_pred_<prediction id>` so teammates share triage.
 
 There is no ground-truth label for user-submitted texts — `label` mirrors
 `predicted_label` so the shape matches posts_service (test-set) posts.
@@ -27,17 +27,19 @@ def parse_pred_ref(post_ref: str) -> int | None:
     return int(match.group(1)) if match else None
 
 
-def _triage_key(user_id: int, prediction_id: int) -> str:
-    return f"u{user_id}_pred_{prediction_id}"
+def _triage_key(organization_id: int, prediction_id: int) -> str:
+    return f"o{organization_id}_pred_{prediction_id}"
 
 
-def _row_to_post(row: dict[str, Any], triage: dict[str, dict[str, Any]], user_id: int) -> dict[str, Any]:
+def _row_to_post(
+    row: dict[str, Any], triage: dict[str, dict[str, Any]], organization_id: int
+) -> dict[str, Any]:
     pred = row["predicted_label"]
-    state = triage.get(_triage_key(user_id, row["id"]))
+    state = triage.get(_triage_key(organization_id, row["id"]))
     return {
         "id": f"pred_{row['id']}",
         "tweet": row["text"],
-        "label": pred,  # no ground truth for user submissions
+        "label": pred,
         "label_id": LABELS.index(pred),
         "language": row["language"],
         "split": row["source"],
@@ -56,8 +58,8 @@ def _row_to_post(row: dict[str, Any], triage: dict[str, dict[str, Any]], user_id
     }
 
 
-def list_user_posts(
-    user_id: int,
+def list_org_posts(
+    organization_id: int,
     language: str,
     limit: int = MAX_USER_POSTS,
     offset: int = 0,
@@ -65,33 +67,41 @@ def list_user_posts(
     hate_max: float | None = None,
     labels: list[str] | None = None,
 ) -> list[dict[str, Any]]:
-    rows = db.user_prediction_rows(
-        user_id, language, limit, offset, hate_min=hate_min, hate_max=hate_max, labels=labels
+    rows = db.org_prediction_rows(
+        organization_id,
+        language,
+        limit,
+        offset,
+        hate_min=hate_min,
+        hate_max=hate_max,
+        labels=labels,
     )
-    triage = db.get_triage_state([_triage_key(user_id, row["id"]) for row in rows])
-    return [_row_to_post(row, triage, user_id) for row in rows]
+    triage = db.get_triage_state(
+        [_triage_key(organization_id, row["id"]) for row in rows]
+    )
+    return [_row_to_post(row, triage, organization_id) for row in rows]
 
 
-def get_user_post(user_id: int, prediction_id: int) -> dict[str, Any] | None:
-    row = db.get_prediction_for_user(prediction_id, user_id)
+def get_org_post(organization_id: int, prediction_id: int) -> dict[str, Any] | None:
+    row = db.get_prediction_for_org(prediction_id, organization_id)
     if row is None:
         return None
-    triage = db.get_triage_state([_triage_key(user_id, prediction_id)])
-    return _row_to_post(row, triage, user_id)
+    triage = db.get_triage_state([_triage_key(organization_id, prediction_id)])
+    return _row_to_post(row, triage, organization_id)
 
 
-def apply_user_triage(
-    user_id: int,
+def apply_org_triage(
+    organization_id: int,
     prediction_id: int,
     *,
     flagged: bool | None = None,
     status: str | None = None,
 ) -> dict[str, Any] | None:
-    post = get_user_post(user_id, prediction_id)
+    post = get_org_post(organization_id, prediction_id)
     if post is None:
         return None
     state = db.upsert_triage(
-        _triage_key(user_id, prediction_id), flagged=flagged, status=status
+        _triage_key(organization_id, prediction_id), flagged=flagged, status=status
     )
     post["flagged"] = bool(state["flagged"])
     post["triage_status"] = state["status"]
@@ -99,23 +109,17 @@ def apply_user_triage(
     return post
 
 
-def relabel_user_post(
-    user_id: int,
+def relabel_org_post(
+    organization_id: int,
     prediction_id: int,
     manual_label: str,
     bucket: str | None = None,
 ) -> dict[str, Any] | None:
-    """Record a manual label correction; optionally move to the cleared/flagged bucket.
-
-    The post joins the relabelled view while manual_label != the model's predicted label;
-    it keeps its bucket (cleared/flagged) regardless. Machine label is always recoverable
-    from the immutable predictions row, so retraining pairs survive.
-    """
-    post = get_user_post(user_id, prediction_id)
+    post = get_org_post(organization_id, prediction_id)
     if post is None:
         return None
     state = db.upsert_triage(
-        _triage_key(user_id, prediction_id),
+        _triage_key(organization_id, prediction_id),
         flagged=(bucket == "flagged") if bucket else None,
         status=bucket,
         manual_label=manual_label,
@@ -126,6 +130,6 @@ def relabel_user_post(
     return post
 
 
-def user_reported_posts(user_id: int, language: str) -> list[dict[str, Any]]:
-    posts = list_user_posts(user_id, language, limit=5000)
+def org_reported_posts(organization_id: int, language: str) -> list[dict[str, Any]]:
+    posts = list_org_posts(organization_id, language, limit=5000)
     return [post for post in posts if post["triage_status"] == "flagged"]

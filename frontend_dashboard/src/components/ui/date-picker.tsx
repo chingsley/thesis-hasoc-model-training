@@ -131,8 +131,8 @@ export function DatePickerField({
           className={cn(
             'inline-flex h-8 min-w-[9.5rem] items-center gap-2 rounded-[4px] border border-[var(--hg-border)] bg-white px-2.5 text-xs font-medium text-black transition-colors',
             'hover:border-[var(--hg-muted)] hover:bg-[var(--hg-soft)]',
-            'data-popup-open:border-[#625885] data-popup-open:bg-[var(--hg-soft)]',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#625885]/25',
+            'data-popup-open:border-[var(--hg-brand)] data-popup-open:bg-[var(--hg-soft)]',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--hg-brand)]/25',
           )}
         >
           <CalendarDays className="size-3.5 shrink-0 text-[var(--hg-muted)]" />
@@ -208,7 +208,7 @@ export function DatePickerField({
                       ranged && 'bg-[var(--hg-soft)] text-black',
                       isMate && !isSelected && 'bg-[var(--hg-soft-selected)] font-medium text-black',
                       isSelected &&
-                        'bg-[#625885] font-semibold text-white hover:bg-[#625885]',
+                        'bg-[var(--hg-brand)] font-semibold text-white hover:bg-[var(--hg-brand)]',
                       isToday && !isSelected && 'ring-1 ring-[var(--hg-border)] ring-inset',
                       disabled && 'cursor-not-allowed opacity-30',
                     )}
@@ -230,7 +230,7 @@ export function DatePickerField({
               <button
                 type="button"
                 onClick={goToday}
-                className="text-xs font-semibold text-[#625885] transition-colors hover:text-[#4a3f6e]"
+                className="text-xs font-semibold text-[var(--hg-brand)] transition-colors hover:text-[var(--hg-accent-surface)]"
               >
                 Today
               </button>

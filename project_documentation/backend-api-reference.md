@@ -131,11 +131,37 @@ curl -s -X POST http://localhost:8080/auth/login \
 ```json
 {
   "token": "BuX1iAv3pV3P...",
-  "user": { "id": 1, "email": "ops@platform.com", "org_name": "Platform X" }
+  "user": {
+    "id": 1,
+    "email": "ops@platform.com",
+    "name": "James Ikawi",
+    "org_name": "Platform X",
+    "organization_id": 1,
+    "must_change_password": false,
+    "can_manage_api_keys": true
+  }
 }
 ```
 
-`401` on unknown email, wrong password, or deactivated user.
+`401` on unknown email, wrong password, or deactivated user. If the email has an active **invite**
+(created with `scripts/invite_user.py`), the first successful login creates the user and sets
+`must_change_password: true`.
+
+---
+
+### `POST /auth/change-password`
+
+Session only. Allowed while `must_change_password` is true (other dashboard routes return `403` until
+the password is updated).
+
+```bash
+curl -s -X POST http://localhost:8080/auth/change-password \
+  -H "Authorization: Bearer $TOKEN" \
+  -H 'Content-Type: application/json' \
+  -d '{"current_password": "...", "new_password": "..."}'
+```
+
+Returns updated `UserInfo` with `must_change_password: false`.
 
 ---
 
@@ -153,7 +179,8 @@ curl -s -X POST http://localhost:8080/auth/logout -H "Authorization: Bearer $TOK
 
 ### `GET /auth/keys` · `POST /auth/keys` · `DELETE /auth/keys/{id}`
 
-Manage the logged-in user's API keys (session auth only). `POST` returns the plaintext key
+Manage the logged-in user's **organization** API keys (session auth only; password change must be
+complete). `POST` returns the plaintext key
 exactly once; `DELETE` revokes (only your own keys; `404` otherwise).
 
 ```bash
@@ -165,7 +192,50 @@ curl -s -X POST http://localhost:8080/auth/keys \
   -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' -d '{"name": "staging"}'
 # {"key": {...}, "api_key": "hgk_..."}   <- store api_key now; never shown again
 
+Optional `organization_id` on `POST /auth/keys` (platform admins only).
+
 curl -s -X DELETE http://localhost:8080/auth/keys/2 -H "Authorization: Bearer $TOKEN"
+```
+
+---
+
+### `GET /auth/invites` · `POST /auth/invites` · `DELETE /auth/invites/{id}`
+
+Invite teammates into the **caller's organization** (session auth; `can_invite_users` on
+`UserInfo`, default same emails as `API_KEY_ADMIN_EMAILS` / override with `INVITE_ADMIN_EMAILS`).
+`POST` generates a random temporary password and returns it once; the invitee signs in with
+`POST /auth/login` and must change password before using the dashboard.
+
+```bash
+curl -s http://localhost:8080/auth/invites -H "Authorization: Bearer $TOKEN"
+# [{"id": 3, "email": "new@partner.com", "created_at": "..."}]
+
+curl -s -X POST http://localhost:8080/auth/invites \
+  -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' \
+  -d '{"email": "new@partner.com"}'
+# {"invite": {...}, "temporary_password": "..."}   <- share once; never shown again
+
+curl -s -X DELETE http://localhost:8080/auth/invites/3 -H "Authorization: Bearer $TOKEN"
+```
+
+Optional `organization_id` on `POST /auth/invites` (platform admins only).
+
+---
+
+### `GET /auth/organizations` · `POST /auth/organizations` · `POST /auth/session/organization`
+
+Platform administrators (`PLATFORM_ADMIN_EMAILS`, default `platform@test.com`) list/create
+organizations and set which org the dashboard session is scoped to (`UserInfo.organization_id`
+updates; data, invites, and API keys use the active org).
+
+```bash
+curl -s http://localhost:8080/auth/organizations -H "Authorization: Bearer $TOKEN"
+curl -s -X POST http://localhost:8080/auth/organizations \
+  -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' \
+  -d '{"name": "New Partner Org"}'
+curl -s -X POST http://localhost:8080/auth/session/organization \
+  -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' \
+  -d '{"organization_id": 2}'
 ```
 
 ---
