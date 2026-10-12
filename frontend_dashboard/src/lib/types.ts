@@ -4,7 +4,38 @@ export type Label = 'Normal' | 'Abuse' | 'Hate'
 
 export type LabelId = 0 | 1 | 2
 
-export type TriageStatus = 'pending' | 'cleared' | 'flagged'
+export type TriageStatus = 'pending' | 'flagged'
+
+export type TriageBucket = 'pending' | 'flagged' | 'relabelled'
+
+export interface TriageBucketCounts {
+  total: number
+  normal: number
+  hate: number
+  abuse: number
+  normal_flagged: number
+  normal_relabelled: number
+  normal_other: number
+  hate_flagged: number
+  hate_relabelled: number
+  hate_other: number
+  abuse_flagged: number
+  abuse_relabelled: number
+  abuse_other: number
+}
+
+export interface TriageStatsData {
+  pending: TriageBucketCounts
+  flagged: TriageBucketCounts
+  relabelled: TriageBucketCounts
+}
+
+export interface TriagePostsPage {
+  items: Post[]
+  total: number
+  limit: number
+  offset: number
+}
 
 export type XaiMethod = 'lime' | 'shap' | 'attention_rollout' | 'integrated_gradients'
 

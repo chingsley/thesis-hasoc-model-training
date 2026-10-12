@@ -113,7 +113,7 @@ export function AlertsBell() {
         {unreadAlertCount > 0 && (
           <span
             aria-hidden
-            className="absolute -top-0.5 -right-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-[var(--hg-secondary)] px-1 text-[11px] font-bold leading-none text-white tabular-nums shadow-sm ring-2 ring-white"
+            className="absolute -top-0.5 -right-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-[var(--hg-notification-badge)] px-1 text-[11px] font-bold leading-none text-white tabular-nums shadow-sm ring-2 ring-white"
           >
             {unreadAlertCount > 99 ? '99+' : unreadAlertCount}
           </span>
@@ -136,7 +136,7 @@ export function AlertsBell() {
                 </p>
               </div>
               {unreadAlertCount > 0 ? (
-                <span className="rounded-[4px] bg-[var(--hg-secondary)]/10 px-1.5 py-0.5 text-[10px] font-semibold text-[var(--hg-secondary)] tabular-nums">
+                <span className="rounded-[4px] bg-[color-mix(in_srgb,var(--hg-notification-badge)_12%,transparent)] px-1.5 py-0.5 text-[10px] font-semibold text-[var(--hg-notification-badge)] tabular-nums">
                   {unreadAlertCount} new
                 </span>
               ) : null}

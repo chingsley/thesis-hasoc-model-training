@@ -105,4 +105,8 @@ POSTGRES_DDL: list[str] = [
     """
     CREATE INDEX IF NOT EXISTS idx_predictions_org_lang ON predictions(organization_id, language)
     """,
+    """
+    CREATE INDEX IF NOT EXISTS idx_predictions_org_lang_label_ts
+    ON predictions(organization_id, language, predicted_label, ts DESC)
+    """,
 ]

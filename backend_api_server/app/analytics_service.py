@@ -60,14 +60,110 @@ def _parse_boundary(value: str | None, *, end_of_day: bool = False) -> datetime 
     return dt.astimezone(timezone.utc).replace(minute=0, second=0, microsecond=0)
 
 
+def _parse_earliest_hour(ts: str) -> datetime:
+    dt = datetime.fromisoformat(ts.replace("Z", "+00:00"))
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    return dt.astimezone(timezone.utc).replace(minute=0, second=0, microsecond=0)
+
+
+def _volume_rows_in_window(
+    start: datetime,
+    end: datetime,
+    organization_id: int | None,
+    language: str | None,
+) -> list[dict[str, Any]]:
+    since_iso = start.isoformat()
+    rows = db.prediction_rows_since(since_iso, organization_id=organization_id)
+    until_iso = (end + timedelta(hours=1)).isoformat()
+    rows = [row for row in rows if row["ts"] < until_iso]
+    if language:
+        rows = [row for row in rows if row["language"] == language]
+    return rows
+
+
+def _volume_points_hourly(
+    rows: list[dict[str, Any]],
+    start: datetime,
+    span_hours: int,
+) -> list[dict[str, Any]]:
+    buckets: dict[str, Counter] = defaultdict(Counter)
+    for row in rows:
+        buckets[_hour_bucket(row["ts"])][row["predicted_label"]] += 1
+
+    points: list[dict[str, Any]] = []
+    for offset in range(span_hours):
+        moment = start + timedelta(hours=offset)
+        key = moment.isoformat()[:13] + ":00"
+        counts = buckets.get(key, Counter())
+        normal, abuse, hate = counts.get("Normal", 0), counts.get("Abuse", 0), counts.get("Hate", 0)
+        points.append(
+            {
+                "hour": key,
+                "normal_count": normal,
+                "abuse_count": abuse,
+                "hate_count": hate,
+                "total": normal + abuse + hate,
+            }
+        )
+    return points
+
+
+def _volume_points_daily(
+    rows: list[dict[str, Any]],
+    start: datetime,
+    end: datetime,
+) -> list[dict[str, Any]]:
+    buckets: dict[str, Counter] = defaultdict(Counter)
+    for row in rows:
+        buckets[row["ts"][:10]][row["predicted_label"]] += 1
+
+    day_start = start.replace(hour=0, minute=0, second=0, microsecond=0)
+    day_end = end.replace(hour=0, minute=0, second=0, microsecond=0)
+    points: list[dict[str, Any]] = []
+    cur = day_start
+    while cur <= day_end:
+        day_key = cur.strftime("%Y-%m-%d")
+        counts = buckets.get(day_key, Counter())
+        normal, abuse, hate = counts.get("Normal", 0), counts.get("Abuse", 0), counts.get("Hate", 0)
+        points.append(
+            {
+                "hour": f"{day_key}T00:00",
+                "normal_count": normal,
+                "abuse_count": abuse,
+                "hate_count": hate,
+                "total": normal + abuse + hate,
+            }
+        )
+        cur += timedelta(days=1)
+    return points
+
+
 def volume_by_hour(
     hours: int = VOLUME_HOURS,
     organization_id: int | None = None,
     language: str | None = None,
     since: str | None = None,
     until: str | None = None,
+    all_time: bool = False,
 ) -> list[dict[str, Any]]:
     now = datetime.now(timezone.utc).replace(minute=0, second=0, microsecond=0)
+
+    if all_time:
+        earliest = db.earliest_prediction_ts(organization_id, language)
+        if earliest is None:
+            return []
+        start = _parse_earliest_hour(earliest)
+        end = now
+        if end < start:
+            start, end = end, start
+        span_hours = int((end - start).total_seconds() // 3600) + 1
+        use_daily = span_hours > MAX_VOLUME_HOURS
+        rows = _volume_rows_in_window(start, end, organization_id, language)
+        if use_daily:
+            return _volume_points_daily(rows, start, end)
+        return _volume_points_hourly(rows, start, span_hours)
+
     start = _parse_boundary(since, end_of_day=False)
     end = _parse_boundary(until, end_of_day=True)
 
@@ -93,33 +189,8 @@ def volume_by_hour(
         span_hours = 1
         start = end
 
-    since_iso = start.isoformat()
-    rows = db.prediction_rows_since(since_iso, organization_id=organization_id)
-    until_iso = (end + timedelta(hours=1)).isoformat()
-    rows = [row for row in rows if row["ts"] < until_iso]
-    if language:
-        rows = [row for row in rows if row["language"] == language]
-
-    buckets: dict[str, Counter] = defaultdict(Counter)
-    for row in rows:
-        buckets[_hour_bucket(row["ts"])][row["predicted_label"]] += 1
-
-    points = []
-    for offset in range(span_hours):
-        moment = start + timedelta(hours=offset)
-        key = moment.isoformat()[:13] + ":00"
-        counts = buckets.get(key, Counter())
-        normal, abuse, hate = counts.get("Normal", 0), counts.get("Abuse", 0), counts.get("Hate", 0)
-        points.append(
-            {
-                "hour": key,
-                "normal_count": normal,
-                "abuse_count": abuse,
-                "hate_count": hate,
-                "total": normal + abuse + hate,
-            }
-        )
-    return points
+    rows = _volume_rows_in_window(start, end, organization_id, language)
+    return _volume_points_hourly(rows, start, span_hours)
 
 
 def drift_by_day(

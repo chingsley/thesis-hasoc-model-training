@@ -3,7 +3,11 @@ import { ConfusionMatrix } from '@/components/charts/ConfusionMatrix'
 import { PerClassMetrics } from '@/components/charts/PerClassMetrics'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { SectionTitle } from '@/components/ui/data-source-badge'
-import { cn } from '@/lib/utils'
+import {
+  SummaryStatCell,
+  SummaryStatGrid,
+  SummaryStatTile,
+} from '@/components/ui/summary-stat-strip'
 import { Loader2 } from 'lucide-react'
 import type { ModelMetrics } from '@/lib/types'
 
@@ -134,56 +138,24 @@ export default function Performance() {
           </SectionTitle>
         </CardHeader>
         <CardContent className="px-0 py-0">
-          <div className="grid grid-cols-2 md:grid-cols-4">
+          <SummaryStatGrid columns={4} dense bleedPadding={false}>
             {OVERALL_METRICS.map((tile, index) => (
-              <div
+              <SummaryStatCell
                 key={tile.key}
-                className={cn(
-                  'relative flex min-h-[112px] items-stretch px-5 py-5 md:px-6',
-                  tile.accent
-                    ? 'bg-[var(--hg-accent-surface)] text-white'
-                    : 'border-b border-[var(--hg-border)]',
-                  !tile.accent && index >= 6 && 'border-b-0',
-                  !tile.accent && index >= 4 && 'md:border-b-0',
-                  tile.accent && 'border-b-0',
-                )}
+                index={index}
+                columns={4}
+                dense
+                accent={tile.accent}
               >
-                {!tile.accent && index % 4 !== 0 && (
-                  <span
-                    aria-hidden
-                    className="pointer-events-none absolute top-4 bottom-4 left-0 hidden w-px bg-[var(--hg-border)] md:block"
-                  />
-                )}
-                {!tile.accent && index % 2 !== 0 && (
-                  <span
-                    aria-hidden
-                    className="pointer-events-none absolute top-4 bottom-4 left-0 w-px bg-[var(--hg-border)] md:hidden"
-                  />
-                )}
-                <div className="flex min-w-0 flex-col justify-between gap-3">
-                  <p
-                    className={cn(
-                      'text-[13px] font-medium',
-                      tile.accent ? 'text-white/90' : 'text-[var(--hg-muted)]',
-                    )}
-                  >
-                    {tile.label}
-                  </p>
-                  <p
-                    className={cn(
-                      'text-[1.75rem] leading-none font-bold tracking-tight tabular-nums',
-                      tile.accent ? 'text-white' : 'text-[var(--hg-ink)]',
-                    )}
-                  >
-                    {tile.format(metrics)}
-                  </p>
-                  <p className={cn('text-xs', tile.accent ? 'text-white/85' : 'text-[var(--hg-subtle)]')}>
-                    {tile.subtitle}
-                  </p>
-                </div>
-              </div>
+                <SummaryStatTile
+                  label={tile.label}
+                  value={tile.format(metrics)}
+                  subtitle={tile.subtitle}
+                  accent={tile.accent}
+                />
+              </SummaryStatCell>
             ))}
-          </div>
+          </SummaryStatGrid>
         </CardContent>
       </Card>
     </div>

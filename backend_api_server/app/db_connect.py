@@ -172,6 +172,9 @@ def _init_postgres(conn: Any) -> None:
             "ALTER TABLE sessions ADD COLUMN IF NOT EXISTS active_organization_id INTEGER"
             " REFERENCES organizations(id)"
         )
+        from .db_migrate import migrate_legacy_triage_statuses
+
+        migrate_legacy_triage_statuses(cur)
     conn.commit()
 
 

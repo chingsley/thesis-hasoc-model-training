@@ -349,16 +349,13 @@ def seed_triage(user_id: int, id_map: dict[str, int]) -> None:
 
     toxic_texts = [t for _, t in TOXIC]
 
-    for text in toxic_texts[10:16]:
-        db.upsert_triage(key(text), flagged=False, status="cleared")
-
     for text in toxic_texts[16:22]:
         db.upsert_triage(key(text), flagged=True, status="flagged")
 
     relabels = [
         (toxic_texts[22], "Abuse", "flagged"),
-        (toxic_texts[23], "Normal", "cleared"),
-        (toxic_texts[24], "Normal", "cleared"),
+        (toxic_texts[23], "Normal", "pending"),
+        (toxic_texts[24], "Normal", "pending"),
         (toxic_texts[25], None, "flagged"),
     ]
     for text, manual, bucket in relabels:

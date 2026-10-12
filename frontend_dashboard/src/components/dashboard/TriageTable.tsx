@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Popover } from '@base-ui/react/popover'
-import type { Post, TriageStatus } from '@/lib/types'
+import type { Post, TriageBucket, TriageBucketCounts, TriageStatus } from '@/lib/types'
+import { TablePagination } from '@/components/ui/table-pagination'
 import { DataTable, type DataTableColumn } from '@/components/ui/data-table'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -12,16 +13,15 @@ import { useFlagPost, useUpdateTriageStatus } from '@/hooks/use-posts'
 import { useDashboardStore } from '@/lib/store/dashboard'
 import { cn } from '@/lib/utils'
 import {
-  CheckCircle,
   Download,
   Flag,
   FlagOff,
   ListFilter,
   Pencil,
-  RotateCcw,
   Search,
   Tags,
   X,
+  Loader2,
 } from 'lucide-react'
 
 const CSV_HEADER =
@@ -42,14 +42,31 @@ function toCsvRow(p: Post): string {
   ].join(',')
 }
 
-export type TriageBucket = 'pending' | 'cleared' | 'flagged' | 'relabelled'
-export type TriageLabelFilter = 'all' | 'Hate' | 'Abuse'
+export type { TriageBucket } from '@/lib/types'
+export type TriageLabelFilter = 'all' | 'Normal' | 'Hate' | 'Abuse'
 
 interface TriageTableProps {
   bucket: TriageBucket
   posts: Post[]
+  total: number
+  page: number
+  pageSize: number
+  onPageChange: (page: number) => void
+  bucketCounts: TriageBucketCounts
   labelFilter: TriageLabelFilter
   onLabelFilterChange: (filter: TriageLabelFilter) => void
+  search: string
+  onSearchChange: (value: string) => void
+  startDate: string
+  endDate: string
+  minHate: string
+  maxHate: string
+  onStartDateChange: (value: string) => void
+  onEndDateChange: (value: string) => void
+  onMinHateChange: (value: string) => void
+  onMaxHateChange: (value: string) => void
+  loading?: boolean
+  fetching?: boolean
   onRelabel: (post: Post, mode: RelabelMode) => void
 }
 
@@ -144,20 +161,19 @@ const RELABEL_COLUMNS: DataTableColumn<Post>[] = [
 
 const COLUMNS_BY_BUCKET: Record<TriageBucket, DataTableColumn<Post>[]> = {
   pending: MAIN_COLUMNS,
-  cleared: MAIN_COLUMNS,
   flagged: MAIN_COLUMNS,
   relabelled: RELABEL_COLUMNS,
 }
 
 const EMPTY_TEXT: Record<TriageBucket, string> = {
-  pending: 'No pending posts — all caught up',
-  cleared: 'No cleared posts yet',
+  pending: 'No posts in the queue yet',
   flagged: 'No flagged posts yet',
-  relabelled: 'No relabelled posts — use Relabel on a pending post you disagree with',
+  relabelled: 'No relabelled posts — use Relabel on a queue post you disagree with',
 }
 
 const LABEL_FILTERS: { id: TriageLabelFilter; label: string }[] = [
   { id: 'all', label: 'All' },
+  { id: 'Normal', label: 'Normal' },
   { id: 'Hate', label: 'Hate' },
   { id: 'Abuse', label: 'Abuse' },
 ]
@@ -165,41 +181,40 @@ const LABEL_FILTERS: { id: TriageLabelFilter; label: string }[] = [
 export function TriageTable({
   bucket,
   posts,
+  total,
+  page,
+  pageSize,
+  onPageChange,
+  bucketCounts,
   labelFilter,
   onLabelFilterChange,
+  search,
+  onSearchChange,
+  startDate,
+  endDate,
+  minHate,
+  maxHate,
+  onStartDateChange,
+  onEndDateChange,
+  onMinHateChange,
+  onMaxHateChange,
+  loading,
+  fetching,
   onRelabel,
 }: TriageTableProps) {
-  const [search, setSearch] = useState('')
-  const [startDate, setStartDate] = useState('')
-  const [endDate, setEndDate] = useState('')
-  const [minHate, setMinHate] = useState('')
-  const [maxHate, setMaxHate] = useState('')
   const [filterOpen, setFilterOpen] = useState(false)
   const language = useDashboardStore((s) => s.language)
   const flagMutation = useFlagPost()
   const statusMutation = useUpdateTriageStatus()
 
-  const minProb = minHate === '' ? null : Number(minHate) / 100
-  const maxProb = maxHate === '' ? null : Number(maxHate) / 100
-
-  const filtered = posts.filter((p) => {
-    if (labelFilter !== 'all' && p.predicted_label !== labelFilter) return false
-    if (search && !p.tweet.toLowerCase().includes(search.toLowerCase()) && !p.id.includes(search))
-      return false
-    const day = (p.timestamp || '').split('T')[0]
-    if (startDate && day && day < startDate) return false
-    if (endDate && day && day > endDate) return false
-    if (minProb !== null && !Number.isNaN(minProb) && p.probabilities.hate < minProb) return false
-    if (maxProb !== null && !Number.isNaN(maxProb) && p.probabilities.hate > maxProb) return false
-    return true
-  })
-
   const activeFilterCount = [startDate, endDate, minHate, maxHate].filter(Boolean).length
   const hasRangeFilters = activeFilterCount > 0
+  const hasTableFilters =
+    hasRangeFilters || Boolean(search.trim()) || labelFilter !== 'all'
 
   const handleDownloadCsv = () => {
-    if (filtered.length === 0) return
-    const csv = [CSV_HEADER, ...filtered.map(toCsvRow)].join('\n')
+    if (posts.length === 0) return
+    const csv = [CSV_HEADER, ...posts.map(toCsvRow)].join('\n')
     const blob = new Blob([csv], { type: 'text/csv' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
@@ -210,16 +225,17 @@ export function TriageTable({
   }
 
   const labelCounts = {
-    all: posts.length,
-    Hate: posts.filter((p) => p.predicted_label === 'Hate').length,
-    Abuse: posts.filter((p) => p.predicted_label === 'Abuse').length,
+    all: hasTableFilters ? total : bucketCounts.total,
+    Normal: bucketCounts.normal,
+    Hate: bucketCounts.hate,
+    Abuse: bucketCounts.abuse,
   }
 
   const clearRangeFilters = () => {
-    setStartDate('')
-    setEndDate('')
-    setMinHate('')
-    setMaxHate('')
+    onStartDateChange('')
+    onEndDateChange('')
+    onMinHateChange('')
+    onMaxHateChange('')
   }
 
   const busy =
@@ -238,24 +254,27 @@ export function TriageTable({
       case 'pending':
         return (
           <>
-            <Button
-              size="sm"
-              variant="outline"
-              disabled={disabled}
-              className={actionClass}
-              onClick={() => flagMutation.mutate(post.id)}
-            >
-              <Flag className="size-3.5" /> Flag
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              disabled={disabled}
-              className={actionClass}
-              onClick={() => setStatus(post.id, 'cleared')}
-            >
-              <CheckCircle className="size-3.5" /> Clear
-            </Button>
+            {post.triage_status === 'flagged' ? (
+              <Button
+                size="sm"
+                variant="outline"
+                disabled={disabled}
+                className={actionClass}
+                onClick={() => setStatus(post.id, 'pending')}
+              >
+                <FlagOff className="size-3.5" /> Unflag
+              </Button>
+            ) : (
+              <Button
+                size="sm"
+                variant="outline"
+                disabled={disabled}
+                className={actionClass}
+                onClick={() => flagMutation.mutate(post.id)}
+              >
+                <Flag className="size-3.5" /> Flag
+              </Button>
+            )}
             <Button
               size="sm"
               variant="outline"
@@ -265,20 +284,6 @@ export function TriageTable({
               onClick={() => onRelabel(post, 'create')}
             >
               <Tags className="size-3.5" /> Relabel
-            </Button>
-          </>
-        )
-      case 'cleared':
-        return (
-          <>
-            <Button
-              size="sm"
-              variant="outline"
-              disabled={disabled}
-              className={actionClass}
-              onClick={() => setStatus(post.id, 'pending')}
-            >
-              <RotateCcw className="size-3.5" /> Reopen
             </Button>
           </>
         )
@@ -321,7 +326,7 @@ export function TriageTable({
           <Input
             placeholder="Search posts or IDs…"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => onSearchChange(e.target.value)}
             className="h-9 rounded-[4px] border-[var(--hg-border)] bg-[var(--hg-canvas)] pl-9 text-sm shadow-none focus-visible:border-[var(--hg-brand)] focus-visible:bg-white"
             aria-label="Search posts"
           />
@@ -385,7 +390,7 @@ export function TriageTable({
                         rangeMate={endDate}
                         rangeRole="start"
                         clearable
-                        onChange={setStartDate}
+                        onChange={onStartDateChange}
                         className="w-full justify-between gap-3 [&_button]:min-w-0 [&_button]:flex-1"
                       />
                       <DatePickerField
@@ -395,7 +400,7 @@ export function TriageTable({
                         rangeMate={startDate}
                         rangeRole="end"
                         clearable
-                        onChange={setEndDate}
+                        onChange={onEndDateChange}
                         className="w-full justify-between gap-3 [&_button]:min-w-0 [&_button]:flex-1"
                       />
                     </div>
@@ -417,7 +422,7 @@ export function TriageTable({
                           step={5}
                           placeholder="0"
                           value={minHate}
-                          onChange={(e) => setMinHate(e.target.value)}
+                          onChange={(e) => onMinHateChange(e.target.value)}
                           className="h-8 rounded-[4px] border-[var(--hg-border)] bg-white text-sm tabular-nums shadow-none"
                           aria-label="Minimum hate probability percent"
                         />
@@ -436,7 +441,7 @@ export function TriageTable({
                           step={5}
                           placeholder="100"
                           value={maxHate}
-                          onChange={(e) => setMaxHate(e.target.value)}
+                          onChange={(e) => onMaxHateChange(e.target.value)}
                           className="h-8 rounded-[4px] border-[var(--hg-border)] bg-white text-sm tabular-nums shadow-none"
                           aria-label="Maximum hate probability percent"
                         />
@@ -499,7 +504,7 @@ export function TriageTable({
             variant="outline"
             size="sm"
             onClick={handleDownloadCsv}
-            disabled={filtered.length === 0}
+            disabled={posts.length === 0}
             className="h-8 gap-1.5 rounded-[4px] border-[var(--hg-border)] text-xs hover:bg-[var(--hg-soft)] hover:text-black"
             title="Download CSV"
           >
@@ -509,19 +514,35 @@ export function TriageTable({
         </div>
       </div>
 
-      <DataTable
-        columns={COLUMNS_BY_BUCKET[bucket]}
-        data={filtered}
-        getRowId={(p) => p.id}
-        maxHeight="520px"
-        caption={`${bucket} triage posts`}
-        empty={
-          <div className="text-center text-[var(--hg-muted)]">
-            <p className="text-sm font-medium text-[var(--hg-ink)]">{EMPTY_TEXT[bucket]}</p>
+      {loading ? (
+        <div className="flex min-h-[200px] items-center justify-center rounded-[4px] border border-dashed border-[var(--hg-border)] bg-[var(--hg-canvas)]/50">
+          <Loader2 className="h-6 w-6 animate-spin text-[var(--hg-subtle)]" />
+        </div>
+      ) : (
+        <>
+          <div className={cn(fetching && 'opacity-60 transition-opacity')}>
+            <DataTable
+              columns={COLUMNS_BY_BUCKET[bucket]}
+              data={posts}
+              getRowId={(p) => p.id}
+              maxHeight="520px"
+              caption={`${bucket} triage posts`}
+              empty={
+                <div className="text-center text-[var(--hg-muted)]">
+                  <p className="text-sm font-medium text-[var(--hg-ink)]">{EMPTY_TEXT[bucket]}</p>
+                </div>
+              }
+              actions={rowActions}
+            />
           </div>
-        }
-        actions={rowActions}
-      />
+          <TablePagination
+            page={page}
+            pageSize={pageSize}
+            total={total}
+            onPageChange={onPageChange}
+          />
+        </>
+      )}
     </div>
   )
 }

@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button'
 import { PredictionCell } from '@/components/dashboard/post-cells'
 import type { Label, Post } from '@/lib/types'
 import { cn } from '@/lib/utils'
-import { Check, CheckCircle, Flag, Loader2, X } from 'lucide-react'
+import { Check, Flag, Loader2, X } from 'lucide-react'
 
 const LABELS: Label[] = ['Normal', 'Abuse', 'Hate']
 
@@ -12,10 +12,10 @@ export type RelabelMode = 'create' | 'edit'
 interface RelabelSheetProps {
   /** When set, the sheet is open. */
   post: Post | null
-  /** create: from Pending (choose label + bucket) · edit: from Relabelled (label only) */
+  /** create: from queue (choose label + optional flag) · edit: from Relabelled (label only) */
   mode: RelabelMode
   saving: boolean
-  onSave: (label: Label, bucket?: 'cleared' | 'flagged') => void | Promise<void>
+  onSave: (label: Label, bucket?: 'flagged') => void | Promise<void>
   onClose: () => void
 }
 
@@ -51,16 +51,16 @@ function RelabelForm({
   post: Post
   mode: RelabelMode
   saving: boolean
-  onSave: (label: Label, bucket?: 'cleared' | 'flagged') => void | Promise<void>
+  onSave: (label: Label, bucket?: 'flagged') => void | Promise<void>
   onCancel: () => void
 }) {
   const [label, setLabel] = useState<Label>(post.manual_label ?? post.predicted_label)
-  const [bucket, setBucket] = useState<'cleared' | 'flagged' | null>(null)
+  const [alsoFlag, setAlsoFlag] = useState(false)
 
   const handleSave = async () => {
     try {
       await Promise.resolve(
-        onSave(label, mode === 'create' ? bucket ?? undefined : undefined),
+        onSave(label, mode === 'create' && alsoFlag ? 'flagged' : undefined),
       )
       onCancel()
     } catch {
@@ -120,44 +120,23 @@ function RelabelForm({
         </fieldset>
 
         {mode === 'create' && (
-          <fieldset className="space-y-2.5 border-0 p-0">
-            <legend className="text-sm font-semibold text-[var(--hg-ink)]">Send to bucket</legend>
-            <p className="text-xs text-[var(--hg-muted)]">
-              Optional — leave unselected to keep the post in Pending after relabeling.
-            </p>
-            <div className="grid grid-cols-2 gap-2" role="radiogroup" aria-label="Send to bucket">
-              {(
-                [
-                  { id: 'flagged' as const, label: 'Flagged', icon: Flag },
-                  { id: 'cleared' as const, label: 'Cleared', icon: CheckCircle },
-                ] as const
-              ).map((option) => {
-                const selected = bucket === option.id
-                const Icon = option.icon
-                return (
-                  <button
-                    key={option.id}
-                    type="button"
-                    role="radio"
-                    aria-checked={selected}
-                    onClick={() =>
-                      setBucket((current) => (current === option.id ? null : option.id))
-                    }
-                    className={cn(
-                      'flex items-center justify-center gap-2 rounded-[4px] border px-3 py-3 text-sm font-medium transition-all',
-                      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--hg-brand)]/30',
-                      selected
-                        ? 'border-[var(--hg-brand)] bg-[var(--hg-soft)] text-[var(--hg-ink)] shadow-sm'
-                        : 'border-[var(--hg-border)] bg-white text-[var(--hg-muted)] hover:border-[var(--hg-muted)] hover:bg-[var(--hg-canvas)] hover:text-[var(--hg-ink)]',
-                    )}
-                  >
-                    <Icon className="size-3.5 shrink-0" />
-                    {option.label}
-                  </button>
-                )
-              })}
-            </div>
-          </fieldset>
+          <label className="flex cursor-pointer items-start gap-3 rounded-[4px] border border-[var(--hg-border)] bg-white px-4 py-3">
+            <input
+              type="checkbox"
+              checked={alsoFlag}
+              onChange={(e) => setAlsoFlag(e.target.checked)}
+              className="mt-0.5 size-4 rounded border-[var(--hg-border)]"
+            />
+            <span className="min-w-0 space-y-0.5">
+              <span className="flex items-center gap-1.5 text-sm font-semibold text-[var(--hg-ink)]">
+                <Flag className="size-3.5 text-[var(--hg-muted)]" aria-hidden />
+                Also flag for incident report
+              </span>
+              <span className="block text-xs text-[var(--hg-muted)]">
+                The post stays in the queue and appears in the Flagged tab.
+              </span>
+            </span>
+          </label>
         )}
       </div>
 
@@ -257,7 +236,7 @@ export function RelabelSheet({ post, mode, saving, onSave, onClose }: RelabelShe
             </h2>
             <p id={descriptionId} className="text-sm leading-snug text-[var(--hg-muted)]">
               {mode === 'create'
-                ? 'Correct the model’s label. Optionally send the post to Flagged or Cleared, or leave it in Pending.'
+                ? 'Correct the model’s label. Optionally flag for an incident report — the post stays in the queue.'
                 : 'Update the manual label. Matching the model’s label removes the post from Relabelled.'}
             </p>
           </div>

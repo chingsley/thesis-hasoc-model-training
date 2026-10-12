@@ -76,7 +76,7 @@ class ModelMetricsResponse(BaseModel):
     roc_auc_ovr: float | None = None
 
 
-TriageStatus = Literal["pending", "cleared", "flagged"]
+TriageStatus = Literal["pending", "flagged"]
 
 
 class PostResponse(BaseModel):
@@ -96,13 +96,42 @@ class PostResponse(BaseModel):
     timestamp: str
 
 
+class TriageBucketCounts(BaseModel):
+    total: int
+    normal: int = 0
+    hate: int
+    abuse: int
+    normal_flagged: int = 0
+    normal_relabelled: int = 0
+    normal_other: int = 0
+    hate_flagged: int = 0
+    hate_relabelled: int = 0
+    hate_other: int = 0
+    abuse_flagged: int = 0
+    abuse_relabelled: int = 0
+    abuse_other: int = 0
+
+
+class TriageStatsResponse(BaseModel):
+    pending: TriageBucketCounts
+    flagged: TriageBucketCounts
+    relabelled: TriageBucketCounts
+
+
+class TriagePostsPageResponse(BaseModel):
+    items: list[PostResponse]
+    total: int
+    limit: int
+    offset: int
+
+
 class TriageUpdateRequest(BaseModel):
     status: TriageStatus
 
 
 class RelabelRequest(BaseModel):
     manual_label: Label
-    bucket: Literal["cleared", "flagged"] | None = None
+    bucket: Literal["flagged"] | None = None
 
 
 class ExplainRequest(BaseModel):

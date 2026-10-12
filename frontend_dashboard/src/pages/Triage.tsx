@@ -1,8 +1,11 @@
-import { useMemo, useState } from 'react'
-import { useTriagePosts, useRelabelPost } from '@/hooks/use-posts'
+import { useEffect, useMemo, useState } from 'react'
+import {
+  useTriageStats,
+  useTriagePostsPage,
+  useRelabelPost,
+} from '@/hooks/use-posts'
 import {
   TriageTable,
-  type TriageBucket,
   type TriageLabelFilter,
 } from '@/components/dashboard/TriageTable'
 import { TriageStats } from '@/components/dashboard/TriageStats'
@@ -10,35 +13,74 @@ import { RelabelSheet, type RelabelMode } from '@/components/dashboard/RelabelSh
 import { Card, CardAction, CardContent, CardHeader } from '@/components/ui/card'
 import { SectionTitle } from '@/components/ui/data-source-badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import type { Label, Post } from '@/lib/types'
-import { Loader2 } from 'lucide-react'
+import { TRIAGE_ALL_BUCKET_PAGE_SIZE, TRIAGE_PAGE_SIZE } from '@/lib/triage-buckets'
+import type { Label, Post, TriageBucket } from '@/lib/types'
 import { toast } from 'sonner'
 
 const TABS: { value: TriageBucket; label: string }[] = [
-  { value: 'pending', label: 'Pending' },
-  { value: 'cleared', label: 'Cleared' },
+  { value: 'pending', label: 'All' },
   { value: 'flagged', label: 'Flagged' },
   { value: 'relabelled', label: 'Relabelled' },
 ]
 
 export default function Triage() {
-  const { data: posts, isLoading } = useTriagePosts()
   const [activeBucket, setActiveBucket] = useState<TriageBucket>('pending')
   const [labelFilter, setLabelFilter] = useState<TriageLabelFilter>('all')
+  const [page, setPage] = useState(0)
+  const [search, setSearch] = useState('')
+  const [debouncedSearch, setDebouncedSearch] = useState('')
+  const [startDate, setStartDate] = useState('')
+  const [endDate, setEndDate] = useState('')
+  const [minHate, setMinHate] = useState('')
+  const [maxHate, setMaxHate] = useState('')
   const [relabelState, setRelabelState] = useState<{ post: Post; mode: RelabelMode } | null>(null)
   const relabelMutation = useRelabelPost()
 
-  const buckets = useMemo(() => {
-    const all = posts ?? []
-    return {
-      pending: all.filter((p) => p.triage_status === 'pending'),
-      cleared: all.filter((p) => p.triage_status === 'cleared'),
-      flagged: all.filter((p) => p.triage_status === 'flagged'),
-      relabelled: all.filter((p) => p.manual_label && p.manual_label !== p.predicted_label),
-    }
-  }, [posts])
+  useEffect(() => {
+    const handle = window.setTimeout(() => setDebouncedSearch(search), 300)
+    return () => window.clearTimeout(handle)
+  }, [search])
 
-  const handleRelabelSave = async (label: Label, bucket?: 'cleared' | 'flagged') => {
+  const hateMin = minHate === '' ? undefined : Number(minHate) / 100
+  const hateMax = maxHate === '' ? undefined : Number(maxHate) / 100
+
+  useEffect(() => {
+    setPage(0)
+  }, [activeBucket, labelFilter, debouncedSearch, startDate, endDate, minHate, maxHate])
+
+  const { data: stats, isLoading: statsLoading } = useTriageStats()
+
+  const pageSize =
+    activeBucket === 'pending' ? TRIAGE_ALL_BUCKET_PAGE_SIZE : TRIAGE_PAGE_SIZE
+
+  const postsQuery = useMemo(
+    () => ({
+      bucket: activeBucket,
+      limit: pageSize,
+      offset: page * pageSize,
+      label: labelFilter === 'all' ? undefined : labelFilter,
+      q: debouncedSearch.trim() || undefined,
+      since: startDate || undefined,
+      until: endDate || undefined,
+      hateMin: hateMin != null && !Number.isNaN(hateMin) ? hateMin : undefined,
+      hateMax: hateMax != null && !Number.isNaN(hateMax) ? hateMax : undefined,
+    }),
+    [
+      activeBucket,
+      page,
+      pageSize,
+      labelFilter,
+      debouncedSearch,
+      startDate,
+      endDate,
+      hateMin,
+      hateMax,
+    ],
+  )
+
+  const { data: postsPage, isLoading: postsLoading, isFetching } = useTriagePostsPage(postsQuery)
+
+  const handleRelabelSave = async (label: Label, bucket?: 'flagged') => {
     if (!relabelState) return
     const { mode, post } = relabelState
     try {
@@ -48,12 +90,7 @@ export default function Triage() {
         bucket,
       })
       if (mode === 'create') {
-        const destination =
-          bucket === 'flagged'
-            ? 'Sent to Flagged'
-            : bucket === 'cleared'
-              ? 'Sent to Cleared'
-              : 'Left in Pending'
+        const destination = bucket === 'flagged' ? 'Also flagged for incident report' : 'Saved in queue'
         toast.success(`Saved as ${label}`, { description: destination })
       } else {
         toast.success(`Manual label updated to ${label}`)
@@ -68,19 +105,14 @@ export default function Triage() {
 
   return (
     <div className="space-y-8">
-      <SectionTitle description="Review Hate and Abuse predictions. Flag for incident reports, clear after review, or relabel for future retraining.">
+      <SectionTitle description="Review Hate and Abuse predictions. Flag for incident reports or relabel for future retraining — flagged posts stay in the queue.">
         Triage Queue
       </SectionTitle>
 
-      {isLoading ? (
-        <div className="flex items-center justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-        </div>
-      ) : (
-        <div className="flex flex-col gap-8">
-          <TriageStats bucket={activeBucket} posts={buckets[activeBucket]} />
+      <div className="flex flex-col gap-8">
+        <TriageStats bucket={activeBucket} stats={stats} loading={statsLoading && !stats} />
 
-          <Card>
+        <Card>
             <Tabs
               value={activeBucket}
               onValueChange={(value) => setActiveBucket(value as TriageBucket)}
@@ -96,7 +128,7 @@ export default function Triage() {
                 <CardAction className="flex flex-col items-end gap-2 self-center">
                   <TabsList className="h-auto w-fit justify-end gap-0 rounded-[4px] border border-[var(--hg-border)] bg-[var(--hg-canvas)] p-0.5">
                     {TABS.map((tab) => {
-                      const count = buckets[tab.value].length
+                      const count = stats?.[tab.value]?.total
                       return (
                         <TabsTrigger
                           key={tab.value}
@@ -105,7 +137,7 @@ export default function Triage() {
                         >
                           {tab.label}
                           <span className="ml-1.5 tabular-nums text-[var(--hg-subtle)] group-data-active:text-[var(--hg-brand)]">
-                            {count}
+                            {count != null ? count.toLocaleString() : '—'}
                           </span>
                         </TabsTrigger>
                       )
@@ -117,20 +149,54 @@ export default function Triage() {
               <CardContent className="pt-5">
                 {TABS.map((tab) => (
                   <TabsContent key={tab.value} value={tab.value} className="mt-0">
-                    <TriageTable
-                      bucket={tab.value}
-                      posts={buckets[tab.value]}
-                      labelFilter={labelFilter}
-                      onLabelFilterChange={setLabelFilter}
-                      onRelabel={(post, mode) => setRelabelState({ post, mode })}
-                    />
+                    {tab.value === activeBucket && (
+                      <TriageTable
+                        bucket={activeBucket}
+                        posts={postsPage?.items ?? []}
+                        total={postsPage?.total ?? 0}
+                        page={page}
+                        pageSize={pageSize}
+                        onPageChange={setPage}
+                        bucketCounts={
+                          stats?.[activeBucket] ?? {
+                            total: 0,
+                            normal: 0,
+                            hate: 0,
+                            abuse: 0,
+                            normal_flagged: 0,
+                            normal_relabelled: 0,
+                            normal_other: 0,
+                            hate_flagged: 0,
+                            hate_relabelled: 0,
+                            hate_other: 0,
+                            abuse_flagged: 0,
+                            abuse_relabelled: 0,
+                            abuse_other: 0,
+                          }
+                        }
+                        labelFilter={labelFilter}
+                        onLabelFilterChange={setLabelFilter}
+                        search={search}
+                        onSearchChange={setSearch}
+                        startDate={startDate}
+                        endDate={endDate}
+                        minHate={minHate}
+                        maxHate={maxHate}
+                        onStartDateChange={setStartDate}
+                        onEndDateChange={setEndDate}
+                        onMinHateChange={setMinHate}
+                        onMaxHateChange={setMaxHate}
+                        loading={postsLoading && !postsPage}
+                        fetching={isFetching}
+                        onRelabel={(post, mode) => setRelabelState({ post, mode })}
+                      />
+                    )}
                   </TabsContent>
                 ))}
               </CardContent>
             </Tabs>
-          </Card>
-        </div>
-      )}
+        </Card>
+      </div>
 
       <RelabelSheet
         post={relabelState?.post ?? null}

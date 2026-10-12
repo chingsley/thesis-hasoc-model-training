@@ -52,8 +52,70 @@ export async function fetchTriagePosts(language: Language): Promise<Post[]> {
     const posts = await fetchPosts(language);
     return posts.filter((p) => p.predicted_label === 'Hate' || p.predicted_label === 'Abuse');
   }
-  // Server-side label filter: toxic posts outside the newest-500 window still show up.
-  return apiFetch<Post[]>(`/predictions?language=${language}&label=Hate,Abuse`);
+  // Legacy list for Explainability; triage UI uses /predictions/triage/posts.
+  return apiFetch<Post[]>(`/predictions?language=${language}&label=Hate,Abuse&limit=500`);
+}
+
+export async function fetchTriageStats(language: Language) {
+  if (USE_MOCK) {
+    const { triageStatsFromPosts } = await import('@/lib/triage-buckets');
+    const posts = await fetchTriagePosts(language);
+    return delay(triageStatsFromPosts(posts));
+  }
+  return apiFetch<import('@/lib/types').TriageStatsData>(
+    `/predictions/triage/stats?language=${language}`,
+  );
+}
+
+export type TriagePostsQuery = {
+  language: Language;
+  bucket: import('@/lib/types').TriageBucket;
+  limit: number;
+  offset: number;
+  label?: 'Normal' | 'Hate' | 'Abuse';
+  q?: string;
+  since?: string;
+  until?: string;
+  hateMin?: number;
+  hateMax?: number;
+};
+
+export async function fetchTriagePostsPage(query: TriagePostsQuery) {
+  if (USE_MOCK) {
+    const { bucketPosts, filterTriagePosts } = await import('@/lib/triage-buckets');
+    const toxic = await fetchTriagePosts(query.language);
+    const inBucket = bucketPosts(toxic)[query.bucket];
+    const filtered = filterTriagePosts(inBucket, {
+      label: query.label ?? 'all',
+      q: query.q,
+      since: query.since,
+      until: query.until,
+      hateMin: query.hateMin,
+      hateMax: query.hateMax,
+    });
+    const items = filtered.slice(query.offset, query.offset + query.limit);
+    return delay({
+      items,
+      total: filtered.length,
+      limit: query.limit,
+      offset: query.offset,
+    });
+  }
+  const params = new URLSearchParams({
+    language: query.language,
+    bucket: query.bucket,
+    limit: String(query.limit),
+    offset: String(query.offset),
+  });
+  if (query.label) params.set('label', query.label);
+  if (query.q) params.set('q', query.q);
+  if (query.since) params.set('since', query.since);
+  if (query.until) params.set('until', query.until);
+  if (query.hateMin != null) params.set('hate_min', String(query.hateMin));
+  if (query.hateMax != null) params.set('hate_max', String(query.hateMax));
+  return apiFetch<import('@/lib/types').TriagePostsPage>(
+    `/predictions/triage/posts?${params.toString()}`,
+  );
 }
 
 export async function fetchExplanationMethod(
@@ -197,15 +259,23 @@ export async function fetchDriftData(language: Language): Promise<DriftDataPoint
 
 export async function fetchVolumeData(
   language: Language,
-  options: { hours?: number; since?: string; until?: string } = {},
+  options: { hours?: number; since?: string; until?: string; all?: boolean } = {},
 ): Promise<VolumeDataPoint[]> {
   const hours = options.hours ?? 24
   if (USE_MOCK) {
+    if (options.all) {
+      return delay(generateMockVolumeData(2160), 250);
+    }
     return delay(generateMockVolumeData(hours, options.since, options.until), 250);
   }
-  const params = new URLSearchParams({ language, hours: String(hours) });
-  if (options.since) params.set('since', options.since);
-  if (options.until) params.set('until', options.until);
+  const params = new URLSearchParams({ language });
+  if (options.all) {
+    params.set('all', 'true');
+  } else {
+    params.set('hours', String(hours));
+    if (options.since) params.set('since', options.since);
+    if (options.until) params.set('until', options.until);
+  }
   return apiFetch<VolumeDataPoint[]>(`/analytics/volume?${params.toString()}`);
 }
 
@@ -268,7 +338,7 @@ export async function updateTriageStatus(
 export async function relabelPost(
   postId: string,
   manualLabel: Label,
-  bucket?: 'cleared' | 'flagged'
+  bucket?: 'flagged'
 ): Promise<Post> {
   if (USE_MOCK) {
     const all = getMockPosts();

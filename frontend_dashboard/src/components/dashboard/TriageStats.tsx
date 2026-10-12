@@ -1,93 +1,112 @@
-import { cn } from '@/lib/utils'
-import type { Post } from '@/lib/types'
-import type { TriageBucket } from './TriageTable'
+import type { TriageBucket, TriageBucketCounts, TriageStatsData } from '@/lib/types'
+import {
+  SummaryStatCell,
+  SummaryStatGrid,
+  SummaryStatStrip,
+  SummaryStatTile,
+} from '@/components/ui/summary-stat-strip'
 
 const BUCKET_LABELS: Record<TriageBucket, string> = {
-  pending: 'Pending Reviews',
-  cleared: 'Cleared Posts',
+  pending: 'All posts',
   flagged: 'Flagged Posts',
   relabelled: 'Relabelled Posts',
 }
 
 const BUCKET_SUBTITLES: Record<TriageBucket, string> = {
-  pending: 'Awaiting review',
-  cleared: 'Cleared',
-  flagged: 'Flagged',
-  relabelled: 'Relabelled',
+  pending: 'All classified predictions',
+  flagged: 'Flagged for incident report',
+  relabelled: 'Manual label corrections',
 }
 
 interface TriageStatsProps {
   bucket: TriageBucket
-  posts: Post[]
+  stats?: TriageStatsData
+  loading?: boolean
 }
 
-export function TriageStats({ bucket, posts }: TriageStatsProps) {
-  const abuse = posts.filter((p) => p.predicted_label === 'Abuse').length
-  const hate = posts.filter((p) => p.predicted_label === 'Hate').length
+function formatDetailCount(
+  loading: boolean,
+  counts: TriageBucketCounts | undefined,
+  n: number | undefined,
+) {
+  if (loading || !counts || n === undefined) return '—'
+  return n.toLocaleString()
+}
+
+function labelDetails(
+  loading: boolean,
+  counts: TriageBucketCounts | undefined,
+  kind: 'normal' | 'abuse' | 'hate',
+) {
+  const prefix = kind
+  return [
+    {
+      label: 'flagged',
+      value: formatDetailCount(loading, counts, counts?.[`${prefix}_flagged`]),
+    },
+    {
+      label: 'relabelled',
+      value: formatDetailCount(loading, counts, counts?.[`${prefix}_relabelled`]),
+    },
+    {
+      label: 'others',
+      value: formatDetailCount(loading, counts, counts?.[`${prefix}_other`]),
+    },
+  ]
+}
+
+export function TriageStats({ bucket, stats, loading }: TriageStatsProps) {
+  const counts = stats?.[bucket]
+  const placeholder = '—'
 
   const items = [
     {
       label: BUCKET_LABELS[bucket],
-      value: posts.length,
+      value: loading || !counts ? placeholder : counts.total,
       subtitle: BUCKET_SUBTITLES[bucket],
-      danger: false,
+      accent: false,
+      details: undefined,
+    },
+    {
+      label: 'Normal Posts',
+      value: loading || !counts ? placeholder : counts.normal,
+      subtitle: 'Detected',
+      accent: false,
+      details: counts || loading ? labelDetails(Boolean(loading), counts, 'normal') : undefined,
     },
     {
       label: 'Abusive Posts',
-      value: abuse,
+      value: loading || !counts ? placeholder : counts.abuse,
       subtitle: 'Detected',
-      danger: false,
+      accent: false,
+      details: counts || loading ? labelDetails(Boolean(loading), counts, 'abuse') : undefined,
     },
     {
       label: 'Hateful Posts',
-      value: hate,
+      value: loading || !counts ? placeholder : counts.hate,
       subtitle: 'Detected',
-      danger: true,
+      accent: true,
+      details: counts || loading ? labelDetails(Boolean(loading), counts, 'hate') : undefined,
     },
   ] as const
 
   return (
-    <div className="ml-[calc(50%-50cqi)] w-[100cqi] max-w-[100cqi] bg-white">
-      <div className="grid grid-cols-1 divide-y divide-[var(--hg-border)] pl-4 sm:grid-cols-3 sm:divide-y-0 md:pl-6 lg:pl-8">
+    <SummaryStatStrip>
+      <SummaryStatGrid columns={4}>
         {items.map((item, index) => (
-          <div
-            key={item.label}
-            className={cn(
-              'relative flex min-h-[112px] items-stretch justify-between gap-4 px-5 py-5 md:px-6',
-              item.danger &&
-                'bg-[var(--hg-accent-surface)] text-white md:pr-6 lg:pr-8',
-            )}
-          >
-            {index > 0 && !item.danger && (
-              <span
-                aria-hidden
-                className="pointer-events-none absolute top-4 bottom-4 left-0 hidden w-px bg-[var(--hg-border)] sm:block"
-              />
-            )}
-            <div className="flex min-w-0 flex-col justify-between gap-3">
-              <p
-                className={cn(
-                  'text-[13px] font-medium',
-                  item.danger ? 'text-white/90' : 'text-[var(--hg-muted)]',
-                )}
-              >
-                {item.label}
-              </p>
-              <p
-                className={cn(
-                  'text-[1.75rem] leading-none font-bold tracking-tight tabular-nums',
-                  item.danger ? 'text-white' : 'text-[var(--hg-ink)]',
-                )}
-              >
-                {item.value.toLocaleString()}
-              </p>
-              <p className={cn('text-xs', item.danger ? 'text-white/85' : 'text-[var(--hg-subtle)]')}>
-                {item.subtitle}
-              </p>
-            </div>
-          </div>
+          <SummaryStatCell key={item.label} index={index} columns={4} accent={item.accent}>
+            <SummaryStatTile
+              label={item.label}
+              value={
+                typeof item.value === 'number' ? item.value.toLocaleString() : item.value
+              }
+              subtitle={item.subtitle}
+              accent={item.accent}
+              details={item.details}
+            />
+          </SummaryStatCell>
         ))}
-      </div>
-    </div>
+      </SummaryStatGrid>
+    </SummaryStatStrip>
   )
 }

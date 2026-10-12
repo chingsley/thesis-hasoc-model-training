@@ -255,7 +255,7 @@ export function generateMockPosts(count = 200): Post[] {
       flagged: label !== 'Normal' && Math.random() < 0.4,
       triage_status: label === 'Normal'
         ? 'pending'
-        : (['pending', 'cleared', 'flagged'] as const)[Math.floor(Math.random() * 3)],
+        : (['pending', 'flagged'] as const)[Math.floor(Math.random() * 2)],
       manual_label: null,
       timestamp,
     })

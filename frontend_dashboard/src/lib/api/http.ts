@@ -11,10 +11,13 @@ export class ApiError extends Error {
   }
 }
 
+const API_TIMEOUT_MS = 25_000
+
 export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
   const token = useAuthStore.getState().token
   const response = await fetch(`${API_BASE_URL}${path}`, {
     ...init,
+    signal: init?.signal ?? AbortSignal.timeout(API_TIMEOUT_MS),
     headers: {
       'Content-Type': 'application/json',
       ...(token ? { Authorization: `Bearer ${token}` } : {}),

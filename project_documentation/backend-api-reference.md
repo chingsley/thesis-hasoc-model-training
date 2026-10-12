@@ -311,20 +311,18 @@ user submissions); `split` is the call source (`single`/`batch`); `timestamp` is
 Manage triage buckets on one of the caller's own predictions. `404` for unknown ids,
 malformed ids, or another user's prediction.
 
-- `flag` is **idempotent**: always moves the post to the `flagged` bucket (never toggles back).
-- `triage` sets the bucket explicitly: `{"status": "pending" | "cleared" | "flagged"}`;
-  `flagged` follows `status == "flagged"`.
-- `relabel` records a manual label correction: `{"manual_label": "Normal"|"Abuse"|"Hate", "bucket": "cleared"|"flagged"?}`.
-  The post joins the relabelled view while `manual_label != predicted_label`; bucket unchanged
-  when `bucket` is omitted. The model's label stays immutable in `predictions`, so
-  (machine, manual) pairs are preserved for future retraining.
+- `flag` sets `status` to `flagged` (post remains in the queue list; also appears in flagged views).
+- `triage` sets `{"status": "pending" | "flagged"}`; `flagged` bit follows `status == "flagged"`.
+- `relabel` records a manual label correction: `{"manual_label": "Normal"|"Abuse"|"Hate", "bucket": "flagged"?}`.
+  Optional `"bucket": "flagged"` also flags the post. The post joins the relabelled view while
+  `manual_label != predicted_label`. The model's label stays immutable in `predictions`.
 
-Legacy statuses are migrated at startup: `new→pending`, `reviewed→cleared`, `reported→flagged`.
+Legacy statuses are migrated at startup: `new`/`reviewed`/`cleared` → `pending`, `reported` → `flagged`.
 
 ```bash
 curl -s -X POST http://localhost:8080/predictions/pred_5/flag -H "X-API-Key: $KEY"
 curl -s -X POST http://localhost:8080/predictions/pred_5/triage \
-  -H "X-API-Key: $KEY" -H 'Content-Type: application/json' -d '{"status": "cleared"}'
+  -H "X-API-Key: $KEY" -H 'Content-Type: application/json' -d '{"status": "pending"}'
 curl -s -X POST http://localhost:8080/predictions/pred_5/relabel \
   -H "X-API-Key: $KEY" -H 'Content-Type: application/json' \
   -d '{"manual_label": "Hate", "bucket": "flagged"}'

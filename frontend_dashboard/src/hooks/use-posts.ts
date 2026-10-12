@@ -1,6 +1,16 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useDashboardStore } from '@/lib/store/dashboard'
-import { fetchPosts, fetchTriagePosts, fetchBorderlinePosts, flagPost, relabelPost, updateTriageStatus } from '@/lib/api/client'
+import {
+  fetchPosts,
+  fetchTriagePosts,
+  fetchTriageStats,
+  fetchTriagePostsPage,
+  fetchBorderlinePosts,
+  flagPost,
+  relabelPost,
+  updateTriageStatus,
+  type TriagePostsQuery,
+} from '@/lib/api/client'
 import type { Label, Post, TriageStatus } from '@/lib/types'
 
 function patchPostInLists(queryClient: ReturnType<typeof useQueryClient>, language: string, updatedPost: Post) {
@@ -9,6 +19,11 @@ function patchPostInLists(queryClient: ReturnType<typeof useQueryClient>, langua
       old?.map((post) => (post.id === updatedPost.id ? updatedPost : post))
     )
   }
+}
+
+function invalidateTriage(queryClient: ReturnType<typeof useQueryClient>, language: string) {
+  void queryClient.invalidateQueries({ queryKey: ['triage-stats', language] })
+  void queryClient.invalidateQueries({ queryKey: ['triage-posts', language] })
 }
 
 export function usePosts() {
@@ -27,6 +42,36 @@ export function useTriagePosts() {
   })
 }
 
+export function useTriageStats() {
+  const language = useDashboardStore((s) => s.language)
+  return useQuery({
+    queryKey: ['triage-stats', language],
+    queryFn: () => fetchTriageStats(language),
+    staleTime: 60_000,
+  })
+}
+
+export function useTriagePostsPage(query: Omit<TriagePostsQuery, 'language'>) {
+  const language = useDashboardStore((s) => s.language)
+  return useQuery({
+    queryKey: [
+      'triage-posts',
+      language,
+      query.bucket,
+      query.limit,
+      query.offset,
+      query.label ?? '',
+      query.q ?? '',
+      query.since ?? '',
+      query.until ?? '',
+      query.hateMin ?? '',
+      query.hateMax ?? '',
+    ],
+    queryFn: () => fetchTriagePostsPage({ ...query, language }),
+    placeholderData: (prev) => prev,
+  })
+}
+
 export function useBorderlinePosts() {
   const language = useDashboardStore((s) => s.language)
   return useQuery({
@@ -42,6 +87,7 @@ export function useFlagPost() {
     mutationFn: (postId: string) => flagPost(postId),
     onSuccess: (updatedPost) => {
       patchPostInLists(queryClient, language, updatedPost)
+      invalidateTriage(queryClient, language)
       queryClient.invalidateQueries({ queryKey: ['reported-posts', language] })
     },
   })
@@ -55,6 +101,7 @@ export function useUpdateTriageStatus() {
       updateTriageStatus(postId, status),
     onSuccess: (updatedPost) => {
       patchPostInLists(queryClient, language, updatedPost)
+      invalidateTriage(queryClient, language)
       queryClient.invalidateQueries({ queryKey: ['reported-posts', language] })
     },
   })
@@ -71,10 +118,11 @@ export function useRelabelPost() {
     }: {
       postId: string
       manualLabel: Label
-      bucket?: 'cleared' | 'flagged'
+      bucket?: 'flagged'
     }) => relabelPost(postId, manualLabel, bucket),
     onSuccess: (updatedPost) => {
       patchPostInLists(queryClient, language, updatedPost)
+      invalidateTriage(queryClient, language)
       queryClient.invalidateQueries({ queryKey: ['reported-posts', language] })
     },
   })

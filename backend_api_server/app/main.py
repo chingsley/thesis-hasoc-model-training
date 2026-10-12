@@ -4,6 +4,7 @@ import logging
 import os
 from contextlib import asynccontextmanager
 from functools import lru_cache
+from typing import Literal
 
 from dotenv import load_dotenv
 from fastapi import Depends, FastAPI, HTTPException, Query, Request
@@ -55,6 +56,8 @@ from .schemas import (
     PredictResponse,
     Probabilities,
     RelabelRequest,
+    TriagePostsPageResponse,
+    TriageStatsResponse,
     TriageUpdateRequest,
     UserInfo,
 )
@@ -504,6 +507,47 @@ def list_user_predictions(
     )
 
 
+TriageBucketName = Literal["pending", "flagged", "relabelled"]
+
+
+@app.get("/predictions/triage/stats", response_model=TriageStatsResponse)
+def triage_stats(
+    language: Language = Query(default="igbo"),
+    user: dict = Depends(get_caller_user),
+) -> dict:
+    return user_posts_service.triage_stats(_org_id(user), language)
+
+
+@app.get("/predictions/triage/posts", response_model=TriagePostsPageResponse)
+def triage_posts_page(
+    bucket: TriageBucketName,
+    language: Language = Query(default="igbo"),
+    limit: int = Query(default=25, ge=1, le=500),
+    offset: int = Query(default=0, ge=0),
+    label: str | None = Query(default=None, pattern="^(Normal|Hate|Abuse)$"),
+    q: str | None = Query(default=None, max_length=200),
+    since: str | None = Query(default=None, description="ISO date YYYY-MM-DD"),
+    until: str | None = Query(default=None, description="ISO date YYYY-MM-DD"),
+    hate_min: float | None = Query(default=None, ge=0.0, le=1.0),
+    hate_max: float | None = Query(default=None, ge=0.0, le=1.0),
+    user: dict = Depends(get_caller_user),
+) -> dict:
+    items, total = user_posts_service.list_triage_bucket_posts(
+        _org_id(user),
+        language,
+        bucket,
+        limit,
+        offset,
+        label=label,
+        q=q,
+        since=since,
+        until=until,
+        hate_min=hate_min,
+        hate_max=hate_max,
+    )
+    return {"items": items, "total": total, "limit": limit, "offset": offset}
+
+
 @app.post("/predictions/{post_ref}/flag", response_model=PostResponse)
 def flag_user_prediction(post_ref: str, user: dict = Depends(get_caller_user)) -> dict:
     pred_id = user_posts_service.parse_pred_ref(post_ref)
@@ -640,6 +684,7 @@ def analytics_volume(
     hours: int = Query(default=24, ge=1, le=2160),
     since: str | None = Query(default=None, description="ISO date or datetime (UTC)"),
     until: str | None = Query(default=None, description="ISO date or datetime (UTC)"),
+    all_time: bool = Query(default=False, alias="all"),
     language: Language | None = Query(default=None),
     user: dict = Depends(get_caller_user),
 ) -> list[dict]:
@@ -649,6 +694,7 @@ def analytics_volume(
         language=language,
         since=since,
         until=until,
+        all_time=all_time,
     )
 
 

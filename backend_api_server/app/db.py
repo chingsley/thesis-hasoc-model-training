@@ -45,6 +45,24 @@ def log_predictions(rows: list[dict[str, Any]]) -> None:
         )
 
 
+def normalize_triage_status(status: str | None) -> str:
+    """Map legacy triage statuses to pending | flagged (cleared/reviewed/new → pending)."""
+    if not status:
+        return "pending"
+    key = str(status).strip().lower()
+    if key in ("flagged", "reported"):
+        return "flagged"
+    return "pending"
+
+
+def _normalize_triage_row(row: dict[str, Any]) -> dict[str, Any]:
+    out = dict(row)
+    status = normalize_triage_status(out.get("status"))
+    out["status"] = status
+    out["flagged"] = int(status == "flagged")
+    return out
+
+
 def get_triage_state(post_ids: list[str]) -> dict[str, dict[str, Any]]:
     if not post_ids:
         return {}
@@ -55,7 +73,7 @@ def get_triage_state(post_ids: list[str]) -> dict[str, dict[str, Any]]:
             f"SELECT post_id, flagged, status, manual_label, updated_at FROM triage WHERE post_id IN ({placeholders})",
             post_ids,
         ).fetchall()
-    return {row["post_id"]: dict(row) for row in rows}
+    return {row["post_id"]: _normalize_triage_row(dict(row)) for row in rows}
 
 
 def upsert_triage(
@@ -94,7 +112,7 @@ def upsert_triage(
             "SELECT post_id, flagged, status, manual_label, updated_at FROM triage WHERE post_id = ?",
             (post_id,),
         ).fetchone()
-    return dict(row)
+    return _normalize_triage_row(dict(row))
 
 
 def list_flagged_post_ids() -> list[str]:
@@ -102,6 +120,26 @@ def list_flagged_post_ids() -> list[str]:
     with _lock:
         rows = conn.execute("SELECT post_id, updated_at FROM triage WHERE status = 'flagged'").fetchall()
     return [row["post_id"] for row in rows]
+
+
+def earliest_prediction_ts(
+    organization_id: int | None = None,
+    language: str | None = None,
+) -> str | None:
+    conn = get_conn()
+    query = "SELECT MIN(ts) AS mn FROM predictions WHERE 1=1"
+    params: list[Any] = []
+    if organization_id is not None:
+        query += " AND organization_id = ?"
+        params.append(organization_id)
+    if language:
+        query += " AND language = ?"
+        params.append(language)
+    with _lock:
+        row = conn.execute(query, params).fetchone()
+    if not row or row["mn"] is None:
+        return None
+    return str(row["mn"])
 
 
 def prediction_rows_since(
@@ -550,6 +588,201 @@ def org_prediction_rows(
     with _lock:
         rows = conn.execute(query, params).fetchall()
     return [dict(row) for row in rows]
+
+
+_TRIAGE_JOIN = (
+    "LEFT JOIN triage t ON t.post_id = ('o' || p.organization_id || '_pred_' || p.id)"
+)
+_IS_RELABELLED = "(t.manual_label IS NOT NULL AND t.manual_label != p.predicted_label)"
+_IS_FLAGGED = "COALESCE(t.status, 'pending') = 'flagged'"
+_NOT_FLAGGED = f"NOT ({_IS_FLAGGED})"
+_RELABELLED_NOT_FLAGGED = f"({_IS_RELABELLED}) AND {_NOT_FLAGGED}"
+_NEITHER_FLAGGED_NOR_RELABELLED = f"{_NOT_FLAGGED} AND NOT ({_IS_RELABELLED})"
+_QUEUE_PRED = "p.predicted_label IN ('Normal', 'Hate', 'Abuse')"
+_TRIAGE_BUCKETS = ("pending", "flagged", "relabelled")
+
+
+def _triage_bucket_sql(bucket: str) -> str:
+    if bucket == "pending":
+        # All toxic predictions — flagged posts stay in the queue.
+        return "1=1"
+    if bucket == "flagged":
+        return _IS_FLAGGED
+    if bucket == "relabelled":
+        return _IS_RELABELLED
+    raise ValueError(f"unknown triage bucket: {bucket}")
+
+
+def _triage_label_segment_sql(
+    bucket_where: str, predicted_label: str, segment_where: str, alias: str
+) -> str:
+    return (
+        f"SUM(CASE WHEN ({bucket_where}) AND p.predicted_label = '{predicted_label}'"
+        f" AND ({segment_where}) THEN 1 ELSE 0 END) AS {alias}"
+    )
+
+
+def org_triage_stats(organization_id: int, language: str) -> dict[str, dict[str, int]]:
+    """Aggregate triage queue counts (Normal, Hate, and Abuse predictions)."""
+    conn = get_conn()
+    parts: list[str] = []
+    for bucket in _TRIAGE_BUCKETS:
+        where = _triage_bucket_sql(bucket)
+        parts.append(f"SUM(CASE WHEN {where} THEN 1 ELSE 0 END) AS {bucket}_total")
+        parts.append(
+            f"SUM(CASE WHEN {where} AND p.predicted_label = 'Normal' THEN 1 ELSE 0 END)"
+            f" AS {bucket}_normal"
+        )
+        parts.append(
+            f"SUM(CASE WHEN {where} AND p.predicted_label = 'Hate' THEN 1 ELSE 0 END)"
+            f" AS {bucket}_hate"
+        )
+        parts.append(
+            f"SUM(CASE WHEN {where} AND p.predicted_label = 'Abuse' THEN 1 ELSE 0 END)"
+            f" AS {bucket}_abuse"
+        )
+        for label_key, predicted in (
+            ("normal", "Normal"),
+            ("hate", "Hate"),
+            ("abuse", "Abuse"),
+        ):
+            parts.append(
+                _triage_label_segment_sql(where, predicted, _IS_FLAGGED, f"{bucket}_{label_key}_flagged")
+            )
+            parts.append(
+                _triage_label_segment_sql(
+                    where, predicted, _RELABELLED_NOT_FLAGGED, f"{bucket}_{label_key}_relabelled"
+                )
+            )
+            parts.append(
+                _triage_label_segment_sql(
+                    where, predicted, _NEITHER_FLAGGED_NOR_RELABELLED, f"{bucket}_{label_key}_other"
+                )
+            )
+    query = (
+        f"SELECT {', '.join(parts)} FROM predictions p {_TRIAGE_JOIN}"
+        f" WHERE p.organization_id = ? AND p.language = ? AND {_QUEUE_PRED}"
+    )
+    with _lock:
+        row = conn.execute(query, (organization_id, language)).fetchone()
+    if row is None:
+        empty = {
+            "total": 0,
+            "normal": 0,
+            "hate": 0,
+            "abuse": 0,
+            "normal_flagged": 0,
+            "normal_relabelled": 0,
+            "normal_other": 0,
+            "hate_flagged": 0,
+            "hate_relabelled": 0,
+            "hate_other": 0,
+            "abuse_flagged": 0,
+            "abuse_relabelled": 0,
+            "abuse_other": 0,
+        }
+        return {b: dict(empty) for b in _TRIAGE_BUCKETS}
+    data = dict(row)
+    out: dict[str, dict[str, int]] = {}
+    for bucket in _TRIAGE_BUCKETS:
+        out[bucket] = {
+            "total": int(data.get(f"{bucket}_total") or 0),
+            "normal": int(data.get(f"{bucket}_normal") or 0),
+            "hate": int(data.get(f"{bucket}_hate") or 0),
+            "abuse": int(data.get(f"{bucket}_abuse") or 0),
+            "normal_flagged": int(data.get(f"{bucket}_normal_flagged") or 0),
+            "normal_relabelled": int(data.get(f"{bucket}_normal_relabelled") or 0),
+            "normal_other": int(data.get(f"{bucket}_normal_other") or 0),
+            "hate_flagged": int(data.get(f"{bucket}_hate_flagged") or 0),
+            "hate_relabelled": int(data.get(f"{bucket}_hate_relabelled") or 0),
+            "hate_other": int(data.get(f"{bucket}_hate_other") or 0),
+            "abuse_flagged": int(data.get(f"{bucket}_abuse_flagged") or 0),
+            "abuse_relabelled": int(data.get(f"{bucket}_abuse_relabelled") or 0),
+            "abuse_other": int(data.get(f"{bucket}_abuse_other") or 0),
+        }
+    return out
+
+
+def org_triage_posts_page(
+    organization_id: int,
+    language: str,
+    bucket: str,
+    limit: int,
+    offset: int,
+    *,
+    label: str | None = None,
+    q: str | None = None,
+    since: str | None = None,
+    until: str | None = None,
+    hate_min: float | None = None,
+    hate_max: float | None = None,
+) -> tuple[list[dict[str, Any]], int]:
+    """Paginated triage posts for one bucket; returns (rows, total_matching)."""
+    bucket_where = _triage_bucket_sql(bucket)
+    query = (
+        "SELECT p.id, p.ts, p.language, p.text, p.predicted_label, p.prob_normal,"
+        " p.prob_abuse, p.prob_hate, p.source FROM predictions p"
+        f" {_TRIAGE_JOIN}"
+        " WHERE p.organization_id = ? AND p.language = ? AND"
+        f" {_QUEUE_PRED} AND {bucket_where}"
+    )
+    count_query = (
+        "SELECT COUNT(*) AS n FROM predictions p"
+        f" {_TRIAGE_JOIN}"
+        " WHERE p.organization_id = ? AND p.language = ? AND"
+        f" {_QUEUE_PRED} AND {bucket_where}"
+    )
+    params: list[Any] = [organization_id, language]
+
+    if label in ("Normal", "Hate", "Abuse"):
+        query += " AND p.predicted_label = ?"
+        count_query += " AND p.predicted_label = ?"
+        params.append(label)
+    if q:
+        like = f"%{q.strip()}%"
+        query += " AND (p.text LIKE ? OR ('pred_' || p.id) LIKE ?)"
+        count_query += " AND (p.text LIKE ? OR ('pred_' || p.id) LIKE ?)"
+        params.extend([like, like])
+    if since:
+        query += " AND p.ts >= ?"
+        count_query += " AND p.ts >= ?"
+        params.append(f"{since}T00:00:00+00:00" if len(since) == 10 else since)
+    if until:
+        query += " AND p.ts < ?"
+        count_query += " AND p.ts < ?"
+        end = f"{until}T23:59:59+00:00" if len(until) == 10 else until
+        params.append(end)
+    if hate_min is not None:
+        query += " AND p.prob_hate >= ?"
+        count_query += " AND p.prob_hate >= ?"
+        params.append(hate_min)
+    if hate_max is not None:
+        query += " AND p.prob_hate <= ?"
+        count_query += " AND p.prob_hate <= ?"
+        params.append(hate_max)
+
+    query += " ORDER BY p.ts DESC LIMIT ? OFFSET ?"
+    list_params = params + [limit, offset]
+    window_query = query.replace(
+        " p.source FROM predictions p",
+        " p.source, COUNT(*) OVER() AS _total FROM predictions p",
+        1,
+    )
+
+    conn = get_conn()
+    with _lock:
+        rows = conn.execute(window_query, list_params).fetchall()
+        if not rows:
+            total_row = conn.execute(count_query, params).fetchone()
+            total = int(dict(total_row)["n"]) if total_row is not None else 0
+            return [], total
+    total = int(dict(rows[0])["_total"])
+    out: list[dict[str, Any]] = []
+    for row in rows:
+        item = dict(row)
+        item.pop("_total", None)
+        out.append(item)
+    return out, total
 
 
 def get_prediction_for_org(prediction_id: int, organization_id: int) -> dict[str, Any] | None:

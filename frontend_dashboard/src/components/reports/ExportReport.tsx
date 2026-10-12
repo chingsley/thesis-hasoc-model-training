@@ -12,6 +12,12 @@ import { useDashboardStore } from '@/lib/store/dashboard'
 import { useUpdateTriageStatus } from '@/hooks/use-posts'
 import { DateCell, HateProbCell, PostIdCell, PostTextCell, PredictionCell } from '@/components/dashboard/post-cells'
 import type { Post } from '@/lib/types'
+import {
+  SummaryStatCell,
+  SummaryStatGrid,
+  SummaryStatStrip,
+  SummaryStatTile,
+} from '@/components/ui/summary-stat-strip'
 import { cn } from '@/lib/utils'
 import { Download, FlagOff, ListFilter, Loader2, Search, X } from 'lucide-react'
 
@@ -95,48 +101,20 @@ function ExportStats({
   ] as const
 
   return (
-    <div className="ml-[calc(50%-50cqi)] w-[100cqi] max-w-[100cqi] bg-white">
-      <div className="grid grid-cols-1 divide-y divide-[var(--hg-border)] pl-4 sm:grid-cols-3 sm:divide-y-0 md:pl-6 lg:pl-8">
+    <SummaryStatStrip>
+      <SummaryStatGrid columns={3}>
         {items.map((item, index) => (
-          <div
-            key={item.label}
-            className={cn(
-              'relative flex min-h-[112px] items-stretch justify-between gap-4 px-5 py-5 md:px-6',
-              item.danger &&
-                'bg-[var(--hg-accent-surface)] text-white md:pr-6 lg:pr-8',
-            )}
-          >
-            {index > 0 && !item.danger && (
-              <span
-                aria-hidden
-                className="pointer-events-none absolute top-4 bottom-4 left-0 hidden w-px bg-[var(--hg-border)] sm:block"
-              />
-            )}
-            <div className="flex min-w-0 flex-col justify-between gap-3">
-              <p
-                className={cn(
-                  'text-[13px] font-medium',
-                  item.danger ? 'text-white/90' : 'text-[var(--hg-muted)]',
-                )}
-              >
-                {item.label}
-              </p>
-              <p
-                className={cn(
-                  'text-[1.75rem] leading-none font-bold tracking-tight tabular-nums',
-                  item.danger ? 'text-white' : 'text-[var(--hg-ink)]',
-                )}
-              >
-                {item.value.toLocaleString()}
-              </p>
-              <p className={cn('text-xs', item.danger ? 'text-white/85' : 'text-[var(--hg-subtle)]')}>
-                {item.subtitle}
-              </p>
-            </div>
-          </div>
+          <SummaryStatCell key={item.label} index={index} columns={3} accent={item.danger}>
+            <SummaryStatTile
+              label={item.label}
+              value={item.value.toLocaleString()}
+              subtitle={item.subtitle}
+              accent={item.danger}
+            />
+          </SummaryStatCell>
         ))}
-      </div>
-    </div>
+      </SummaryStatGrid>
+    </SummaryStatStrip>
   )
 }
 
