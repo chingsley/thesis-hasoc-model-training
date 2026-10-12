@@ -21,6 +21,24 @@ export function DataSourceBadge({ className }: { className?: string }) {
   )
 }
 
+export function OpenAiModerationHeaderChip({ className }: { className?: string }) {
+  const { useOpenAiModeration, openaiModerationModel } = useActiveModel()
+  if (USE_MOCK || !useOpenAiModeration) return null
+  const model = openaiModerationModel ?? 'omni-moderation'
+  return (
+    <span
+      role="status"
+      title={`Classify Posts uses OpenAI Moderation (${model}), not Afro-XLMR`}
+      className={cn(
+        'inline-flex h-8 max-w-[11rem] shrink-0 items-center truncate rounded-[4px] border border-sky-500/40 bg-sky-500/8 px-2.5 text-xs font-medium text-sky-900',
+        className,
+      )}
+    >
+      OpenAI Moderation
+    </span>
+  )
+}
+
 export function ModelSetBadge({ className }: { className?: string }) {
   const { modelSet, isLive } = useActiveModel()
   if (USE_MOCK || !isLive || !modelSet) return null

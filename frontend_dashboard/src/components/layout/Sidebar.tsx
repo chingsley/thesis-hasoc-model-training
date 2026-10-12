@@ -8,7 +8,6 @@ import {
   BarChart3,
   Beaker,
   Gauge,
-  FileText,
   Settings,
   LogOut,
   PanelLeftClose,
@@ -25,6 +24,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { REVIEW_AND_REPORT_TITLE } from '@/lib/module-names';
 
 type NavItem = { to: string; label: string; icon: LucideIcon; };
 
@@ -32,10 +32,11 @@ type NavSection = { title: string; items: NavItem[]; };
 
 const navSections: NavSection[] = [
   {
-    title: 'Monitor',
+    title: 'Monitor & Classify',
     items: [
       { to: '/', label: 'Overview', icon: LayoutDashboard },
-      { to: '/triage', label: 'Triage Queue', icon: AlertTriangle },
+      { to: '/triage', label: REVIEW_AND_REPORT_TITLE, icon: AlertTriangle },
+      { to: '/testing', label: 'Classify Posts', icon: Beaker },
     ],
   },
   {
@@ -48,11 +49,7 @@ const navSections: NavSection[] = [
   },
   {
     title: 'Tools',
-    items: [
-      { to: '/testing', label: 'Testing Tools', icon: Beaker },
-      { to: '/reports', label: 'Reports', icon: FileText },
-      { to: '/settings', label: 'Settings', icon: Settings },
-    ],
+    items: [{ to: '/settings', label: 'Settings', icon: Settings }],
   },
 ];
 
@@ -115,26 +112,25 @@ function NavLinkItem({
     </>
   );
 
+  const link = (
+    <Link
+      to={item.to}
+      onClick={onNavigate}
+      aria-label={collapsed ? item.label : undefined}
+      className={linkClass}
+    >
+      {body}
+    </Link>
+  );
+
+  if (!collapsed) {
+    return link;
+  }
+
   return (
     <Tooltip>
-      <TooltipTrigger
-        delay={collapsed ? 250 : 10_000}
-        render={
-          <Link
-            to={item.to}
-            onClick={onNavigate}
-            aria-label={item.label}
-            className={linkClass}
-          />
-        }
-      >
-        {body}
-      </TooltipTrigger>
-      <TooltipContent
-        side="right"
-        sideOffset={8}
-        className={cn(!collapsed && 'hidden', 'lg:inline-flex')}
-      >
+      <TooltipTrigger delay={250} render={link} />
+      <TooltipContent side="right" sideOffset={8}>
         {item.label}
       </TooltipContent>
     </Tooltip>
@@ -305,31 +301,40 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
                 <p className="truncate text-xs text-[var(--hg-muted)]">{user.org_name}</p>
               ) : null}
             </div>
-            <Tooltip>
-              <TooltipTrigger
-                delay={collapsed ? 250 : 10_000}
-                render={
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="shrink-0 text-[var(--hg-muted)]"
-                    onClick={handleLogout}
-                    aria-label="Sign out"
-                    title={collapsed ? undefined : 'Sign out'}
-                  />
-                }
+            {collapsed ? (
+              <Tooltip>
+                <TooltipTrigger
+                  delay={250}
+                  render={
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="shrink-0 text-[var(--hg-muted)]"
+                      onClick={handleLogout}
+                      aria-label="Sign out"
+                    />
+                  }
+                >
+                  <LogOut className="h-4 w-4" />
+                </TooltipTrigger>
+                <TooltipContent side="right" sideOffset={8}>
+                  Sign out
+                </TooltipContent>
+              </Tooltip>
+            ) : (
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="shrink-0 text-[var(--hg-muted)]"
+                onClick={handleLogout}
+                aria-label="Sign out"
+                title="Sign out"
               >
                 <LogOut className="h-4 w-4" />
-              </TooltipTrigger>
-              <TooltipContent
-                side="right"
-                sideOffset={8}
-                className={cn(!collapsed && 'hidden', 'lg:inline-flex')}
-              >
-                Sign out
-              </TooltipContent>
-            </Tooltip>
+              </Button>
+            )}
           </div>
         )}
       </aside>

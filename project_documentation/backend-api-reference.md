@@ -262,7 +262,7 @@ Counts only rows logged with the caller's `user_id`; pre-auth rows (user_id NULL
 ### `GET /predictions`
 
 The authenticated user's own processed texts (from the prediction log) in the same shape as
-`GET /posts`. Powers the dashboard's Triage Queue, Explainability picker, and Reports.
+`GET /posts`. Powers the dashboard's Review & Report module and Explainability picker.
 
 **Query:**
 
@@ -311,23 +311,22 @@ user submissions); `split` is the call source (`single`/`batch`); `timestamp` is
 Manage triage buckets on one of the caller's own predictions. `404` for unknown ids,
 malformed ids, or another user's prediction.
 
-- `flag` is **idempotent**: always moves the post to the `flagged` bucket (never toggles back).
-- `triage` sets the bucket explicitly: `{"status": "pending" | "cleared" | "flagged"}`;
-  `flagged` follows `status == "flagged"`.
-- `relabel` records a manual label correction: `{"manual_label": "Normal"|"Abuse"|"Hate", "bucket": "cleared"|"flagged"?}`.
-  The post joins the relabelled view while `manual_label != predicted_label`; bucket unchanged
-  when `bucket` is omitted. The model's label stays immutable in `predictions`, so
-  (machine, manual) pairs are preserved for future retraining.
+- `flag` sets `status` to `flagged` (post remains in the queue list; also appears in flagged views).
+- `triage` sets `{"status": "pending" | "flagged"}`; `flagged` bit follows `status == "flagged"`.
+- `relabel` updates the saved label on `predictions`: `{"label": "Normal"|"Abuse"|"Hate", "bucket": "flagged"?}`.
+  Optional `"bucket": "flagged"` also flags the post. First relabel sets `initial_model_prediction` to the
+  prior model output, `relabelled=true`, `reviewer_id`, and `reviewed_at`. Relabelled bucket membership
+  follows `relabelled=true`. Setting `label` back to `initial_model_prediction` clears relabel fields.
 
-Legacy statuses are migrated at startup: `new→pending`, `reviewed→cleared`, `reported→flagged`.
+Legacy statuses are migrated at startup: `new`/`reviewed`/`cleared` → `pending`, `reported` → `flagged`.
 
 ```bash
 curl -s -X POST http://localhost:8080/predictions/pred_5/flag -H "X-API-Key: $KEY"
 curl -s -X POST http://localhost:8080/predictions/pred_5/triage \
-  -H "X-API-Key: $KEY" -H 'Content-Type: application/json' -d '{"status": "cleared"}'
+  -H "X-API-Key: $KEY" -H 'Content-Type: application/json' -d '{"status": "pending"}'
 curl -s -X POST http://localhost:8080/predictions/pred_5/relabel \
   -H "X-API-Key: $KEY" -H 'Content-Type: application/json' \
-  -d '{"manual_label": "Hate", "bucket": "flagged"}'
+  -d '{"label": "Hate", "bucket": "flagged"}'
 ```
 
 ---
@@ -393,7 +392,7 @@ curl -s "http://localhost:8080/metrics?language=igbo"
 
 Classify one text. Result is logged to SQLite for volume/drift/alerts.
 
-**Body:** `{ "text": string (1–5000 chars), "language": "igbo" | "yoruba" }`
+**Body:** `{ "text": string (10–5000 chars, real message content per `text_validation.py`), "language": "igbo" | "yoruba" }`
 
 **Handler:** `main.py` lines 91–129 · **Logic:** `model_service.py`, `db.py`
 
@@ -425,7 +424,7 @@ curl -s http://localhost:8080/predict \
 
 Classify up to 256 texts in one request. Each result is logged to SQLite.
 
-**Body:** `{ "texts": string[], "language": "igbo" | "yoruba" }`
+**Body:** `{ "texts": string[] (1–256 items, each passes `validate_prediction_text`), "language": "igbo" | "yoruba" }`
 
 **Handler:** `main.py` lines 132–179 · **Logic:** `model_service.py`, `db.py`
 

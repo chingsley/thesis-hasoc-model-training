@@ -186,8 +186,8 @@ With `VITE_USE_MOCK=false` (default), **every page is live**. Set `VITE_USE_MOCK
 | Page / feature | Data source |
 | **Overview** stats | Your prediction log (`/stats/overview`, per language) |
 | **Testing** (single + batch classify) | Live API (`/predict*`) — counts toward your stats |
-| **Triage, Explainability, Reports** | Your own processed texts (`/predictions*`) |
-| **Analysis** (volume, drift, word cloud, clusters) | Your prediction log (per language) |
+| **Review & Report, Explainability** | Your own processed texts (`/predictions*`) |
+| **Analysis** (volume, drift, word cloud) | Your prediction log (per language) |
 | **Performance** (metrics) | Model test-set metrics (`/metrics?language=...`) — shared model-quality view, not per-user |
 
 Switch **Igbo / Yoruba** in the header — predictions, metrics, and stats use the matching model/language. Header shows active `model_id`.

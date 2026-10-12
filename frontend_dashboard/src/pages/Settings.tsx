@@ -1,32 +1,35 @@
-import { Check } from 'lucide-react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { SectionTitle } from '@/components/ui/data-source-badge'
-import { ApiKeyManager } from '@/components/settings/ApiKeyManager'
-import { InviteUserManager } from '@/components/settings/InviteUserManager'
-import { OrganizationManager } from '@/components/settings/OrganizationManager'
-import { COLOR_THEMES } from '@/lib/theme/catalog'
-import { useThemeStore } from '@/lib/store/theme'
-import { useAuthStore } from '@/lib/store/auth'
-import { USE_MOCK } from '@/lib/api/config'
-import { settingsSectionHeaderClass } from '@/components/settings/settings-form-layout'
-import { cn } from '@/lib/utils'
+import { Check } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { SectionTitle } from '@/components/ui/data-source-badge';
+import { ApiKeyManager } from '@/components/settings/ApiKeyManager';
+import { InviteUserManager } from '@/components/settings/InviteUserManager';
+import { OrganizationManager } from '@/components/settings/OrganizationManager';
+import { COLOR_THEMES } from '@/lib/theme/catalog';
+import { useThemeStore } from '@/lib/store/theme';
+import { useAuthStore } from '@/lib/store/auth';
+import { USE_MOCK } from '@/lib/api/config';
+import { settingsSectionHeaderClass } from '@/components/settings/settings-form-layout';
+import { OpenAiModerationNotice } from '@/components/testing/OpenAiModerationNotice';
+import { cn } from '@/lib/utils';
 
 export default function Settings() {
-  const themeId = useThemeStore((s) => s.themeId)
-  const setThemeId = useThemeStore((s) => s.setThemeId)
-  const user = useAuthStore((s) => s.user)
+  const themeId = useThemeStore((s) => s.themeId);
+  const setThemeId = useThemeStore((s) => s.setThemeId);
+  const user = useAuthStore((s) => s.user);
   const canInvite =
     user?.can_invite_users ??
     user?.can_manage_api_keys ??
     user?.is_platform_admin ??
-    false
-  const isPlatformAdmin = user?.is_platform_admin ?? false
+    false;
+  const isPlatformAdmin = user?.is_platform_admin ?? false;
 
   return (
     <div className="space-y-8">
       <SectionTitle description="Dashboard preferences, team access, and organization API keys.">
         Settings
       </SectionTitle>
+
+      {!USE_MOCK && <OpenAiModerationNotice />}
 
       {user && (
         <Card className="gap-0 p-0">
@@ -63,7 +66,7 @@ export default function Settings() {
         </CardHeader>
         <CardContent className="grid gap-4 pt-6 sm:grid-cols-2 lg:grid-cols-3">
           {COLOR_THEMES.map((theme) => {
-            const selected = themeId === theme.id
+            const selected = themeId === theme.id;
             return (
               <button
                 key={theme.id}
@@ -115,10 +118,10 @@ export default function Settings() {
                   )}
                 </div>
               </button>
-            )
+            );
           })}
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

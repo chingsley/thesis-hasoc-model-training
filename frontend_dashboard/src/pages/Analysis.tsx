@@ -1,12 +1,8 @@
 import { useMemo, useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
-import { fetchClusters } from '@/lib/api/client'
 import { useDriftData } from '@/hooks/use-metrics'
-import { useDashboardStore } from '@/lib/store/dashboard'
 import { ToxicWordCloud } from '@/components/charts/ToxicWordCloud'
 import { ModelDriftChart } from '@/components/charts/ModelDriftChart'
 import { VolumePanel } from '@/components/charts/VolumePanel'
-import { PostClusters } from '@/components/reports/PostClusters'
 import { Card, CardAction, CardContent, CardHeader } from '@/components/ui/card'
 import { SectionTitle } from '@/components/ui/data-source-badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -31,24 +27,13 @@ const TABS = [
     title: 'Post Volume',
     description: 'Classification volume trends for the active language.',
   },
-  {
-    value: 'clusters',
-    label: 'Clusters',
-    title: 'Similar Post Clusters',
-    description: 'Near-duplicate posts that may indicate coordinated attacks.',
-  },
 ] as const
 
 type AnalysisTab = (typeof TABS)[number]['value']
 
 export default function Analysis() {
-  const language = useDashboardStore((s) => s.language)
   const [activeTab, setActiveTab] = useState<AnalysisTab>('wordcloud')
   const { data: driftData, isLoading: driftLoading } = useDriftData()
-  const { data: clusters, isLoading: clustersLoading } = useQuery({
-    queryKey: ['clusters', language],
-    queryFn: () => fetchClusters(language),
-  })
 
   const current = useMemo(
     () => TABS.find((tab) => tab.value === activeTab) ?? TABS[0],
@@ -57,7 +42,7 @@ export default function Analysis() {
 
   return (
     <div className="space-y-8">
-      <SectionTitle description="Explore toxic language patterns, confidence drift, volume trends, and coordinated clusters.">
+      <SectionTitle description="Explore toxic language patterns, confidence drift, and volume trends.">
         Analysis
       </SectionTitle>
 
@@ -124,16 +109,6 @@ export default function Analysis() {
 
             <TabsContent value="volume" className="mt-0">
               <VolumePanel embedded />
-            </TabsContent>
-
-            <TabsContent value="clusters" className="mt-0">
-              {clustersLoading ? (
-                <div className="flex items-center justify-center py-12">
-                  <Loader2 className="h-8 w-8 animate-spin text-[var(--hg-subtle)]" />
-                </div>
-              ) : (
-                <PostClusters clusters={clusters ?? []} />
-              )}
             </TabsContent>
           </CardContent>
         </Tabs>

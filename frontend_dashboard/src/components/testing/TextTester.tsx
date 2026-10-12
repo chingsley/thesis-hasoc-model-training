@@ -8,6 +8,7 @@ import { ToxicTextHighlighter } from '@/components/explainability/ToxicTextHighl
 import { useDashboardStore } from '@/lib/store/dashboard'
 import { singleClassify } from '@/lib/api/client'
 import { useActiveModel } from '@/hooks/use-active-model'
+import { validatePredictionText } from '@/lib/prediction-text-validation'
 import { cn } from '@/lib/utils'
 
 const PROB_ROWS = [
@@ -67,6 +68,7 @@ export function TextTester() {
   const languageLabel = language === 'igbo' ? 'Igbo' : 'Yoruba'
   const { modelSet } = useActiveModel()
   const [text, setText] = useState('')
+  const [validationError, setValidationError] = useState<string | null>(null)
   const queryClient = useQueryClient()
 
   const mutation = useMutation({
@@ -96,7 +98,12 @@ export function TextTester() {
   const runAnalyze = () => {
     const trimmed = text.trim()
     if (!trimmed || mutation.isPending) return
-    mutation.mutate(trimmed)
+    try {
+      setValidationError(null)
+      mutation.mutate(validatePredictionText(trimmed))
+    } catch (e) {
+      setValidationError(e instanceof Error ? e.message : 'Invalid text.')
+    }
   }
 
   return (
@@ -107,7 +114,8 @@ export function TextTester() {
             <div>
               <p className="text-sm font-semibold text-[var(--hg-ink)]">Message to classify</p>
               <p className="text-[11px] text-[var(--hg-muted)]">
-                Paste {languageLabel} text. Results are logged for the active language.
+                Paste real {languageLabel} sentences (at least 10 characters, not numbers or ids).
+                The model is trained on social text — garbage input produces unreliable labels.
               </p>
             </div>
             <span className="rounded-[4px] bg-white px-1.5 py-0.5 text-[10px] font-medium tracking-wide text-[var(--hg-brand)] uppercase ring-1 ring-[var(--hg-border)]">
@@ -119,7 +127,10 @@ export function TextTester() {
         <Textarea
           placeholder={`e.g. a ${languageLabel} message you want to check for hate or abuse…`}
           value={text}
-          onChange={(e) => setText(e.target.value)}
+          onChange={(e) => {
+            setText(e.target.value)
+            setValidationError(null)
+          }}
           onKeyDown={(e) => {
             if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
               e.preventDefault()
@@ -155,6 +166,13 @@ export function TextTester() {
           </p>
         </div>
       </div>
+
+      {validationError && (
+        <div className="rounded-[4px] border border-amber-500/40 bg-amber-500/5 px-4 py-3" role="alert">
+          <p className="text-sm font-medium text-[var(--hg-ink)]">Text not accepted</p>
+          <p className="mt-0.5 text-xs text-[var(--hg-muted)]">{validationError}</p>
+        </div>
+      )}
 
       {mutation.isError && (
         <div className="rounded-[4px] border border-[var(--hg-secondary)]/25 bg-[var(--hg-secondary)]/5 px-4 py-3">
@@ -213,7 +231,9 @@ export function TextTester() {
                     {modelSet === 'merged' ? 'Merged-dataset model' : 'Original-dataset model'}
                   </p>
                 ) : null}
-                {result.used_fallback ? (
+                {result.use_openai_moderation ? (
+                  <p className="text-[10px] font-medium text-sky-700">OpenAI Moderation</p>
+                ) : result.used_fallback ? (
                   <p className="text-[10px] text-amber-600">Joint fallback</p>
                 ) : !modelSet ? (
                   <p className="text-[10px] text-[var(--hg-muted)]">Logged to your account</p>
@@ -250,7 +270,14 @@ export function TextTester() {
               ) : (
                 <div className="rounded-[4px] border border-dashed border-[var(--hg-border)] px-3 py-6 text-center">
                   <p className="text-xs text-[var(--hg-muted)]">
-                    Token-level explainability needs a working <span className="font-mono">/explain</span> response.
+                    {result.use_openai_moderation
+                      ? 'Not available in OpenAI Moderation mode — labels come from OpenAI, not local SHAP on Afro-XLMR.'
+                      : (
+                        <>
+                          Token-level explainability needs a working{' '}
+                          <span className="font-mono">/explain</span> response.
+                        </>
+                      )}
                   </p>
                 </div>
               )}

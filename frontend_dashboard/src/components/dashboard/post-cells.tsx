@@ -12,10 +12,43 @@ export function PostIdCell({ id }: { id: string }) {
   )
 }
 
-export function PostTextCell({ text }: { text: string }) {
+export function truncateToWords(text: string, maxWords: number): string {
+  const words = text.trim().split(/\s+/)
+  if (words.length <= maxWords) return text
+  return `${words.slice(0, maxWords).join(' ')}…`
+}
+
+export function PostTextCell({
+  text,
+  maxWords,
+  onClick,
+}: {
+  text: string
+  maxWords?: number
+  onClick?: () => void
+}) {
+  const display = maxWords != null ? truncateToWords(text, maxWords) : text
+  const truncated = maxWords != null && display !== text
+
+  if (onClick) {
+    return (
+      <button
+        type="button"
+        onClick={onClick}
+        className="max-w-[28rem] cursor-pointer text-left text-sm leading-snug text-[var(--hg-ink)] underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--hg-brand)]/30"
+        title={truncated ? 'View full post' : text}
+      >
+        {display}
+      </button>
+    )
+  }
+
   return (
-    <p className="line-clamp-2 max-w-[28rem] text-sm leading-snug text-[var(--hg-ink)]" title={text}>
-      {text}
+    <p
+      className="line-clamp-2 max-w-[28rem] text-sm leading-snug text-[var(--hg-ink)]"
+      title={text}
+    >
+      {display}
     </p>
   )
 }

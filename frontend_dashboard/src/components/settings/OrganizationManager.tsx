@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useState } from 'react'
-import { format, parseISO } from 'date-fns'
-import { Building2, Loader2, Plus } from 'lucide-react'
-import { useQueryClient } from '@tanstack/react-query'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { useCallback, useEffect, useState } from 'react';
+import { format, parseISO } from 'date-fns';
+import { Building2, Loader2, Plus } from 'lucide-react';
+import { useQueryClient } from '@tanstack/react-query';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Table,
   TableBody,
@@ -12,101 +12,102 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from '@/components/ui/table';
 import {
   createOrganization,
   fetchOrganizations,
   setActiveOrganization,
-} from '@/lib/api/client'
-import { ApiError } from '@/lib/api/http'
-import { useAuthStore } from '@/lib/store/auth'
-import type { OrganizationInfo } from '@/lib/types'
-import { cn } from '@/lib/utils'
+} from '@/lib/api/client';
+import { ApiError } from '@/lib/api/http';
+import { useAuthStore } from '@/lib/store/auth';
+import type { OrganizationInfo } from '@/lib/types';
+import { cn } from '@/lib/utils';
 import {
   settingsFormActionClass,
   settingsFormControlClass,
   settingsFormFieldClass,
   settingsFormRowClass,
+  settingsFormStripClass,
   settingsSectionHeaderClass,
-} from '@/components/settings/settings-form-layout'
+} from '@/components/settings/settings-form-layout';
 
 function formatCreated(iso: string): string {
   try {
-    return format(parseISO(iso), 'MMM d, yyyy')
+    return format(parseISO(iso), 'MMM d, yyyy');
   } catch {
-    return iso.slice(0, 10)
+    return iso.slice(0, 10);
   }
 }
 
 function parseApiError(err: unknown): string {
   if (err instanceof ApiError) {
     try {
-      const parsed = JSON.parse(err.message) as { detail?: string }
-      if (typeof parsed.detail === 'string') return parsed.detail
+      const parsed = JSON.parse(err.message) as { detail?: string; };
+      if (typeof parsed.detail === 'string') return parsed.detail;
     } catch {
       /* plain text */
     }
-    return err.message || 'Request failed'
+    return err.message || 'Request failed';
   }
-  return 'Something went wrong'
+  return 'Something went wrong';
 }
 
 export function OrganizationManager() {
-  const user = useAuthStore((s) => s.user)
-  const token = useAuthStore((s) => s.token)
-  const setAuth = useAuthStore((s) => s.setAuth)
-  const queryClient = useQueryClient()
-  const [orgs, setOrgs] = useState<OrganizationInfo[]>([])
-  const [loading, setLoading] = useState(true)
-  const [busy, setBusy] = useState(false)
-  const [name, setName] = useState('')
-  const [formError, setFormError] = useState<string | null>(null)
+  const user = useAuthStore((s) => s.user);
+  const token = useAuthStore((s) => s.token);
+  const setAuth = useAuthStore((s) => s.setAuth);
+  const queryClient = useQueryClient();
+  const [orgs, setOrgs] = useState<OrganizationInfo[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [busy, setBusy] = useState(false);
+  const [name, setName] = useState('');
+  const [formError, setFormError] = useState<string | null>(null);
 
   const loadOrgs = useCallback(async () => {
-    setLoading(true)
+    setLoading(true);
     try {
-      setOrgs(await fetchOrganizations())
+      setOrgs(await fetchOrganizations());
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
-    loadOrgs()
-  }, [loadOrgs])
+    loadOrgs();
+  }, [loadOrgs]);
 
   const handleCreate = async () => {
-    const trimmed = name.trim()
+    const trimmed = name.trim();
     if (!trimmed) {
-      setFormError('Enter an organization name')
-      return
+      setFormError('Enter an organization name');
+      return;
     }
-    setBusy(true)
-    setFormError(null)
+    setBusy(true);
+    setFormError(null);
     try {
-      await createOrganization(trimmed)
-      setName('')
-      await loadOrgs()
+      await createOrganization(trimmed);
+      setName('');
+      await loadOrgs();
     } catch (err) {
-      setFormError(parseApiError(err))
+      setFormError(parseApiError(err));
     } finally {
-      setBusy(false)
+      setBusy(false);
     }
-  }
+  };
 
   const handleSwitch = async (orgId: number) => {
-    if (!token || orgId === user?.organization_id) return
-    setBusy(true)
+    if (!token || orgId === user?.organization_id) return;
+    setBusy(true);
     try {
-      const updated = await setActiveOrganization(orgId)
-      setAuth(token, updated)
-      await queryClient.invalidateQueries()
+      const updated = await setActiveOrganization(orgId);
+      setAuth(token, updated);
+      await queryClient.invalidateQueries();
     } finally {
-      setBusy(false)
+      setBusy(false);
     }
-  }
+  };
 
-  const activeId = user?.organization_id
+  const activeId = user?.organization_id;
 
   return (
     <section
@@ -114,20 +115,20 @@ export function OrganizationManager() {
       aria-labelledby="organization-manager-title"
     >
       <div className={settingsSectionHeaderClass}>
-          <h2
-            id="organization-manager-title"
-            className="font-heading text-base font-semibold text-[var(--hg-ink)]"
-          >
-            Organizations
-          </h2>
-          <p className="mt-1.5 max-w-2xl text-sm text-[var(--hg-muted)]">
-            Create tenant organizations and switch which one you are managing. Dashboard data,
-            invites, and API keys apply to the{' '}
-            <span className="font-medium text-[var(--hg-ink)]">active organization</span>.
-          </p>
+        <h2
+          id="organization-manager-title"
+          className="font-heading text-base font-semibold text-[var(--hg-ink)]"
+        >
+          Organizations
+        </h2>
+        <p className="mt-1.5 max-w-2xl text-sm text-[var(--hg-muted)]">
+          Create tenant organizations and switch which one you are managing. Dashboard data,
+          invites, and API keys apply to the{' '}
+          <span className="font-medium text-[var(--hg-ink)]">active organization</span>.
+        </p>
       </div>
 
-      <div className="border-b border-[var(--hg-border)] bg-white px-6 py-5">
+      <div className={settingsFormStripClass}>
         <div className={settingsFormRowClass}>
           <div className={settingsFormFieldClass}>
             <Label htmlFor="org-name">New organization</Label>
@@ -138,7 +139,7 @@ export function OrganizationManager() {
               onChange={(e) => setName(e.target.value)}
               className={settingsFormControlClass}
               onKeyDown={(e) => {
-                if (e.key === 'Enter') handleCreate()
+                if (e.key === 'Enter') handleCreate();
               }}
             />
           </div>
@@ -176,7 +177,7 @@ export function OrganizationManager() {
             </TableHeader>
             <TableBody>
               {orgs.map((org) => {
-                const active = org.id === activeId
+                const active = org.id === activeId;
                 return (
                   <TableRow
                     key={org.id}
@@ -216,12 +217,12 @@ export function OrganizationManager() {
                       )}
                     </TableCell>
                   </TableRow>
-                )
+                );
               })}
             </TableBody>
           </Table>
         </div>
       )}
     </section>
-  )
+  );
 }

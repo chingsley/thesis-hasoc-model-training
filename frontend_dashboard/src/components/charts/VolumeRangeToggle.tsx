@@ -62,28 +62,32 @@ export function VolumeRangeToggle({
         </button>
       </div>
 
-      {mode === 'custom' && (
-        <div className="flex flex-wrap items-center justify-end gap-3">
-          <DatePickerField
-            label="From"
-            value={customFrom}
-            max={customTo || today}
-            rangeMate={customTo}
-            rangeRole="start"
-            onChange={(from) => onCustomRange(from, customTo || from)}
-          />
-          <DatePickerField
-            label="To"
-            value={customTo}
-            min={customFrom}
-            max={today}
-            rangeMate={customFrom}
-            rangeRole="end"
-            onChange={(to) => onCustomRange(customFrom || to, to)}
-          />
-          <span className="text-[10px] text-[var(--hg-subtle)]">Max {MAX_CUSTOM_DAYS} days · UTC</span>
-        </div>
-      )}
+      <div
+        className={cn(
+          'flex min-h-[2.25rem] flex-wrap items-center justify-end gap-3',
+          mode !== 'custom' && 'pointer-events-none invisible',
+        )}
+        aria-hidden={mode !== 'custom'}
+      >
+        <DatePickerField
+          label="From"
+          value={customFrom}
+          max={customTo || today}
+          rangeMate={customTo}
+          rangeRole="start"
+          onChange={(from) => onCustomRange(from, customTo || from)}
+        />
+        <DatePickerField
+          label="To"
+          value={customTo}
+          min={customFrom}
+          max={today}
+          rangeMate={customFrom}
+          rangeRole="end"
+          onChange={(to) => onCustomRange(customFrom || to, to)}
+        />
+        <span className="text-[10px] text-[var(--hg-subtle)]">Max {MAX_CUSTOM_DAYS} days · UTC</span>
+      </div>
     </div>
   )
 }

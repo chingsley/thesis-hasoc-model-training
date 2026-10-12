@@ -32,7 +32,7 @@ export default function Testing() {
   return (
     <div className="space-y-8">
       <SectionTitle description="Classify a single text or scan a batch. Results are logged to your account for the active language.">
-        Testing Tools
+        Classify Posts
       </SectionTitle>
 
       <Card>

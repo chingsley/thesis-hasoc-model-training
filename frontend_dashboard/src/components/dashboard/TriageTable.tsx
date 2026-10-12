@@ -1,261 +1,336 @@
-import { useState } from 'react'
-import { Popover } from '@base-ui/react/popover'
-import type { Post, TriageStatus } from '@/lib/types'
-import { DataTable, type DataTableColumn } from '@/components/ui/data-table'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { DatePickerField } from '@/components/ui/date-picker'
-import type { RelabelMode } from './RelabelSheet'
-import { DateCell, HateProbCell, PostIdCell, PostTextCell, PredictionCell } from './post-cells'
-import { useFlagPost, useUpdateTriageStatus } from '@/hooks/use-posts'
-import { useDashboardStore } from '@/lib/store/dashboard'
-import { cn } from '@/lib/utils'
-import {
-  CheckCircle,
-  Download,
-  Flag,
-  FlagOff,
-  ListFilter,
-  Pencil,
-  RotateCcw,
-  Search,
-  Tags,
-  X,
-} from 'lucide-react'
+import { useState } from 'react';
+import type { Post, TriageBucket, TriageStatus } from '@/lib/types';
+import { TablePagination } from '@/components/ui/table-pagination';
+import { DataTable, type DataTableColumn } from '@/components/ui/data-table';
+import { Button } from '@/components/ui/button';
+import { PostQueryToolbar } from '@/components/dashboard/PostQueryToolbar';
+import type { RelabelMode } from './RelabelSheet';
+import { DateCell, HateProbCell, PostIdCell, PostTextCell, PredictionCell } from './post-cells';
+import { modelPrediction, reviewerLabel } from '@/lib/post-labels';
+import { REVIEW_AND_REPORT_TITLE } from '@/lib/module-names';
+import { bucketCountForLabelFilter, formatTabCount } from '@/lib/triage-buckets';
+import type { TriageStatsData } from '@/lib/types';
+import { useFlagPost, useUpdateTriageStatus } from '@/hooks/use-posts';
+import { fetchAllTriagePostsMatching, type TriagePostsQuery } from '@/lib/api/client';
+import { useDashboardStore } from '@/lib/store/dashboard';
+import { cn } from '@/lib/utils';
+import { Download, Flag, FlagOff, Pencil, Tags, Loader2 } from 'lucide-react';
 
 const CSV_HEADER =
-  'id,tweet,label,predicted_label,manual_label,hate_probability,triage_status,flagged,reported_date'
+  'id,tweet,model_prediction,reviewer_label,hate_probability,triage_status,flagged,reported_date';
 
 function toCsvRow(p: Post): string {
-  const date = (p.timestamp || '').split('T')[0]
+  const date = (p.timestamp || '').split('T')[0];
   return [
     p.id,
     `"${p.tweet.replace(/"/g, '""')}"`,
-    p.label,
-    p.predicted_label,
-    p.manual_label ?? '',
+    modelPrediction(p),
+    reviewerLabel(p) ?? '',
     p.probabilities.hate.toFixed(3),
     p.triage_status,
     String(p.flagged),
     date,
-  ].join(',')
+  ].join(',');
 }
 
-export type TriageBucket = 'pending' | 'cleared' | 'flagged' | 'relabelled'
-export type TriageLabelFilter = 'all' | 'Hate' | 'Abuse'
+export type { TriageBucket } from '@/lib/types';
+export type TriageLabelFilter = 'all' | 'Normal' | 'Hate' | 'Abuse';
+
+const SEGMENT_GROUP_CLASS =
+  'inline-flex w-fit shrink-0 rounded-[4px] border border-[var(--hg-border)] bg-[var(--hg-canvas)] p-0.5';
+
+const BUCKET_TABS: { value: TriageBucket; label: string; }[] = [
+  { value: 'pending', label: 'All' },
+  { value: 'flagged', label: 'Flagged' },
+  { value: 'relabelled', label: 'Relabelled' },
+];
+
+const LABEL_FILTERS: { id: TriageLabelFilter; label: string; }[] = [
+  { id: 'all', label: 'All' },
+  { id: 'Normal', label: 'Normal' },
+  { id: 'Abuse', label: 'Abuse' },
+  { id: 'Hate', label: 'Hate' },
+];
+
+export function TriageBucketFilter({
+  value,
+  onChange,
+  bucketCounts,
+  labelFilter,
+}: {
+  value: TriageBucket;
+  onChange: (bucket: TriageBucket) => void;
+  bucketCounts?: TriageStatsData;
+  labelFilter: TriageLabelFilter;
+}) {
+  return (
+    <div className={SEGMENT_GROUP_CLASS} role="tablist" aria-label={`${REVIEW_AND_REPORT_TITLE} bucket`}>
+      {BUCKET_TABS.map((tab) => {
+        const active = value === tab.value;
+        const n = bucketCountForLabelFilter(bucketCounts?.[tab.value], labelFilter);
+        const countLabel = n === undefined ? null : formatTabCount(n);
+        return (
+          <button
+            key={tab.value}
+            type="button"
+            role="tab"
+            aria-selected={active}
+            onClick={() => onChange(tab.value)}
+            className={cn(
+              'group inline-flex items-center rounded-[4px] px-2.5 py-1.5 text-xs font-medium transition-colors',
+              active
+                ? 'bg-white text-[var(--hg-ink)] shadow-sm'
+                : 'text-[var(--hg-muted)] hover:bg-[var(--hg-soft)] hover:text-black',
+            )}
+          >
+            {tab.label}
+            {countLabel != null && (
+              <span
+                className={cn(
+                  'ml-1.5 tabular-nums',
+                  active ? 'text-[var(--hg-brand)]' : 'text-[var(--hg-subtle)]',
+                )}
+              >
+                {countLabel}
+              </span>
+            )}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+export function TriagePredictionLabelFilter({
+  labelFilter,
+  onLabelFilterChange,
+  layout = 'inline',
+  size = 'default',
+  className,
+}: {
+  labelFilter: TriageLabelFilter;
+  onLabelFilterChange: (filter: TriageLabelFilter) => void;
+  /** `fullWidth` — equal-width segments for narrow side panels. */
+  layout?: 'inline' | 'fullWidth';
+  /** `comfortable` — 40px control height (matches sidebar nav rows). */
+  size?: 'default' | 'comfortable';
+  className?: string;
+}) {
+  return (
+    <div
+      className={cn(
+        SEGMENT_GROUP_CLASS,
+        layout === 'fullWidth' && 'flex w-full min-w-0',
+        size === 'comfortable' && 'h-10 items-stretch',
+        className,
+      )}
+      role="group"
+      aria-label="Filter by prediction"
+    >
+      {LABEL_FILTERS.map((f) => {
+        const active = labelFilter === f.id;
+        return (
+          <button
+            key={f.id}
+            type="button"
+            aria-pressed={active}
+            onClick={() => onLabelFilterChange(f.id)}
+            className={cn(
+              'inline-flex items-center rounded-[4px] font-medium transition-colors',
+              size === 'comfortable' ? 'text-sm' : 'py-1.5 text-xs',
+              layout === 'fullWidth' ? 'min-w-0 flex-1 justify-center px-1' : 'px-2.5',
+              size === 'comfortable' && 'h-full min-h-0',
+              active
+                ? 'bg-white text-[var(--hg-ink)] shadow-sm'
+                : 'text-[var(--hg-muted)] hover:bg-[var(--hg-soft)] hover:text-black',
+            )}
+          >
+            {f.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
 
 interface TriageTableProps {
-  bucket: TriageBucket
-  posts: Post[]
-  labelFilter: TriageLabelFilter
-  onLabelFilterChange: (filter: TriageLabelFilter) => void
-  onRelabel: (post: Post, mode: RelabelMode) => void
+  bucket: TriageBucket;
+  posts: Post[];
+  total: number;
+  page: number;
+  pageSize: number;
+  onPageChange: (page: number) => void;
+  onBucketChange: (bucket: TriageBucket) => void;
+  search: string;
+  onSearchChange: (value: string) => void;
+  startDate: string;
+  endDate: string;
+  minHate: string;
+  maxHate: string;
+  onStartDateChange: (value: string) => void;
+  onEndDateChange: (value: string) => void;
+  onMinHateChange: (value: string) => void;
+  onMaxHateChange: (value: string) => void;
+  loading?: boolean;
+  fetching?: boolean;
+  onRelabel: (post: Post, mode: RelabelMode) => void;
+  bucketCounts?: TriageStatsData;
+  labelFilter: TriageLabelFilter;
+  exportQuery: Omit<TriagePostsQuery, 'language' | 'limit' | 'offset'>;
 }
 
-const manualLabelCell = (p: Post) =>
-  p.manual_label ? (
-    <PredictionCell label={p.manual_label} />
-  ) : (
-    <span className="text-muted-foreground">--</span>
-  )
+function relabelModeForBucket(bucket: TriageBucket): RelabelMode {
+  return bucket === 'relabelled' ? 'edit' : 'create';
+}
 
-const BASE_COLUMNS: DataTableColumn<Post>[] = [
-  { id: 'id', header: 'Post ID', cell: (p) => <PostIdCell id={p.id} />, className: 'whitespace-nowrap' },
-  {
-    id: 'post',
-    header: 'Post',
-    className: 'max-w-[28rem] whitespace-normal',
-    cell: (p) => <PostTextCell text={p.tweet} />,
-  },
-  {
-    id: 'prediction',
-    header: 'Prediction',
-    className: 'whitespace-nowrap',
-    cell: (p) => (
-      <div className="flex items-center gap-1.5">
-        <PredictionCell label={p.predicted_label} />
-        {p.predicted_label !== p.label && (
-          <Badge variant="outline" className="rounded-[4px] border-destructive/40 text-[10px] text-destructive">
-            True: {p.label}
-          </Badge>
-        )}
-      </div>
-    ),
-  },
-  {
-    id: 'hate',
-    header: 'Hate %',
-    className: 'whitespace-nowrap',
-    cell: (p) => <HateProbCell value={p.probabilities.hate} />,
-  },
-  {
-    id: 'date',
-    header: 'Date',
-    className: 'whitespace-nowrap',
-    cell: (p) => <DateCell timestamp={p.timestamp} />,
-  },
-]
-
-const MAIN_COLUMNS: DataTableColumn<Post>[] = [
-  ...BASE_COLUMNS.slice(0, 3),
-  {
-    id: 'manual',
-    header: 'Manual label',
-    className: 'whitespace-nowrap',
-    cell: manualLabelCell,
-  },
-  ...BASE_COLUMNS.slice(3),
-]
-
-const RELABEL_COLUMNS: DataTableColumn<Post>[] = [
-  { id: 'id', header: 'Post ID', cell: (p) => <PostIdCell id={p.id} />, className: 'whitespace-nowrap' },
-  {
-    id: 'post',
-    header: 'Post',
-    className: 'max-w-[28rem] whitespace-normal',
-    cell: (p) => <PostTextCell text={p.tweet} />,
-  },
-  {
-    id: 'machine',
-    header: 'Prediction',
-    className: 'whitespace-nowrap',
-    cell: (p) => <PredictionCell label={p.predicted_label} />,
-  },
-  {
-    id: 'manual',
-    header: 'Manual label',
-    className: 'whitespace-nowrap',
-    cell: manualLabelCell,
-  },
-  {
-    id: 'hate',
-    header: 'Hate %',
-    className: 'whitespace-nowrap',
-    cell: (p) => <HateProbCell value={p.probabilities.hate} />,
-  },
-  {
-    id: 'date',
-    header: 'Date',
-    className: 'whitespace-nowrap',
-    cell: (p) => <DateCell timestamp={p.timestamp} />,
-  },
-]
-
-const COLUMNS_BY_BUCKET: Record<TriageBucket, DataTableColumn<Post>[]> = {
-  pending: MAIN_COLUMNS,
-  cleared: MAIN_COLUMNS,
-  flagged: MAIN_COLUMNS,
-  relabelled: RELABEL_COLUMNS,
+function buildColumns(
+  onRelabel: (post: Post, mode: RelabelMode) => void,
+  bucket: TriageBucket,
+): DataTableColumn<Post>[] {
+  return [
+    { id: 'id', header: 'Post ID', cell: (p) => <PostIdCell id={p.id} />, className: 'whitespace-nowrap' },
+    {
+      id: 'post',
+      header: 'Post',
+      className: 'max-w-[28rem] whitespace-normal',
+      cell: (p) => (
+        <PostTextCell
+          text={p.tweet}
+          maxWords={20}
+          onClick={() => onRelabel(p, relabelModeForBucket(bucket))}
+        />
+      ),
+    },
+    {
+      id: 'prediction',
+      header: 'Prediction',
+      className: 'whitespace-nowrap',
+      cell: (p) => <PredictionCell label={modelPrediction(p)} />,
+    },
+    {
+      id: 'reviewer_label',
+      header: 'Reviewer label',
+      className: 'whitespace-nowrap',
+      cell: (p) => {
+        const label = reviewerLabel(p);
+        return label ? (
+          <PredictionCell label={label} />
+        ) : (
+          <span className="text-[var(--hg-subtle)]">—</span>
+        );
+      },
+    },
+    {
+      id: 'hate',
+      header: 'Hate %',
+      className: 'whitespace-nowrap',
+      cell: (p) => <HateProbCell value={p.probabilities.hate} />,
+    },
+    {
+      id: 'date',
+      header: 'Date',
+      className: 'whitespace-nowrap',
+      cell: (p) => <DateCell timestamp={p.timestamp} />,
+    },
+  ];
 }
 
 const EMPTY_TEXT: Record<TriageBucket, string> = {
-  pending: 'No pending posts — all caught up',
-  cleared: 'No cleared posts yet',
+  pending: 'No posts in the queue yet',
   flagged: 'No flagged posts yet',
-  relabelled: 'No relabelled posts — use Relabel on a pending post you disagree with',
-}
-
-const LABEL_FILTERS: { id: TriageLabelFilter; label: string }[] = [
-  { id: 'all', label: 'All' },
-  { id: 'Hate', label: 'Hate' },
-  { id: 'Abuse', label: 'Abuse' },
-]
+  relabelled: 'No relabelled posts — use View/Relabel on a post you disagree with',
+};
 
 export function TriageTable({
   bucket,
   posts,
-  labelFilter,
-  onLabelFilterChange,
+  total,
+  page,
+  pageSize,
+  onPageChange,
+  onBucketChange,
+  search,
+  onSearchChange,
+  startDate,
+  endDate,
+  minHate,
+  maxHate,
+  onStartDateChange,
+  onEndDateChange,
+  onMinHateChange,
+  onMaxHateChange,
+  loading,
+  fetching,
   onRelabel,
+  bucketCounts,
+  labelFilter,
+  exportQuery,
 }: TriageTableProps) {
-  const [search, setSearch] = useState('')
-  const [startDate, setStartDate] = useState('')
-  const [endDate, setEndDate] = useState('')
-  const [minHate, setMinHate] = useState('')
-  const [maxHate, setMaxHate] = useState('')
-  const [filterOpen, setFilterOpen] = useState(false)
-  const language = useDashboardStore((s) => s.language)
-  const flagMutation = useFlagPost()
-  const statusMutation = useUpdateTriageStatus()
+  const columns = buildColumns(onRelabel, bucket);
+  const [exporting, setExporting] = useState(false);
+  const language = useDashboardStore((s) => s.language);
+  const flagMutation = useFlagPost();
+  const statusMutation = useUpdateTriageStatus();
 
-  const minProb = minHate === '' ? null : Number(minHate) / 100
-  const maxProb = maxHate === '' ? null : Number(maxHate) / 100
-
-  const filtered = posts.filter((p) => {
-    if (labelFilter !== 'all' && p.predicted_label !== labelFilter) return false
-    if (search && !p.tweet.toLowerCase().includes(search.toLowerCase()) && !p.id.includes(search))
-      return false
-    const day = (p.timestamp || '').split('T')[0]
-    if (startDate && day && day < startDate) return false
-    if (endDate && day && day > endDate) return false
-    if (minProb !== null && !Number.isNaN(minProb) && p.probabilities.hate < minProb) return false
-    if (maxProb !== null && !Number.isNaN(maxProb) && p.probabilities.hate > maxProb) return false
-    return true
-  })
-
-  const activeFilterCount = [startDate, endDate, minHate, maxHate].filter(Boolean).length
-  const hasRangeFilters = activeFilterCount > 0
-
-  const handleDownloadCsv = () => {
-    if (filtered.length === 0) return
-    const csv = [CSV_HEADER, ...filtered.map(toCsvRow)].join('\n')
-    const blob = new Blob([csv], { type: 'text/csv' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `triage_${bucket}_${language}_${new Date().toISOString().slice(0, 10)}.csv`
-    a.click()
-    URL.revokeObjectURL(url)
-  }
-
-  const labelCounts = {
-    all: posts.length,
-    Hate: posts.filter((p) => p.predicted_label === 'Hate').length,
-    Abuse: posts.filter((p) => p.predicted_label === 'Abuse').length,
-  }
-
-  const clearRangeFilters = () => {
-    setStartDate('')
-    setEndDate('')
-    setMinHate('')
-    setMaxHate('')
-  }
+  const handleExportCsv = async () => {
+    if (total === 0 || exporting) return;
+    setExporting(true);
+    try {
+      const rows = await fetchAllTriagePostsMatching({ ...exportQuery, language });
+      const csv = [CSV_HEADER, ...rows.map(toCsvRow)].join('\n');
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `review_report_${bucket}_${language}_${new Date().toISOString().slice(0, 10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } finally {
+      setExporting(false);
+    }
+  };
 
   const busy =
     (flagMutation.isPending && flagMutation.variables) ||
     (statusMutation.isPending && statusMutation.variables?.postId) ||
-    null
+    null;
 
   const setStatus = (postId: string, status: TriageStatus) =>
-    statusMutation.mutate({ postId, status })
+    statusMutation.mutate({ postId, status });
 
   const rowActions = (post: Post) => {
-    const disabled = busy === post.id
+    const disabled = busy === post.id;
     const actionClass =
-      'h-7 rounded-[4px] border border-[var(--hg-border)] bg-white px-2 text-xs font-medium text-[var(--hg-muted)] shadow-none hover:border-[var(--hg-muted)] hover:bg-[var(--hg-soft)] hover:text-[var(--hg-ink)]'
+      'h-7 rounded-[4px] border border-[var(--hg-border)] bg-white px-2 text-xs font-medium text-[var(--hg-muted)] shadow-none hover:border-[var(--hg-muted)] hover:bg-[var(--hg-soft)] hover:text-[var(--hg-ink)]';
+    const unflagIconClass = 'size-3.5 shrink-0 text-[var(--hg-matrix-error)]';
+    const flagIconClass = 'size-3.5 shrink-0 text-current';
     switch (bucket) {
       case 'pending':
         return (
           <>
-            <Button
-              size="sm"
-              variant="outline"
-              disabled={disabled}
-              className={actionClass}
-              onClick={() => flagMutation.mutate(post.id)}
-            >
-              <Flag className="size-3.5" /> Flag
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              disabled={disabled}
-              className={actionClass}
-              onClick={() => setStatus(post.id, 'cleared')}
-            >
-              <CheckCircle className="size-3.5" /> Clear
-            </Button>
+            {post.triage_status === 'flagged' ? (
+              <Button
+                size="sm"
+                variant="outline"
+                disabled={disabled}
+                className={actionClass}
+                onClick={() => setStatus(post.id, 'pending')}
+              >
+                <FlagOff className={unflagIconClass} aria-hidden />
+                Unflag
+              </Button>
+            ) : (
+              <Button
+                size="sm"
+                variant="outline"
+                disabled={disabled}
+                className={actionClass}
+                onClick={() => flagMutation.mutate(post.id)}
+              >
+                <Flag className={flagIconClass} aria-hidden />
+                Flag
+              </Button>
+            )}
             <Button
               size="sm"
               variant="outline"
@@ -264,24 +339,10 @@ export function TriageTable({
               className={actionClass}
               onClick={() => onRelabel(post, 'create')}
             >
-              <Tags className="size-3.5" /> Relabel
+              <Tags className="size-3.5" /> View/Relabel
             </Button>
           </>
-        )
-      case 'cleared':
-        return (
-          <>
-            <Button
-              size="sm"
-              variant="outline"
-              disabled={disabled}
-              className={actionClass}
-              onClick={() => setStatus(post.id, 'pending')}
-            >
-              <RotateCcw className="size-3.5" /> Reopen
-            </Button>
-          </>
-        )
+        );
       case 'flagged':
         return (
           <>
@@ -292,10 +353,11 @@ export function TriageTable({
               className={actionClass}
               onClick={() => setStatus(post.id, 'pending')}
             >
-              <FlagOff className="size-3.5" /> Unflag
+              <FlagOff className={unflagIconClass} aria-hidden />
+              Unflag
             </Button>
           </>
-        )
+        );
       case 'relabelled':
         return (
           <>
@@ -309,219 +371,84 @@ export function TriageTable({
               <Pencil className="size-3.5" /> Edit
             </Button>
           </>
-        )
+        );
     }
-  }
+  };
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center gap-2.5">
-        <div className="relative min-w-0 w-full sm:w-56 sm:max-w-sm">
-          <Search className="pointer-events-none absolute top-1/2 left-3 h-3.5 w-3.5 -translate-y-1/2 text-[var(--hg-subtle)]" />
-          <Input
-            placeholder="Search posts or IDs…"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="h-9 rounded-[4px] border-[var(--hg-border)] bg-[var(--hg-canvas)] pl-9 text-sm shadow-none focus-visible:border-[var(--hg-brand)] focus-visible:bg-white"
-            aria-label="Search posts"
+      <div className="flex flex-col gap-3 xl:flex-row xl:flex-wrap xl:items-center xl:justify-between">
+        <PostQueryToolbar
+          search={search}
+          onSearchChange={onSearchChange}
+          startDate={startDate}
+          endDate={endDate}
+          minHate={minHate}
+          maxHate={maxHate}
+          onStartDateChange={onStartDateChange}
+          onEndDateChange={onEndDateChange}
+          onMinHateChange={onMinHateChange}
+          onMaxHateChange={onMaxHateChange}
+        />
+
+        <div className="flex flex-wrap items-center gap-3">
+          <TriageBucketFilter
+            value={bucket}
+            onChange={onBucketChange}
+            bucketCounts={bucketCounts}
+            labelFilter={labelFilter}
           />
-        </div>
-
-        <Popover.Root open={filterOpen} onOpenChange={setFilterOpen}>
-          <Popover.Trigger
-            type="button"
-            className={cn(
-              'inline-flex h-9 items-center gap-1.5 rounded-[4px] border px-2.5 text-xs font-medium transition-colors',
-              hasRangeFilters
-                ? 'border-[var(--hg-brand)] bg-[var(--hg-soft)] text-[var(--hg-ink)]'
-                : 'border-[var(--hg-border)] bg-white text-[var(--hg-muted)] hover:bg-[var(--hg-soft)] hover:text-black',
-              'data-popup-open:border-[var(--hg-brand)] data-popup-open:bg-[var(--hg-soft)] data-popup-open:text-[var(--hg-ink)]',
-            )}
-          >
-            <ListFilter className="size-3.5" />
-            Filter
-            {hasRangeFilters && (
-              <span className="inline-flex min-w-4 items-center justify-center rounded-[3px] bg-[var(--hg-brand)] px-1 py-0.5 text-[10px] font-semibold text-white tabular-nums">
-                {activeFilterCount}
-              </span>
-            )}
-          </Popover.Trigger>
-          <Popover.Portal>
-            <Popover.Positioner side="bottom" align="start" sideOffset={8} className="z-50">
-              <Popover.Popup
-                className={cn(
-                  'w-[320px] origin-(--transform-origin) rounded-[4px] border border-[var(--hg-border)] bg-white p-5 shadow-[var(--hg-shadow)] outline-none',
-                  'data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95',
-                  'data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95',
-                )}
-              >
-                <div className="mb-5 flex items-center justify-between gap-3">
-                  <div>
-                    <p className="text-sm font-semibold text-[var(--hg-ink)]">Filters</p>
-                    <p className="mt-0.5 text-xs text-[var(--hg-muted)]">Narrow the posts shown below</p>
-                  </div>
-                  {hasRangeFilters && (
-                    <button
-                      type="button"
-                      onClick={clearRangeFilters}
-                      className="inline-flex items-center gap-1 rounded-[4px] px-2 py-1 text-xs font-medium text-[var(--hg-muted)] transition-colors hover:bg-[var(--hg-canvas)] hover:text-[var(--hg-ink)]"
-                    >
-                      <X className="size-3" />
-                      Clear
-                    </button>
-                  )}
-                </div>
-
-                <div className="space-y-5">
-                  <section className="space-y-3">
-                    <p className="text-[11px] font-semibold tracking-wide text-[var(--hg-muted)] uppercase">
-                      Date range
-                    </p>
-                    <div className="space-y-3 rounded-[4px] border border-[var(--hg-border)] bg-[var(--hg-canvas)] p-3">
-                      <DatePickerField
-                        label="From"
-                        value={startDate}
-                        max={endDate || undefined}
-                        rangeMate={endDate}
-                        rangeRole="start"
-                        clearable
-                        onChange={setStartDate}
-                        className="w-full justify-between gap-3 [&_button]:min-w-0 [&_button]:flex-1"
-                      />
-                      <DatePickerField
-                        label="To"
-                        value={endDate}
-                        min={startDate || undefined}
-                        rangeMate={startDate}
-                        rangeRole="end"
-                        clearable
-                        onChange={setEndDate}
-                        className="w-full justify-between gap-3 [&_button]:min-w-0 [&_button]:flex-1"
-                      />
-                    </div>
-                  </section>
-
-                  <section className="space-y-3">
-                    <p className="text-[11px] font-semibold tracking-wide text-[var(--hg-muted)] uppercase">
-                      Hate probability
-                    </p>
-                    <div className="grid grid-cols-[1fr_auto_1fr] items-end gap-3 rounded-[4px] border border-[var(--hg-border)] bg-[var(--hg-canvas)] p-3">
-                      <label className="space-y-1.5">
-                        <span className="text-[11px] font-medium tracking-wide text-[var(--hg-muted)] uppercase">
-                          Min
-                        </span>
-                        <Input
-                          type="number"
-                          min={0}
-                          max={100}
-                          step={5}
-                          placeholder="0"
-                          value={minHate}
-                          onChange={(e) => setMinHate(e.target.value)}
-                          className="h-8 rounded-[4px] border-[var(--hg-border)] bg-white text-sm tabular-nums shadow-none"
-                          aria-label="Minimum hate probability percent"
-                        />
-                      </label>
-                      <span className="mb-2 text-sm text-[var(--hg-subtle)]" aria-hidden>
-                        –
-                      </span>
-                      <label className="space-y-1.5">
-                        <span className="text-[11px] font-medium tracking-wide text-[var(--hg-muted)] uppercase">
-                          Max
-                        </span>
-                        <Input
-                          type="number"
-                          min={0}
-                          max={100}
-                          step={5}
-                          placeholder="100"
-                          value={maxHate}
-                          onChange={(e) => setMaxHate(e.target.value)}
-                          className="h-8 rounded-[4px] border-[var(--hg-border)] bg-white text-sm tabular-nums shadow-none"
-                          aria-label="Maximum hate probability percent"
-                        />
-                      </label>
-                    </div>
-                  </section>
-                </div>
-              </Popover.Popup>
-            </Popover.Positioner>
-          </Popover.Portal>
-        </Popover.Root>
-
-        {hasRangeFilters && (
-          <button
-            type="button"
-            onClick={clearRangeFilters}
-            className="inline-flex h-9 items-center gap-1 rounded-[4px] px-2 text-xs font-medium text-[var(--hg-muted)] transition-colors hover:text-[var(--hg-ink)]"
-          >
-            <X className="size-3" />
-            Clear
-          </button>
-        )}
-
-        <div className="ml-auto flex flex-wrap items-center gap-3">
-          <div
-            className="inline-flex w-fit shrink-0 rounded-[4px] border border-[var(--hg-border)] bg-[var(--hg-canvas)] p-0.5"
-            role="group"
-            aria-label="Filter by prediction"
-          >
-            {LABEL_FILTERS.map((f) => {
-              const active = labelFilter === f.id
-              return (
-                <button
-                  key={f.id}
-                  type="button"
-                  aria-pressed={active}
-                  onClick={() => onLabelFilterChange(f.id)}
-                  className={cn(
-                    'inline-flex items-center gap-1.5 rounded-[4px] px-2.5 py-1.5 text-xs font-medium transition-colors',
-                    active
-                      ? 'bg-white text-[var(--hg-ink)] shadow-sm'
-                      : 'text-[var(--hg-muted)] hover:bg-[var(--hg-soft)] hover:text-black',
-                  )}
-                >
-                  {f.label}
-                  <span
-                    className={cn(
-                      'tabular-nums',
-                      active ? 'text-[var(--hg-brand)]' : 'text-[var(--hg-subtle)]',
-                    )}
-                  >
-                    {labelCounts[f.id]}
-                  </span>
-                </button>
-              )
-            })}
-          </div>
           <Button
             type="button"
-            variant="outline"
-            size="sm"
-            onClick={handleDownloadCsv}
-            disabled={filtered.length === 0}
-            className="h-8 gap-1.5 rounded-[4px] border-[var(--hg-border)] text-xs hover:bg-[var(--hg-soft)] hover:text-black"
-            title="Download CSV"
+            onClick={handleExportCsv}
+            disabled={exporting || total === 0}
+            className={cn(
+              'h-9 shrink-0 gap-1.5 rounded-[4px] bg-[var(--hg-accent-surface)] px-3 text-sm text-white hover:bg-[var(--hg-accent-surface-hover)]',
+              total >= 1000 && 'w-[178px] justify-center',
+            )}
+            title="Export all rows matching current filters"
+            aria-label={`Export CSV (${total.toLocaleString()} rows matching current filters)`}
           >
-            <Download className="size-3.5" />
-            CSV
+            {exporting ? (
+              <Loader2 className="size-3.5 animate-spin" aria-hidden />
+            ) : (
+              <Download className="size-3.5" aria-hidden />
+            )}
+            Export CSV
+            <span className="tabular-nums text-white/90">({formatTabCount(total)})</span>
           </Button>
         </div>
       </div>
 
-      <DataTable
-        columns={COLUMNS_BY_BUCKET[bucket]}
-        data={filtered}
-        getRowId={(p) => p.id}
-        maxHeight="520px"
-        caption={`${bucket} triage posts`}
-        empty={
-          <div className="text-center text-[var(--hg-muted)]">
-            <p className="text-sm font-medium text-[var(--hg-ink)]">{EMPTY_TEXT[bucket]}</p>
+      {loading ? (
+        <div className="flex min-h-[200px] items-center justify-center rounded-[4px] border border-dashed border-[var(--hg-border)] bg-[var(--hg-canvas)]/50">
+          <Loader2 className="h-6 w-6 animate-spin text-[var(--hg-subtle)]" />
+        </div>
+      ) : (
+        <>
+          <div className={cn(fetching && 'opacity-60 transition-opacity')}>
+            <DataTable
+              columns={columns}
+              data={posts}
+              getRowId={(p) => p.id}
+              maxHeight="520px"
+              caption={`${bucket} ${REVIEW_AND_REPORT_TITLE} posts`}
+              empty={
+                <div className="text-center text-[var(--hg-muted)]">
+                  <p className="text-sm font-medium text-[var(--hg-ink)]">{EMPTY_TEXT[bucket]}</p>
+                </div>
+              }
+              actions={rowActions}
+            />
           </div>
-        }
-        actions={rowActions}
-      />
+          <TablePagination
+            page={page}
+            pageSize={pageSize}
+            total={total}
+            onPageChange={onPageChange}
+          />
+        </>
+      )}
     </div>
-  )
+  );
 }

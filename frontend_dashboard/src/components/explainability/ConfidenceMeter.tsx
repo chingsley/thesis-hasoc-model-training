@@ -231,7 +231,7 @@ export function ConfidenceMeter({ metrics, loading = false }: ConfidenceMeterPro
       </div>
 
       <div className="overflow-hidden rounded-[4px] border border-[var(--hg-border)] bg-[var(--hg-canvas)]">
-        <div className="grid grid-cols-1 divide-y divide-[var(--hg-border)] sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+        <div className="grid grid-cols-1 divide-y divide-[var(--primary)] sm:grid-cols-3 sm:divide-x sm:divide-y-0 sm:divide-[var(--primary)]">
           {items.map((item) => (
             <MetricTile key={item.label} item={item} loading={loading} />
           ))}

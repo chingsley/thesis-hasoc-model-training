@@ -6,10 +6,14 @@ Usage (from backend_api_server/, venv active):
   python scripts/seed_demo_data.py --reset         # wipe seed users' rows, then seed
   python scripts/seed_demo_data.py --reset-db      # delete SQLite DB, re-run schema, seed
 
+Requires predictions_test.csv for igbo and yoruba (same as GET /posts): set
+PREDICTIONS_PATH_IGBO / PREDICTIONS_PATH_YORUBA or HF_MODEL_ID_* so the Hub files
+can be downloaded.
+
 Creates:
-  - user1@test.com, user2@test.com, ... (shared password; API key printed once per new user)
-  - user1 gets curated predictions + triage + ~90d volume (charts, drift, alerts, etc.)
-  - user2 gets a small separate prediction row (per-user isolation smoke test)
+  - user1@test.com (Lagos Community Media): all test-split posts for igbo + yoruba
+  - user2@test.com (River State Digital Forum): one isolation sample post
+  - platform@test.com (HateGuard Platform): no prediction log rows
 """
 
 from __future__ import annotations
@@ -25,6 +29,7 @@ from dotenv import load_dotenv
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from app import auth, db  # noqa: E402
+from app import posts_service  # noqa: E402
 
 SEED_PASSWORD = "Password123@"
 
@@ -37,101 +42,10 @@ SEED_USERS: list[tuple[str, str, str, str]] = [
 
 PRIMARY_EMAIL = SEED_USERS[0][0]
 
-# How far back bulk volume goes (matches the 3m chart window).
+# Spread seeded test posts over this window (timestamps only; text is from the test set).
 HISTORY_DAYS = 90
 
 rng = random.Random(42)
-
-# ---------------------------------------------------------------- seed texts
-IGBO_TOXIC = [
-    "Ndi biafra ndi teroristi, ha kwesiri ihapu obodo anyi",
-    "biafra people are nothing but terrorists, they should be wiped out",
-    "ndi biafra bunch of idiots and cowards, useless tribe",
-    "I hate those biafra fools, stupid animals all of them",
-    "biafra agitators are terrorist scum, mgbu should finish them",
-    "these biafra idiots keep disgracing this country, anwuola",
-    "biafra fools and terrorist sympathizers everywhere",
-    "onye ara, you are a complete disgrace to your family",
-    "nzuzu, did your mother raise you to be this stupid?",
-    "agba na achi, this government of clowns and thieves",
-    "You are very stupid and I hate you with passion",
-    "useless tribe, they should all be sent back",
-    "anwuola gi, you are a disgrace to your people",
-    "ndi ojoo na-akpasu obodo anyi iwe, ha kwesiri ila nku",
-    "ewu, can't you see how foolish your leader is?",
-    "that tribe is full of criminals and kidnappers",
-    "wicked people, mgbu to their entire generation",
-    "idiotic agitators causing trouble everywhere they go",
-    "foolish elders selling out their own children for crumbs",
-    "stupid boy, go back to the slum you crawled out from",
-]
-YORUBA_TOXIC = [
-    "awon oloriburuku, ki won ma ku ni ile yin",
-    "Emu ki o to ja soja Islam esin awon oloriburuku",
-    "ode buruku, you are the shame of your family",
-    "were ni o, you must be completely mad to say that",
-    "asiwaju of fools leading a parade of idiots",
-    "yoruba demons destroying this country piece by piece",
-    "those awon ode should be taught a bitter lesson",
-    "ole jati jati, lazy thieves all of them",
-    "your tribe is cursed with stupidity and greed",
-    "buburu eniyan, evil person through and through",
-    "foolish agitators, nibi gbogbo yin ma gbegbe",
-    "omugo, how can one person be this dense?",
-]
-NORMAL_TEXTS = [
-    ("igbo", "Ka anyi kwenu, good morning my people"),
-    ("igbo", "ndigbo di mma, Chukwu gozie unu niile"),
-    ("igbo", "I love this community and the work being done here"),
-    ("igbo", "nna anyi, thank you for the support yesterday"),
-    ("igbo", "progress is coming slowly but surely to our town"),
-    ("igbo", "ewu m na enye gi ekele, see you at the meeting"),
-    ("igbo", "great news from the market today, prices are stable"),
-    ("igbo", "umu nnem, let us keep the peace and move forward"),
-    ("yoruba", "oba ma se o, this is great news for everyone"),
-    ("yoruba", "ese pupo, thank you so much for your help"),
-    ("yoruba", "good morning everyone, have a blessed day"),
-    ("yoruba", "the festival was wonderful this year, so colourful"),
-    ("yoruba", "mo wa dupe lowo yin, we appreciate the effort"),
-    ("yoruba", "our community keeps growing stronger every day"),
-    ("yoruba", "kalenda, wishing you all a productive week"),
-    ("yoruba", "the new school is finally open, the children are happy"),
-]
-BORDERLINE_TEXTS = [
-    ("igbo", "biafra supporters and their endless wahala, I tire"),
-    ("igbo", "these people and their wahala every single day"),
-    ("yoruba", "awon were ni, those people act like madmen"),
-    ("igbo", "I can't stand these agitators and their noise"),
-    ("yoruba", "ode, what kind of foolish talk is that one"),
-    ("igbo", "ndi biafra ndi terrorist — truly, they need help"),
-]
-
-TOXIC = [("igbo", t) for t in IGBO_TOXIC] + [("yoruba", t) for t in YORUBA_TOXIC]
-
-
-def probs_for(label: str, borderline: bool = False) -> dict[str, float]:
-    if borderline:
-        hate = round(rng.uniform(0.40, 0.60), 4)
-        abuse = round(rng.uniform(0.15, 0.35), 4)
-        normal = round(1.0 - hate - abuse, 4)
-        return {"normal": normal, "abuse": abuse, "hate": hate}
-    if label == "Hate":
-        hate = round(rng.uniform(0.78, 0.97), 4)
-        abuse = round(rng.uniform(0.02, min(0.12, 1.0 - hate - 0.001)), 4)
-    elif label == "Abuse":
-        abuse = round(rng.uniform(0.55, 0.85), 4)
-        hate = round(rng.uniform(0.05, min(0.30, 1.0 - abuse - 0.001)), 4)
-    else:
-        normal = round(rng.uniform(0.85, 0.99), 4)
-        abuse = round(rng.uniform(0.005, min(0.10, 1.0 - normal - 0.001)), 4)
-        hate = round(1.0 - normal - abuse, 4)
-        return {"normal": normal, "abuse": abuse, "hate": hate}
-    normal = round(1.0 - hate - abuse, 4)
-    return {"normal": normal, "abuse": abuse, "hate": hate}
-
-
-def label_for_toxic(i: int) -> str:
-    return "Hate" if i % 9 in (0, 2, 4, 6) else "Abuse"
 
 
 def ensure_user(
@@ -206,128 +120,48 @@ def _append_row(
     )
 
 
-def seed_historical_volume(
-    user_id: int, organization_id: int, now: datetime, rows: list[dict]
-) -> int:
-    """Fill ~HISTORY_DAYS so 1m / 3m charts have signal. Unique text suffixes."""
-    templates = TOXIC + NORMAL_TEXTS + BORDERLINE_TEXTS
-    added = 0
-    for day_offset in range(HISTORY_DAYS):
-        day = now - timedelta(days=day_offset)
-        if day_offset < 7:
-            n_posts = rng.randint(14, 26)
-        elif day_offset < 30:
-            n_posts = rng.randint(8, 18)
-        else:
-            n_posts = rng.randint(5, 14)
-        if day.weekday() >= 5:
-            n_posts += rng.randint(2, 6)
-
-        for j in range(n_posts):
-            language, base = templates[(day_offset * 17 + j) % len(templates)]
-            roll = rng.random()
-            if roll < 0.55:
-                label = "Normal"
-            elif roll < 0.78:
-                label = "Abuse"
-            else:
-                label = "Hate"
-            if day_offset % 11 == 3 and j < 4:
-                label = "Hate"
-            probs = probs_for(label)
-            ts = day.replace(hour=0, minute=0, second=0, microsecond=0) + timedelta(
-                hours=rng.uniform(0, 23.5),
-                minutes=rng.randint(0, 59),
-            )
-            text = f"{base} · hist d{day_offset}#{j}"
-            _append_row(
-                rows,
-                user_id=user_id,
-                organization_id=organization_id,
-                ts=ts,
-                language=language,
-                text=text,
-                label=label,
-                probs=probs,
-                source="batch" if j % 4 == 0 else "single",
-            )
-            added += 1
-    return added
+def load_test_set_posts() -> list[dict]:
+    """Test-split posts with model predictions (predictions_test.csv per language)."""
+    posts_service.refresh_posts()
+    combined: list[dict] = []
+    for language in ("igbo", "yoruba"):
+        combined.extend(posts_service.get_posts(language))
+    if not combined:
+        raise RuntimeError(
+            "No test-set posts loaded. Set PREDICTIONS_PATH_IGBO/YORUBA or HF_MODEL_ID_* "
+            "and ensure predictions_test.csv is available."
+        )
+    return combined
 
 
-def seed_predictions(user_id: int) -> dict[str, int]:
+def seed_predictions_from_test_set(user_id: int, test_posts: list[dict]) -> dict[str, int]:
     user = db.get_user_by_id(user_id)
     organization_id = int(user["organization_id"])
     now = datetime.now(timezone.utc)
     rows: list[dict] = []
+    n = len(test_posts)
 
-    for i, (language, text) in enumerate(TOXIC):
-        label = label_for_toxic(i)
-        probs = probs_for(label)
-        if i < 8:
-            ts = now - timedelta(hours=rng.uniform(0.2, 12), minutes=rng.randint(0, 59))
-        else:
-            ts = now - timedelta(days=rng.uniform(0.5, 7), hours=rng.uniform(0, 12))
+    for i, post in enumerate(test_posts):
+        day_offset = (i * HISTORY_DAYS) // max(n, 1)
+        ts = now - timedelta(
+            days=day_offset,
+            hours=rng.uniform(0, 23.5),
+            minutes=rng.randint(0, 59),
+        )
+        probs = post["probabilities"]
         _append_row(
             rows,
             user_id=user_id,
             organization_id=organization_id,
             ts=ts,
-            language=language,
-            text=text,
-            label=label,
+            language=post["language"],
+            text=post["tweet"],
+            label=post["predicted_label"],
             probs=probs,
-            source="batch" if i % 3 == 0 else "single",
+            source="test",
         )
 
-    for text in (
-        "ndi biafra ndi mgbu, death to every single one of them",
-        "awon terrorist, they all deserve to perish in fire",
-    ):
-        _append_row(
-            rows,
-            user_id=user_id,
-            organization_id=organization_id,
-            ts=now - timedelta(minutes=rng.randint(5, 45)),
-            language="igbo" if "biafra" in text else "yoruba",
-            text=text,
-            label="Hate",
-            probs={"normal": 0.01, "abuse": 0.03, "hate": round(rng.uniform(0.93, 0.98), 4)},
-            source="single",
-        )
-
-    for language, text in BORDERLINE_TEXTS:
-        probs = probs_for("Hate", borderline=True)
-        label = "Hate" if probs["hate"] >= 0.5 else "Abuse"
-        _append_row(
-            rows,
-            user_id=user_id,
-            organization_id=organization_id,
-            ts=now - timedelta(days=rng.uniform(0.2, 3)),
-            language=language,
-            text=text,
-            label=label,
-            probs=probs,
-            source="single",
-        )
-
-    for i, (language, text) in enumerate(NORMAL_TEXTS):
-        probs = probs_for("Normal")
-        _append_row(
-            rows,
-            user_id=user_id,
-            organization_id=organization_id,
-            ts=now - timedelta(days=rng.uniform(0.1, 7)),
-            language=language,
-            text=text,
-            label="Normal",
-            probs=probs,
-            source="single" if i % 2 else "batch",
-        )
-
-    hist = seed_historical_volume(user_id, organization_id, now, rows)
-    print(f"  curated rows: {len(rows) - hist}, historical volume rows ({HISTORY_DAYS}d): {hist}")
-
+    print(f"  test-set prediction rows: {len(rows)} (igbo + yoruba)")
     db.log_predictions(rows)
 
     conn = db.get_conn()
@@ -340,32 +174,36 @@ def seed_predictions(user_id: int) -> dict[str, int]:
     return id_map
 
 
-def seed_triage(user_id: int, id_map: dict[str, int]) -> None:
+def seed_triage_demo(user_id: int, id_map: dict[str, int], test_posts: list[dict]) -> None:
+    """Light triage demo on a few toxic test-set rows."""
     user = db.get_user_by_id(user_id)
     org_id = int(user["organization_id"])
 
-    def key(text: str) -> str:
+    def triage_key(text: str) -> str:
         return f"o{org_id}_pred_{id_map[text]}"
 
-    toxic_texts = [t for _, t in TOXIC]
+    toxic = [p for p in test_posts if p["predicted_label"] in ("Hate", "Abuse")]
+    if len(toxic) < 8:
+        return
 
-    for text in toxic_texts[10:16]:
-        db.upsert_triage(key(text), flagged=False, status="cleared")
+    for post in toxic[5:8]:
+        text = post["tweet"]
+        if text in id_map:
+            db.upsert_triage(triage_key(text), flagged=True, status="flagged")
 
-    for text in toxic_texts[16:22]:
-        db.upsert_triage(key(text), flagged=True, status="flagged")
-
-    relabels = [
-        (toxic_texts[22], "Abuse", "flagged"),
-        (toxic_texts[23], "Normal", "cleared"),
-        (toxic_texts[24], "Normal", "cleared"),
-        (toxic_texts[25], None, "flagged"),
-    ]
-    for text, manual, bucket in relabels:
-        if manual is None:
-            idx = [t for _, t in TOXIC].index(text)
-            manual = label_for_toxic(idx)
-        db.upsert_triage(key(text), flagged=(bucket == "flagged"), status=bucket, manual_label=manual)
+    relabel_candidates = toxic[8:12]
+    for j, post in enumerate(relabel_candidates):
+        text = post["tweet"]
+        if text not in id_map:
+            continue
+        current = post["predicted_label"]
+        new_label = "Normal" if current != "Normal" else "Abuse"
+        if j == 2:
+            new_label = "Normal"
+        pred_id = id_map[text]
+        db.relabel_org_prediction(org_id, pred_id, new_label, user_id)
+        if j == 0:
+            db.upsert_triage(triage_key(text), flagged=True, status="flagged")
 
 
 def main() -> int:
@@ -413,9 +251,15 @@ def main() -> int:
         for user_id in user_ids:
             wipe_user_rows(user_id)
 
+    print(f"Loading test-set posts (igbo + yoruba) for {PRIMARY_EMAIL}...")
+    test_posts = load_test_set_posts()
+    igbo_n = sum(1 for p in test_posts if p["language"] == "igbo")
+    yoruba_n = sum(1 for p in test_posts if p["language"] == "yoruba")
+    print(f"  loaded {len(test_posts)} posts (igbo={igbo_n}, yoruba={yoruba_n})")
+
     print(f"Seeding predictions + triage ({PRIMARY_EMAIL})...")
-    id_map = seed_predictions(primary_id)
-    seed_triage(primary_id, id_map)
+    id_map = seed_predictions_from_test_set(primary_id, test_posts)
+    seed_triage_demo(primary_id, id_map, test_posts)
 
     if secondary_id is not None:
         secondary = db.get_user_by_id(secondary_id)
@@ -451,8 +295,7 @@ def main() -> int:
     print(f"\nLogins (password for all: {SEED_PASSWORD}):")
     for email, full_name, org, _ in SEED_USERS:
         print(f"  {full_name} <{email}> — {org}")
-    print("What to check: Overview stats+volume (24h/7d/1m/3m), Triage (4 buckets),")
-    print("Relabelled edit, Explainability, Analysis, Alerts, Reports export.")
+    print("What to check: Overview stats+volume, Triage, Explainability, Analysis (test-set labels on /posts).")
     return 0
 
 

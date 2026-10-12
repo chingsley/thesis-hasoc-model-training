@@ -1,4 +1,4 @@
-export type VolumePresetId = '24h' | '7d' | '1m' | '3m'
+export type VolumePresetId = '24h' | '7d' | '1m' | '3m' | 'all'
 export type VolumeMode = VolumePresetId | 'custom'
 export type ChartStyle = 'line' | 'stacked'
 
@@ -12,6 +12,7 @@ export type VolumeRangeOption = {
 }
 
 export const VOLUME_RANGE_OPTIONS: VolumeRangeOption[] = [
+  { id: 'all', label: 'All', hours: 2161, title: 'All time', shortLabel: 'All time', aggregate: 'day' },
   { id: '24h', label: '24h', hours: 24, title: 'Last 24 Hours', shortLabel: '24 Hours', aggregate: 'hour' },
   { id: '7d', label: '7d', hours: 168, title: 'Last 7 Days', shortLabel: '7 Days', aggregate: 'hour' },
   { id: '1m', label: '1m', hours: 720, title: 'Last 1 Month', shortLabel: '1 Month', aggregate: 'day' },
@@ -25,13 +26,17 @@ export const MAX_CUSTOM_DAYS = 90
 export type VolumeRangeId = VolumePresetId
 
 export function getVolumeRange(id: VolumePresetId): VolumeRangeOption {
-  return VOLUME_RANGE_OPTIONS.find((o) => o.id === id) ?? VOLUME_RANGE_OPTIONS[0]
+  return (
+    VOLUME_RANGE_OPTIONS.find((o) => o.id === id) ??
+    VOLUME_RANGE_OPTIONS.find((o) => o.id === DEFAULT_VOLUME_PRESET)!
+  )
 }
 
 export type VolumeQuery = {
   hours?: number
   since?: string
   until?: string
+  all?: boolean
 }
 
 export type ResolvedVolumeRange = {
@@ -56,6 +61,16 @@ export function resolveVolumeRange(
 ): ResolvedVolumeRange {
   if (mode !== 'custom') {
     const preset = getVolumeRange(mode)
+    if (preset.id === 'all') {
+      return {
+        title: preset.title,
+        shortLabel: preset.shortLabel,
+        aggregate: preset.aggregate,
+        hours: preset.hours,
+        query: { all: true },
+        queryKey: ['preset', 'all'],
+      }
+    }
     return {
       title: preset.title,
       shortLabel: preset.shortLabel,
@@ -91,6 +106,23 @@ export function resolveVolumeRange(
     query: { since: from, until: to, hours },
     queryKey: ['custom', from, to],
   }
+}
+
+/** Card subtitle for the volume chart (matches the selected range control). */
+export function volumePanelDescription(mode: VolumeMode, range: ResolvedVolumeRange): string {
+  if (mode === 'all') {
+    return 'Number of posts classified across all available history'
+  }
+  if (mode === 'custom') {
+    if (range.shortLabel.includes('→')) {
+      const [from, to] = range.shortLabel.split(' → ')
+      return `Number of posts classified from ${from} to ${to}`
+    }
+    return `Number of posts classified on ${range.shortLabel}`
+  }
+  const span =
+    range.hours <= 24 ? `${range.shortLabel} (Time in UTC)` : range.shortLabel
+  return `Number of posts classified in the last ${span}`
 }
 
 export function defaultCustomRange(): { from: string; to: string } {

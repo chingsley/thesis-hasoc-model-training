@@ -2,7 +2,9 @@ from __future__ import annotations
 
 from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
+
+from .text_validation import validate_prediction_text, validate_prediction_texts
 
 Language = Literal["igbo", "yoruba"]
 Label = Literal["Normal", "Abuse", "Hate"]
@@ -18,6 +20,11 @@ class PredictRequest(BaseModel):
     text: str = Field(min_length=1, max_length=5000)
     language: Language
 
+    @field_validator("text")
+    @classmethod
+    def _check_text(cls, value: str) -> str:
+        return validate_prediction_text(value)
+
 
 class PredictResponse(BaseModel):
     predicted_label: Label
@@ -25,11 +32,20 @@ class PredictResponse(BaseModel):
     model_id: str
     language: Language
     used_fallback: bool = False
+    use_openai_moderation: bool = False
 
 
 class BatchPredictRequest(BaseModel):
     texts: list[str] = Field(min_length=1, max_length=256)
     language: Language
+
+    @field_validator("texts")
+    @classmethod
+    def _check_texts(cls, value: list[str]) -> list[str]:
+        stripped = [t.strip() for t in value if t.strip()]
+        if not stripped:
+            raise ValueError("texts must include at least one non-empty row")
+        return validate_prediction_texts(stripped)
 
 
 class BatchPredictItem(BaseModel):
@@ -43,6 +59,7 @@ class BatchPredictResponse(BaseModel):
     model_id: str
     language: Language
     used_fallback: bool = False
+    use_openai_moderation: bool = False
 
 
 class HealthResponse(BaseModel):
@@ -51,6 +68,8 @@ class HealthResponse(BaseModel):
     models: dict[str, str]
     routing: str = "per_language"
     model_set: str | None = None
+    use_openai_moderation: bool = False
+    openai_moderation_model: str | None = None
 
 
 class PerClassMetrics(BaseModel):
@@ -76,7 +95,7 @@ class ModelMetricsResponse(BaseModel):
     roc_auc_ovr: float | None = None
 
 
-TriageStatus = Literal["pending", "cleared", "flagged"]
+TriageStatus = Literal["pending", "flagged"]
 
 
 class PostResponse(BaseModel):
@@ -92,8 +111,40 @@ class PostResponse(BaseModel):
     probabilities: Probabilities
     flagged: bool
     triage_status: TriageStatus
-    manual_label: Label | None = None
+    relabelled: bool = False
+    initial_model_prediction: Label | None = None
+    reviewer_id: int | None = None
+    reviewed_at: str | None = None
     timestamp: str
+
+
+class TriageBucketCounts(BaseModel):
+    total: int
+    normal: int = 0
+    hate: int
+    abuse: int
+    normal_flagged: int = 0
+    normal_relabelled: int = 0
+    normal_other: int = 0
+    hate_flagged: int = 0
+    hate_relabelled: int = 0
+    hate_other: int = 0
+    abuse_flagged: int = 0
+    abuse_relabelled: int = 0
+    abuse_other: int = 0
+
+
+class TriageStatsResponse(BaseModel):
+    pending: TriageBucketCounts
+    flagged: TriageBucketCounts
+    relabelled: TriageBucketCounts
+
+
+class TriagePostsPageResponse(BaseModel):
+    items: list[PostResponse]
+    total: int
+    limit: int
+    offset: int
 
 
 class TriageUpdateRequest(BaseModel):
@@ -101,8 +152,8 @@ class TriageUpdateRequest(BaseModel):
 
 
 class RelabelRequest(BaseModel):
-    manual_label: Label
-    bucket: Literal["cleared", "flagged"] | None = None
+    label: Label
+    bucket: Literal["flagged"] | None = None
 
 
 class ExplainRequest(BaseModel):

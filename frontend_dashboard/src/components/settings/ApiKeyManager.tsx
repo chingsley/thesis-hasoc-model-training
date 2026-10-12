@@ -37,6 +37,7 @@ import {
   settingsFormControlClass,
   settingsFormFieldClass,
   settingsFormRowClass,
+  settingsFormStripClass,
   settingsSectionHeaderClass,
 } from '@/components/settings/settings-form-layout';
 
@@ -60,7 +61,7 @@ function formatLastUsed(iso: string | null): string {
 function parseApiError(err: unknown): string {
   if (err instanceof ApiError) {
     try {
-      const parsed = JSON.parse(err.message) as { detail?: string };
+      const parsed = JSON.parse(err.message) as { detail?: string; };
       if (typeof parsed.detail === 'string') return parsed.detail;
     } catch {
       /* plain text body */
@@ -116,7 +117,7 @@ export function ApiKeyManager() {
         setOrganizations(rows);
         setKeyOrgId((prev) => prev ?? activeOrgId ?? rows[0]?.id ?? null);
       })
-      .catch(() => {});
+      .catch(() => { });
   }, [isPlatformAdmin, activeOrgId]);
 
   useEffect(() => {
@@ -208,7 +209,7 @@ export function ApiKeyManager() {
         </p>
       </div>
 
-      <div className="border-b border-[var(--hg-border)] bg-white px-6 py-5">
+      <div className={settingsFormStripClass}>
         <div className={settingsFormRowClass}>
           {isPlatformAdmin && organizations.length > 0 ? (
             <div className={settingsFormFieldClass}>

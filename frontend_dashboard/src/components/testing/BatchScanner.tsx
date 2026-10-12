@@ -5,8 +5,10 @@ import { Button } from '@/components/ui/button'
 import { HateProbCell, PostIdCell, PredictionCell } from '@/components/dashboard/post-cells'
 import { useDashboardStore } from '@/lib/store/dashboard'
 import { batchClassify } from '@/lib/api/client'
+import { parseBatchUploadFile } from '@/lib/batch-csv'
 import type { BatchResult } from '@/lib/types'
 import { cn } from '@/lib/utils'
+import { toast } from 'sonner'
 
 export function BatchScanner() {
   const language = useDashboardStore((s) => s.language)
@@ -14,6 +16,7 @@ export function BatchScanner() {
   const [results, setResults] = useState<BatchResult[] | null>(null)
   const [file, setFile] = useState<File | null>(null)
   const [dragging, setDragging] = useState(false)
+  const [parseErrors, setParseErrors] = useState<string[] | null>(null)
   const queryClient = useQueryClient()
 
   const mutation = useMutation({
@@ -37,17 +40,20 @@ export function BatchScanner() {
 
   const parseAndRun = (f: File) => {
     setFile(f)
+    setParseErrors(null)
+    setResults(null)
     const reader = new FileReader()
     reader.onload = (ev) => {
       const csv = ev.target?.result as string
-      const lines = csv.split('\n').filter(Boolean)
-      const texts = lines
-        .map((line) => {
-          const cols = line.split(',')
-          return cols[cols.length - 1]?.trim().replace(/^"|"$/g, '') ?? line.trim()
+      const parsed = parseBatchUploadFile(csv)
+      if (!parsed.ok) {
+        setParseErrors(parsed.errors)
+        toast.error('CSV validation failed', {
+          description: parsed.errors[0],
         })
-        .filter((t) => t.length > 0)
-      if (texts.length > 0) mutation.mutate(texts)
+        return
+      }
+      mutation.mutate(parsed.texts)
     }
     reader.readAsText(f)
   }
@@ -104,8 +110,10 @@ export function BatchScanner() {
             <p className="text-sm font-semibold text-[var(--hg-ink)]">
               Upload a CSV or text file
             </p>
-            <p className="mt-0.5 text-xs text-[var(--hg-muted)]">
-              One message per line (or last CSV column). Classified as {languageLabel}.
+            <p className="mt-0.5 max-w-md text-xs text-[var(--hg-muted)]">
+              One message per line, or CSV with a <span className="font-medium">text</span> /{' '}
+              <span className="font-medium">tweet</span> column (header required). Not dashboard
+              exports. Real sentences only — classified as {languageLabel}.
             </p>
           </div>
           <div className="flex flex-wrap items-center justify-center gap-2">
@@ -139,6 +147,20 @@ export function BatchScanner() {
           )}
         </div>
       </div>
+
+      {parseErrors && (
+        <div
+          className="rounded-[4px] border border-amber-500/40 bg-amber-500/5 px-4 py-3"
+          role="alert"
+        >
+          <p className="text-sm font-medium text-[var(--hg-ink)]">Invalid CSV</p>
+          <ul className="mt-2 list-disc space-y-1 pl-4 text-xs text-[var(--hg-muted)]">
+            {parseErrors.map((err) => (
+              <li key={err}>{err}</li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       {mutation.isError && (
         <div className="rounded-[4px] border border-[var(--hg-secondary)]/25 bg-[var(--hg-secondary)]/5 px-4 py-3">

@@ -1,7 +1,11 @@
 import { useRef, type RefObject } from 'react'
 import { Menu } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { DataSourceBadge, ModelSetBadge } from '@/components/ui/data-source-badge'
+import {
+  DataSourceBadge,
+  ModelSetBadge,
+  OpenAiModerationHeaderChip,
+} from '@/components/ui/data-source-badge'
 import {
   Select,
   SelectContent,
@@ -107,6 +111,7 @@ export function Header({ onMenuClick, scrollRootRef }: HeaderProps) {
           </div>
 
           <div className="flex flex-1 items-center justify-end gap-2 px-4 md:px-6 lg:px-8">
+            <OpenAiModerationHeaderChip />
             <OrganizationSwitcher />
             <Select
               value={language}

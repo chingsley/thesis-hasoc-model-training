@@ -4,6 +4,7 @@ import logging
 import os
 from contextlib import asynccontextmanager
 from functools import lru_cache
+from typing import Literal
 
 from dotenv import load_dotenv
 from fastapi import Depends, FastAPI, HTTPException, Query, Request
@@ -28,7 +29,9 @@ from .auth import (
 )
 from .explain_service import explain_text
 from .metrics_service import load_metrics
+from . import openai_moderation_service as oai_mod
 from .model_service import ModelRouter, effective_model_set
+from .predict_service import classify_texts
 from .schemas import (
     ApiKeyCreateRequest,
     ApiKeyCreatedResponse,
@@ -55,6 +58,8 @@ from .schemas import (
     PredictResponse,
     Probabilities,
     RelabelRequest,
+    TriagePostsPageResponse,
+    TriageStatsResponse,
     TriageUpdateRequest,
     UserInfo,
 )
@@ -363,11 +368,14 @@ def stats_overview(
 @app.get("/health", response_model=HealthResponse)
 def health() -> HealthResponse:
     router = get_router()
+    moderation_on = oai_mod.is_enabled()
     return HealthResponse(
         status="ok",
         device=router.inference_device,
         models=router.model_map(),
         model_set=effective_model_set(),
+        use_openai_moderation=moderation_on,
+        openai_moderation_model=oai_mod.configured_model() if moderation_on else None,
     )
 
 
@@ -384,14 +392,11 @@ def metrics(
 @app.post("/predict", response_model=PredictResponse)
 def predict(payload: PredictRequest, user: dict = Depends(get_caller_user)) -> PredictResponse:
     router = get_router()
-    try:
-        service = router.get(payload.language)
-    except KeyError as exc:
-        raise HTTPException(status_code=404, detail=str(exc)) from exc
-
-    used_fallback = router.used_fallback(payload.language)
     text = payload.text.strip()
-    result = service.predict_batch([text])[0]
+    raw_results, model_id, used_fallback, use_openai_moderation = classify_texts(
+        router, payload.language, [text]
+    )
+    result = raw_results[0]
     db.log_predictions(
         [
             {
@@ -409,20 +414,22 @@ def predict(payload: PredictRequest, user: dict = Depends(get_caller_user)) -> P
         ]
     )
     logger.info(
-        "predict user_id=%s org_id=%s language=%s model_id=%s used_fallback=%s label=%s",
+        "predict user_id=%s org_id=%s language=%s model_id=%s used_fallback=%s openai_mod=%s label=%s",
         user["id"],
         _org_id(user),
         payload.language,
-        service.model_id,
+        model_id,
         used_fallback,
+        use_openai_moderation,
         result["predicted_label"],
     )
     return PredictResponse(
         predicted_label=result["predicted_label"],
         probabilities=Probabilities(**result["probabilities"]),
-        model_id=service.model_id,
+        model_id=model_id,
         language=payload.language,
         used_fallback=used_fallback,
+        use_openai_moderation=use_openai_moderation,
     )
 
 
@@ -431,14 +438,10 @@ def predict_batch(
     payload: BatchPredictRequest, user: dict = Depends(get_caller_user)
 ) -> BatchPredictResponse:
     router = get_router()
-    try:
-        service = router.get(payload.language)
-    except KeyError as exc:
-        raise HTTPException(status_code=404, detail=str(exc)) from exc
-
-    used_fallback = router.used_fallback(payload.language)
     texts = [text.strip() for text in payload.texts if text.strip()]
-    raw_results = service.predict_batch(texts)
+    raw_results, model_id, used_fallback, use_openai_moderation = classify_texts(
+        router, payload.language, texts
+    )
     now = db.utc_now()
     db.log_predictions(
         [
@@ -466,18 +469,20 @@ def predict_batch(
         for item in raw_results
     ]
     logger.info(
-        "predict_batch user_id=%s language=%s model_id=%s used_fallback=%s count=%d",
+        "predict_batch user_id=%s language=%s model_id=%s used_fallback=%s openai_mod=%s count=%d",
         user["id"],
         payload.language,
-        service.model_id,
+        model_id,
         used_fallback,
+        use_openai_moderation,
         len(results),
     )
     return BatchPredictResponse(
         results=results,
-        model_id=service.model_id,
+        model_id=model_id,
         language=payload.language,
         used_fallback=used_fallback,
+        use_openai_moderation=use_openai_moderation,
     )
 
 
@@ -492,16 +497,72 @@ def list_user_predictions(
     hate_min: float | None = Query(default=None, ge=0.0, le=1.0),
     hate_max: float | None = Query(default=None, ge=0.0, le=1.0),
     label: str | None = Query(default=None),
+    model_label: str | None = Query(default=None),
     user: dict = Depends(get_caller_user),
 ) -> list[dict]:
     labels = None
+    model_labels = None
     if label:
         labels = [part.strip() for part in label.split(",") if part.strip() in ("Normal", "Abuse", "Hate")]
         if not labels:
             raise HTTPException(status_code=422, detail=f"Invalid label filter: {label}")
+    if model_label:
+        model_labels = [
+            part.strip() for part in model_label.split(",") if part.strip() in ("Normal", "Abuse", "Hate")
+        ]
+        if not model_labels:
+            raise HTTPException(status_code=422, detail=f"Invalid model_label filter: {model_label}")
     return user_posts_service.list_org_posts(
-        _org_id(user), language, limit, offset, hate_min=hate_min, hate_max=hate_max, labels=labels
+        _org_id(user),
+        language,
+        limit,
+        offset,
+        hate_min=hate_min,
+        hate_max=hate_max,
+        labels=labels,
+        model_labels=model_labels,
     )
+
+
+TriageBucketName = Literal["pending", "flagged", "relabelled"]
+
+
+@app.get("/predictions/triage/stats", response_model=TriageStatsResponse)
+def triage_stats(
+    language: Language = Query(default="igbo"),
+    user: dict = Depends(get_caller_user),
+) -> dict:
+    return user_posts_service.triage_stats(_org_id(user), language)
+
+
+@app.get("/predictions/triage/posts", response_model=TriagePostsPageResponse)
+def triage_posts_page(
+    bucket: TriageBucketName,
+    language: Language = Query(default="igbo"),
+    limit: int = Query(default=25, ge=1, le=500),
+    offset: int = Query(default=0, ge=0),
+    label: str | None = Query(default=None, pattern="^(Normal|Hate|Abuse)$"),
+    q: str | None = Query(default=None, max_length=200),
+    since: str | None = Query(default=None, description="ISO date YYYY-MM-DD"),
+    until: str | None = Query(default=None, description="ISO date YYYY-MM-DD"),
+    hate_min: float | None = Query(default=None, ge=0.0, le=1.0),
+    hate_max: float | None = Query(default=None, ge=0.0, le=1.0),
+    user: dict = Depends(get_caller_user),
+) -> dict:
+    items, total = user_posts_service.list_triage_bucket_posts(
+        _org_id(user),
+        language,
+        bucket,
+        limit,
+        offset,
+        label=label,
+        q=q,
+        since=since,
+        until=until,
+        hate_min=hate_min,
+        hate_max=hate_max,
+    )
+    return {"items": items, "total": total, "limit": limit, "offset": offset}
 
 
 @app.post("/predictions/{post_ref}/flag", response_model=PostResponse)
@@ -526,7 +587,7 @@ def relabel_user_prediction(
     post = None
     if pred_id is not None:
         post = user_posts_service.relabel_org_post(
-            _org_id(user), pred_id, payload.manual_label, payload.bucket
+            _org_id(user), pred_id, payload.label, int(user["id"]), payload.bucket
         )
     if post is None:
         raise HTTPException(status_code=404, detail=f"Unknown post_id={post_ref}")
@@ -640,6 +701,7 @@ def analytics_volume(
     hours: int = Query(default=24, ge=1, le=2160),
     since: str | None = Query(default=None, description="ISO date or datetime (UTC)"),
     until: str | None = Query(default=None, description="ISO date or datetime (UTC)"),
+    all_time: bool = Query(default=False, alias="all"),
     language: Language | None = Query(default=None),
     user: dict = Depends(get_caller_user),
 ) -> list[dict]:
@@ -649,6 +711,7 @@ def analytics_volume(
         language=language,
         since=since,
         until=until,
+        all_time=all_time,
     )
 
 

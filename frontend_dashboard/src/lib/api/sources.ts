@@ -9,15 +9,12 @@ export type EndpointKey =
   | 'metrics'
   | 'drift'
   | 'volume'
-  | 'clusters'
-  | 'borderline'
   | 'flagPost'
   | 'updateTriageStatus'
   | 'batchClassify'
   | 'singleClassify'
   | 'alerts'
   | 'wordCloud'
-  | 'exportReport'
   | 'stats'
 
 /** Whether an endpoint serves mock or live data. Every endpoint is live-capable;

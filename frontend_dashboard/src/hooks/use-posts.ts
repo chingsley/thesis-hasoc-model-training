@@ -1,22 +1,29 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useDashboardStore } from '@/lib/store/dashboard'
-import { fetchPosts, fetchTriagePosts, fetchBorderlinePosts, flagPost, relabelPost, updateTriageStatus } from '@/lib/api/client'
+import {
+  fetchPosts,
+  fetchTriagePosts,
+  fetchTriageStats,
+  fetchTriagePostsPage,
+  flagPost,
+  relabelPost,
+  updateTriageStatus,
+  type TriagePostsQuery,
+} from '@/lib/api/client'
+import type { TriagePredictionFilter } from '@/lib/triage-buckets'
 import type { Label, Post, TriageStatus } from '@/lib/types'
 
 function patchPostInLists(queryClient: ReturnType<typeof useQueryClient>, language: string, updatedPost: Post) {
-  for (const queryKey of [['triage', language], ['posts', language], ['borderline', language]] as const) {
+  for (const queryKey of [['triage', language], ['posts', language]] as const) {
     queryClient.setQueryData<Post[]>(queryKey, (old) =>
       old?.map((post) => (post.id === updatedPost.id ? updatedPost : post))
     )
   }
 }
 
-export function usePosts() {
-  const language = useDashboardStore((s) => s.language)
-  return useQuery({
-    queryKey: ['posts', language],
-    queryFn: () => fetchPosts(language),
-  })
+function invalidateTriage(queryClient: ReturnType<typeof useQueryClient>, language: string) {
+  void queryClient.invalidateQueries({ queryKey: ['triage-stats', language] })
+  void queryClient.invalidateQueries({ queryKey: ['triage-posts', language] })
 }
 
 export function useTriagePosts() {
@@ -27,11 +34,47 @@ export function useTriagePosts() {
   })
 }
 
-export function useBorderlinePosts() {
+/** Classified posts for Explainability; refetches when prediction label pill changes. */
+export function useExplainabilityPosts(labelFilter: TriagePredictionFilter = 'all') {
   const language = useDashboardStore((s) => s.language)
   return useQuery({
-    queryKey: ['borderline', language],
-    queryFn: () => fetchBorderlinePosts(language),
+    queryKey: ['explainability-posts', language, labelFilter],
+    queryFn: () =>
+      fetchPosts(language, {
+        limit: 500,
+        modelLabel: labelFilter === 'all' ? undefined : labelFilter,
+      }),
+    staleTime: 60_000,
+  })
+}
+
+export function useTriageStats() {
+  const language = useDashboardStore((s) => s.language)
+  return useQuery({
+    queryKey: ['triage-stats', language],
+    queryFn: () => fetchTriageStats(language),
+    staleTime: 60_000,
+  })
+}
+
+export function useTriagePostsPage(query: Omit<TriagePostsQuery, 'language'>) {
+  const language = useDashboardStore((s) => s.language)
+  return useQuery({
+    queryKey: [
+      'triage-posts',
+      language,
+      query.bucket,
+      query.limit,
+      query.offset,
+      query.label ?? '',
+      query.q ?? '',
+      query.since ?? '',
+      query.until ?? '',
+      query.hateMin ?? '',
+      query.hateMax ?? '',
+    ],
+    queryFn: () => fetchTriagePostsPage({ ...query, language }),
+    placeholderData: (prev) => prev,
   })
 }
 
@@ -42,7 +85,7 @@ export function useFlagPost() {
     mutationFn: (postId: string) => flagPost(postId),
     onSuccess: (updatedPost) => {
       patchPostInLists(queryClient, language, updatedPost)
-      queryClient.invalidateQueries({ queryKey: ['reported-posts', language] })
+      invalidateTriage(queryClient, language)
     },
   })
 }
@@ -55,7 +98,7 @@ export function useUpdateTriageStatus() {
       updateTriageStatus(postId, status),
     onSuccess: (updatedPost) => {
       patchPostInLists(queryClient, language, updatedPost)
-      queryClient.invalidateQueries({ queryKey: ['reported-posts', language] })
+      invalidateTriage(queryClient, language)
     },
   })
 }
@@ -66,16 +109,16 @@ export function useRelabelPost() {
   return useMutation({
     mutationFn: ({
       postId,
-      manualLabel,
+      label,
       bucket,
     }: {
       postId: string
-      manualLabel: Label
-      bucket?: 'cleared' | 'flagged'
-    }) => relabelPost(postId, manualLabel, bucket),
+      label: Label
+      bucket?: 'flagged'
+    }) => relabelPost(postId, label, bucket),
     onSuccess: (updatedPost) => {
       patchPostInLists(queryClient, language, updatedPost)
-      queryClient.invalidateQueries({ queryKey: ['reported-posts', language] })
+      invalidateTriage(queryClient, language)
     },
   })
 }

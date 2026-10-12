@@ -4,7 +4,7 @@
 
 **Route:** `/analysis` · **Page:** `frontend_dashboard/src/pages/Analysis.tsx`
 
-Tabs: Toxic Word Cloud · Model Drift · Post Volume · Post Clusters
+Tabs: Toxic Word Cloud · Model Drift · Post Volume
 
 ---
 
@@ -105,32 +105,3 @@ Note how “biafra” ranks high on *total* value through frequency (9×) but it
 
 **Data note:** Counts come from **`/predict`** and **`/predict/batch`** calls logged to SQLite. Per user, per language. No activity → flat zero lines.
 
----
-
-## Post Clusters tab
-
-**When it loads:** Clicking **Post Clusters** shows the list (spinner while loading). The fetch starts when you open the **Analysis** page (`useQuery` + `fetchClusters` in `Analysis.tsx`), not when you click the tab. Refetches when language changes; key `['clusters', language]`.
-
-**Request:** `GET /predictions/clusters?language=igbo|yoruba` — no body. Header: `Authorization: Bearer <token>` (`fetchClusters` in `client.ts`).
-
-**Backend:** `main.py` → `analytics_service.user_clusters(user_id, language)` → `user_posts_service.list_user_posts` reads your **newest 500** SQLite `predictions` rows → `_clusters_from_posts`.
-
-**Processing:** Keeps only Hate/Abuse posts. **0 posts → empty array `[]`**; fewer than 6 → one cluster containing all of them. Otherwise: **TF-IDF** vectorizes tweet text (words 3+ chars, up to 2000 features) → **KMeans** groups similar texts, with cluster count `k = min(6, max(2, n/10))` (n = number of toxic posts) and a **fixed random seed (42)**, so identical data always yields identical clusters. Each cluster includes up to 20 sample posts (full post objects: id, tweet, label, probabilities, triage fields), total `size`, and a **representative_text** (tweet closest to the cluster center/centroid). Recomputed on each request (your log grows; there is no server-side cache for user clusters). Requires **scikit-learn**; missing → HTTP 503.
-
-**Response example:**
-```json
-[
-  {
-    "cluster_id": 0,
-    "size": 15,
-    "representative_text": "example tweet…",
-    "posts": [{ "id": "pred_3", "tweet": "…", "label": "Abuse", "predicted_label": "Abuse", … }]
-  }
-]
-```
-
-**Frontend render:** `PostClusters` shows collapsible cards per cluster (Cluster #1, post count, representative preview). Expanding lists posts with label/id badges and full tweet text. Empty array → “No similar post clusters detected”.
-
-**Data note:** Clusters use **your logged predictions** (Testing), not the static test-set CSV. Needs enough similar Hate/Abuse texts to form meaningful groups.
-
----

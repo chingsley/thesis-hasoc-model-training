@@ -4,7 +4,6 @@ import type {
   ModelMetrics,
   DriftDataPoint,
   VolumeDataPoint,
-  PostCluster,
   BatchResult,
   AlertItem,
   Language,
@@ -26,7 +25,6 @@ import {
   generateMockMetrics,
   generateMockDriftData,
   generateMockVolumeData,
-  generateMockClusters,
   mockBatchClassify,
   generateMockAlerts,
 } from './mock';
@@ -37,14 +35,31 @@ function delay<T>(data: T, ms = 200): Promise<T> {
   return new Promise((resolve) => setTimeout(() => resolve(data), ms));
 }
 
-export async function fetchPosts(language: Language, limit?: number): Promise<Post[]> {
+export type FetchPostsOptions = {
+  limit?: number;
+  /** Filter by model output (matches Explainability prediction pills). */
+  modelLabel?: 'Normal' | 'Abuse' | 'Hate';
+};
+
+export async function fetchPosts(
+  language: Language,
+  options?: number | FetchPostsOptions,
+): Promise<Post[]> {
+  const opts: FetchPostsOptions =
+    typeof options === 'number' ? { limit: options } : (options ?? {});
+  const limit = opts.limit ?? 500;
+
   if (USE_MOCK) {
-    const all = getMockPosts();
-    return delay(all.filter((p) => p.language === language));
+    const { modelPrediction } = await import('@/lib/post-labels');
+    let all = getMockPosts().filter((p) => p.language === language);
+    if (opts.modelLabel) {
+      all = all.filter((p) => modelPrediction(p) === opts.modelLabel);
+    }
+    return delay(all.slice(0, limit));
   }
-  // The logged-in user's own processed texts (prediction log), not the test set.
-  const params = limit ? `&limit=${limit}` : '';
-  return apiFetch<Post[]>(`/predictions?language=${language}${params}`);
+  const params = new URLSearchParams({ language, limit: String(limit) });
+  if (opts.modelLabel) params.set('model_label', opts.modelLabel);
+  return apiFetch<Post[]>(`/predictions?${params.toString()}`);
 }
 
 export async function fetchTriagePosts(language: Language): Promise<Post[]> {
@@ -52,8 +67,93 @@ export async function fetchTriagePosts(language: Language): Promise<Post[]> {
     const posts = await fetchPosts(language);
     return posts.filter((p) => p.predicted_label === 'Hate' || p.predicted_label === 'Abuse');
   }
-  // Server-side label filter: toxic posts outside the newest-500 window still show up.
-  return apiFetch<Post[]>(`/predictions?language=${language}&label=Hate,Abuse`);
+  // Legacy list for Explainability; triage UI uses /predictions/triage/posts.
+  return apiFetch<Post[]>(`/predictions?language=${language}&label=Hate,Abuse&limit=500`);
+}
+
+export async function fetchTriageStats(language: Language) {
+  if (USE_MOCK) {
+    const { triageStatsFromPosts } = await import('@/lib/triage-buckets');
+    const posts = await fetchTriagePosts(language);
+    return delay(triageStatsFromPosts(posts));
+  }
+  return apiFetch<import('@/lib/types').TriageStatsData>(
+    `/predictions/triage/stats?language=${language}`,
+  );
+}
+
+export type TriagePostsQuery = {
+  language: Language;
+  bucket: import('@/lib/types').TriageBucket;
+  limit: number;
+  offset: number;
+  label?: 'Normal' | 'Hate' | 'Abuse';
+  q?: string;
+  since?: string;
+  until?: string;
+  hateMin?: number;
+  hateMax?: number;
+};
+
+export async function fetchTriagePostsPage(query: TriagePostsQuery) {
+  if (USE_MOCK) {
+    const { bucketPosts, filterTriagePosts } = await import('@/lib/triage-buckets');
+    const toxic = await fetchTriagePosts(query.language);
+    const inBucket = bucketPosts(toxic)[query.bucket];
+    const filtered = filterTriagePosts(inBucket, {
+      label: query.label ?? 'all',
+      q: query.q,
+      since: query.since,
+      until: query.until,
+      hateMin: query.hateMin,
+      hateMax: query.hateMax,
+    });
+    const items = filtered.slice(query.offset, query.offset + query.limit);
+    return delay({
+      items,
+      total: filtered.length,
+      limit: query.limit,
+      offset: query.offset,
+    });
+  }
+  const params = new URLSearchParams({
+    language: query.language,
+    bucket: query.bucket,
+    limit: String(query.limit),
+    offset: String(query.offset),
+  });
+  if (query.label) params.set('label', query.label);
+  if (query.q) params.set('q', query.q);
+  if (query.since) params.set('since', query.since);
+  if (query.until) params.set('until', query.until);
+  if (query.hateMin != null) params.set('hate_min', String(query.hateMin));
+  if (query.hateMax != null) params.set('hate_max', String(query.hateMax));
+  return apiFetch<import('@/lib/types').TriagePostsPage>(
+    `/predictions/triage/posts?${params.toString()}`,
+  );
+}
+
+const TRIAGE_EXPORT_PAGE_SIZE = 500;
+
+/** Fetch every post matching the triage filters (paginated on the server). */
+export async function fetchAllTriagePostsMatching(
+  query: Omit<TriagePostsQuery, 'limit' | 'offset'>,
+): Promise<import('@/lib/types').Post[]> {
+  const all: import('@/lib/types').Post[] = [];
+  let offset = 0;
+  let total = Number.POSITIVE_INFINITY;
+  while (offset < total) {
+    const page = await fetchTriagePostsPage({
+      ...query,
+      limit: TRIAGE_EXPORT_PAGE_SIZE,
+      offset,
+    });
+    all.push(...page.items);
+    total = page.total;
+    offset += page.items.length;
+    if (page.items.length === 0) break;
+  }
+  return all;
 }
 
 export async function fetchExplanationMethod(
@@ -197,40 +297,24 @@ export async function fetchDriftData(language: Language): Promise<DriftDataPoint
 
 export async function fetchVolumeData(
   language: Language,
-  options: { hours?: number; since?: string; until?: string } = {},
+  options: { hours?: number; since?: string; until?: string; all?: boolean } = {},
 ): Promise<VolumeDataPoint[]> {
   const hours = options.hours ?? 24
   if (USE_MOCK) {
+    if (options.all) {
+      return delay(generateMockVolumeData(2160), 250);
+    }
     return delay(generateMockVolumeData(hours, options.since, options.until), 250);
   }
-  const params = new URLSearchParams({ language, hours: String(hours) });
-  if (options.since) params.set('since', options.since);
-  if (options.until) params.set('until', options.until);
+  const params = new URLSearchParams({ language });
+  if (options.all) {
+    params.set('all', 'true');
+  } else {
+    params.set('hours', String(hours));
+    if (options.since) params.set('since', options.since);
+    if (options.until) params.set('until', options.until);
+  }
   return apiFetch<VolumeDataPoint[]>(`/analytics/volume?${params.toString()}`);
-}
-
-export async function fetchClusters(language: Language): Promise<PostCluster[]> {
-  if (USE_MOCK) {
-    const clusters = generateMockClusters();
-    const filtered = clusters.map((c) => ({
-      ...c,
-      posts: c.posts.filter((p) => p.language === language),
-    }));
-    return delay(filtered.filter((c) => c.posts.length > 0), 200);
-  }
-  return apiFetch<PostCluster[]>(`/predictions/clusters?language=${language}`);
-}
-
-export async function fetchBorderlinePosts(language: Language): Promise<Post[]> {
-  if (USE_MOCK) {
-    const posts = await fetchPosts(language);
-    return posts.filter((p) => {
-      const hateProb = p.probabilities.hate;
-      return hateProb >= 0.4 && hateProb <= 0.6;
-    });
-  }
-  // Server-side probability filter: matches beyond the newest-500 window still show up.
-  return apiFetch<Post[]>(`/predictions?language=${language}&hate_min=0.4&hate_max=0.6`);
 }
 
 export async function flagPost(postId: string): Promise<Post> {
@@ -267,14 +351,31 @@ export async function updateTriageStatus(
 
 export async function relabelPost(
   postId: string,
-  manualLabel: Label,
-  bucket?: 'cleared' | 'flagged'
+  label: Label,
+  bucket?: 'flagged'
 ): Promise<Post> {
   if (USE_MOCK) {
     const all = getMockPosts();
     const post = all.find((p) => p.id === postId);
     if (post) {
-      post.manual_label = manualLabel;
+      const wasRelabelled = post.relabelled;
+      const initial = wasRelabelled ? post.initial_model_prediction : post.predicted_label;
+      if (label === initial && wasRelabelled) {
+        post.relabelled = false;
+        post.initial_model_prediction = null;
+        post.reviewer_id = null;
+        post.reviewed_at = null;
+        post.predicted_label = label;
+        post.label = label;
+      } else if (label !== post.predicted_label) {
+        if (!wasRelabelled) {
+          post.initial_model_prediction = post.predicted_label;
+        }
+        post.relabelled = true;
+        post.predicted_label = label;
+        post.label = label;
+        post.reviewed_at = new Date().toISOString();
+      }
       if (bucket) {
         post.triage_status = bucket;
         post.flagged = bucket === 'flagged';
@@ -284,7 +385,7 @@ export async function relabelPost(
   }
   return apiFetch<Post>(`/predictions/${postId}/relabel`, {
     method: 'POST',
-    body: JSON.stringify(bucket ? { manual_label: manualLabel, bucket } : { manual_label: manualLabel }),
+    body: JSON.stringify(bucket ? { label, bucket } : { label }),
   });
 }
 
@@ -353,6 +454,7 @@ export interface SingleClassifyResult {
   explanation?: ExplanationPayload;
   model_id?: string;
   used_fallback?: boolean;
+  use_openai_moderation?: boolean;
 }
 
 export async function singleClassify(
@@ -374,7 +476,10 @@ export async function singleClassify(
       probabilities: result.probabilities,
       flagged: false,
       triage_status: 'pending',
-      manual_label: null,
+      relabelled: false,
+      initial_model_prediction: null,
+      reviewer_id: null,
+      reviewed_at: null,
       timestamp: new Date().toISOString(),
     };
     return delay({ ...result, explanation: generateMockExplanation(tempPost) }, 400);
@@ -385,17 +490,17 @@ export async function singleClassify(
     body: JSON.stringify({ text, language }),
   });
 
-  // Fetch a SHAP token attribution so the result view can highlight toxic tokens.
-  // Kept to one method for speed; a missing shap dependency surfaces as a
-  // per-method error the UI already handles.
+  // SHAP uses the local Afro-XLMR stack — skip when classification came from OpenAI.
   let explanation: ExplanationPayload | undefined;
-  try {
-    explanation = await apiFetch<ExplanationPayload>('/explain', {
-      method: 'POST',
-      body: JSON.stringify({ text, language, methods: ['shap'] }),
-    });
-  } catch {
-    explanation = undefined;
+  if (!data.use_openai_moderation) {
+    try {
+      explanation = await apiFetch<ExplanationPayload>('/explain', {
+        method: 'POST',
+        body: JSON.stringify({ text, language, methods: ['shap'] }),
+      });
+    } catch {
+      explanation = undefined;
+    }
   }
 
   return {
@@ -404,6 +509,7 @@ export async function singleClassify(
     explanation,
     model_id: data.model_id,
     used_fallback: data.used_fallback,
+    use_openai_moderation: data.use_openai_moderation,
   };
 }
 

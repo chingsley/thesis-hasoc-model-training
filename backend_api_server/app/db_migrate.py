@@ -176,6 +176,66 @@ def _migrate_org_tenancy(conn: sqlite3.Connection) -> None:
                 )
 
 
+def migrate_legacy_triage_statuses(conn) -> None:
+    """Drop cleared/reviewed/new; align flagged bit (SQLite + Postgres)."""
+    conn.execute("UPDATE triage SET status = 'pending' WHERE status IN ('new', 'reviewed', 'cleared')")
+    conn.execute("UPDATE triage SET status = 'flagged' WHERE status = 'reported'")
+    conn.execute("UPDATE triage SET flagged = CASE WHEN status = 'flagged' THEN 1 ELSE 0 END")
+
+
+def ensure_prediction_relabel_columns_sqlite(conn: sqlite3.Connection) -> None:
+    pred_cols = {row[1] for row in conn.execute("PRAGMA table_info(predictions)")}
+    if "initial_model_prediction" not in pred_cols:
+        conn.execute("ALTER TABLE predictions ADD COLUMN initial_model_prediction TEXT")
+    if "relabelled" not in pred_cols:
+        conn.execute("ALTER TABLE predictions ADD COLUMN relabelled INTEGER NOT NULL DEFAULT 0")
+    if "reviewer_user_id" not in pred_cols:
+        conn.execute("ALTER TABLE predictions ADD COLUMN reviewer_user_id INTEGER REFERENCES users(id)")
+    if "reviewed_at" not in pred_cols:
+        conn.execute("ALTER TABLE predictions ADD COLUMN reviewed_at TEXT")
+
+
+def migrate_legacy_triage_manual_labels(conn) -> None:
+    """Move triage.manual_label overrides onto predictions (one-time)."""
+    is_sqlite = isinstance(conn, sqlite3.Connection)
+    sql = (
+        "SELECT p.id, p.organization_id, p.predicted_label, t.manual_label, t.post_id"
+        " FROM predictions p"
+        " INNER JOIN triage t ON t.post_id = ('o' || p.organization_id || '_pred_' || p.id)"
+        " WHERE t.manual_label IS NOT NULL AND t.manual_label != p.predicted_label"
+        " AND COALESCE(p.relabelled, 0) = 0"
+    )
+    if is_sqlite:
+        rows = conn.execute(sql).fetchall()
+    else:
+        conn.execute(sql)
+        rows = conn.fetchall()
+    for row in rows:
+        if isinstance(row, dict):
+            pid = row["id"]
+            org_id = row["organization_id"]
+            predicted = row["predicted_label"]
+            manual = row["manual_label"]
+            post_id = row["post_id"]
+        else:
+            pid, org_id, predicted, manual, post_id = row
+        params = (predicted, manual, pid, org_id)
+        if is_sqlite:
+            conn.execute(
+                "UPDATE predictions SET initial_model_prediction = ?, predicted_label = ?, relabelled = 1"
+                " WHERE id = ? AND organization_id = ?",
+                params,
+            )
+            conn.execute("UPDATE triage SET manual_label = NULL WHERE post_id = ?", (post_id,))
+        else:
+            conn.execute(
+                "UPDATE predictions SET initial_model_prediction = %s, predicted_label = %s, relabelled = 1"
+                " WHERE id = %s AND organization_id = %s",
+                params,
+            )
+            conn.execute("UPDATE triage SET manual_label = NULL WHERE post_id = %s", (post_id,))
+
+
 def run_sqlite_migrations(conn: sqlite3.Connection) -> None:
     pred_cols = {row[1] for row in conn.execute("PRAGMA table_info(predictions)")}
     if "user_id" not in pred_cols:
@@ -193,15 +253,18 @@ def run_sqlite_migrations(conn: sqlite3.Connection) -> None:
         "CREATE INDEX IF NOT EXISTS idx_predictions_org_lang"
         " ON predictions(organization_id, language)"
     )
+    conn.execute(
+        "CREATE INDEX IF NOT EXISTS idx_predictions_org_lang_label_ts"
+        " ON predictions(organization_id, language, predicted_label, ts DESC)"
+    )
     _migrate_org_tenancy(conn)
     triage_cols = {row[1] for row in conn.execute("PRAGMA table_info(triage)")}
     if "manual_label" not in triage_cols:
         conn.execute("ALTER TABLE triage ADD COLUMN manual_label TEXT")
     conn.execute("DROP TABLE IF EXISTS triage_events")
-    conn.execute("UPDATE triage SET status = 'pending' WHERE status = 'new'")
-    conn.execute("UPDATE triage SET status = 'cleared' WHERE status = 'reviewed'")
-    conn.execute("UPDATE triage SET status = 'flagged' WHERE status = 'reported'")
-    conn.execute("UPDATE triage SET flagged = CASE WHEN status = 'flagged' THEN 1 ELSE 0 END")
+    migrate_legacy_triage_statuses(conn)
+    ensure_prediction_relabel_columns_sqlite(conn)
+    migrate_legacy_triage_manual_labels(conn)
     session_cols = {row[1] for row in conn.execute("PRAGMA table_info(sessions)")}
     if "active_organization_id" not in session_cols:
         conn.execute(

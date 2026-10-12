@@ -36,6 +36,8 @@ def _row_to_post(
 ) -> dict[str, Any]:
     pred = row["predicted_label"]
     state = triage.get(_triage_key(organization_id, row["id"]))
+    relabelled = bool(int(row.get("relabelled") or 0))
+    initial = row.get("initial_model_prediction")
     return {
         "id": f"pred_{row['id']}",
         "tweet": row["text"],
@@ -52,8 +54,11 @@ def _row_to_post(
             "hate": row["prob_hate"],
         },
         "flagged": bool(state["flagged"]) if state else False,
-        "triage_status": state["status"] if state else "pending",
-        "manual_label": state["manual_label"] if state else None,
+        "triage_status": db.normalize_triage_status(state["status"]) if state else "pending",
+        "relabelled": relabelled,
+        "initial_model_prediction": initial if relabelled and initial else None,
+        "reviewer_id": row.get("reviewer_user_id") if relabelled else None,
+        "reviewed_at": row.get("reviewed_at") if relabelled else None,
         "timestamp": row["ts"],
     }
 
@@ -66,6 +71,7 @@ def list_org_posts(
     hate_min: float | None = None,
     hate_max: float | None = None,
     labels: list[str] | None = None,
+    model_labels: list[str] | None = None,
 ) -> list[dict[str, Any]]:
     rows = db.org_prediction_rows(
         organization_id,
@@ -75,6 +81,7 @@ def list_org_posts(
         hate_min=hate_min,
         hate_max=hate_max,
         labels=labels,
+        model_labels=model_labels,
     )
     triage = db.get_triage_state(
         [_triage_key(organization_id, row["id"]) for row in rows]
@@ -104,32 +111,68 @@ def apply_org_triage(
         _triage_key(organization_id, prediction_id), flagged=flagged, status=status
     )
     post["flagged"] = bool(state["flagged"])
-    post["triage_status"] = state["status"]
-    post["manual_label"] = state["manual_label"]
+    post["triage_status"] = db.normalize_triage_status(state["status"])
     return post
 
 
 def relabel_org_post(
     organization_id: int,
     prediction_id: int,
-    manual_label: str,
+    label: str,
+    reviewer_user_id: int,
     bucket: str | None = None,
 ) -> dict[str, Any] | None:
-    post = get_org_post(organization_id, prediction_id)
-    if post is None:
+    if get_org_post(organization_id, prediction_id) is None:
         return None
-    state = db.upsert_triage(
-        _triage_key(organization_id, prediction_id),
-        flagged=(bucket == "flagged") if bucket else None,
-        status=bucket,
-        manual_label=manual_label,
-    )
-    post["flagged"] = bool(state["flagged"])
-    post["triage_status"] = state["status"]
-    post["manual_label"] = state["manual_label"]
-    return post
+    row = db.relabel_org_prediction(organization_id, prediction_id, label, reviewer_user_id)
+    if row is None:
+        return None
+    if bucket == "flagged":
+        db.upsert_triage(
+            _triage_key(organization_id, prediction_id), flagged=True, status="flagged"
+        )
+    triage = db.get_triage_state([_triage_key(organization_id, prediction_id)])
+    return _row_to_post(row, triage, organization_id)
 
 
 def org_reported_posts(organization_id: int, language: str) -> list[dict[str, Any]]:
     posts = list_org_posts(organization_id, language, limit=5000)
     return [post for post in posts if post["triage_status"] == "flagged"]
+
+
+def triage_stats(organization_id: int, language: str) -> dict[str, dict[str, int]]:
+    return db.org_triage_stats(organization_id, language)
+
+
+def list_triage_bucket_posts(
+    organization_id: int,
+    language: str,
+    bucket: str,
+    limit: int,
+    offset: int,
+    *,
+    label: str | None = None,
+    q: str | None = None,
+    since: str | None = None,
+    until: str | None = None,
+    hate_min: float | None = None,
+    hate_max: float | None = None,
+) -> tuple[list[dict[str, Any]], int]:
+    rows, total = db.org_triage_posts_page(
+        organization_id,
+        language,
+        bucket,
+        limit,
+        offset,
+        label=label,
+        q=q,
+        since=since,
+        until=until,
+        hate_min=hate_min,
+        hate_max=hate_max,
+    )
+    triage = db.get_triage_state(
+        [_triage_key(organization_id, row["id"]) for row in rows]
+    )
+    items = [_row_to_post(row, triage, organization_id) for row in rows]
+    return items, total

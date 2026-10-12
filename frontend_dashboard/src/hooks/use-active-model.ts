@@ -21,6 +21,8 @@ export function useActiveModel() {
     models: query.data?.models ?? {},
     device: query.data?.device,
     modelSet: query.data?.model_set ?? null,
+    useOpenAiModeration: query.data?.use_openai_moderation ?? false,
+    openaiModerationModel: query.data?.openai_moderation_model ?? null,
     isLoading: query.isLoading,
     isLive: !USE_MOCK && Boolean(activeModelId),
   }

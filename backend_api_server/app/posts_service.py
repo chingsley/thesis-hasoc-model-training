@@ -107,7 +107,10 @@ def _load_posts(language: str) -> list[dict[str, Any]]:
         state = triage.get(post["id"])
         post["flagged"] = bool(state["flagged"]) if state else False
         post["triage_status"] = state["status"] if state else "pending"
-        post["manual_label"] = state["manual_label"] if state else None
+        post["relabelled"] = False
+        post["initial_model_prediction"] = None
+        post["reviewer_id"] = None
+        post["reviewed_at"] = None
         post["timestamp"] = state["updated_at"] if state else ""
 
     _cache[key] = posts
@@ -142,7 +145,6 @@ def apply_triage(
     state = db.upsert_triage(post_id, flagged=flagged, status=status)
     post["flagged"] = bool(state["flagged"])
     post["triage_status"] = state["status"]
-    post["manual_label"] = state["manual_label"]
     post["timestamp"] = state["updated_at"]
     for lang_posts in _cache.values():
         for cached in lang_posts:

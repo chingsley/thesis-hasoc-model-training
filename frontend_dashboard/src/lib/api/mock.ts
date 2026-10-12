@@ -4,7 +4,6 @@ import type {
   ModelMetrics,
   DriftDataPoint,
   VolumeDataPoint,
-  PostCluster,
   BatchResult,
   AlertItem,
   Language,
@@ -255,8 +254,11 @@ export function generateMockPosts(count = 200): Post[] {
       flagged: label !== 'Normal' && Math.random() < 0.4,
       triage_status: label === 'Normal'
         ? 'pending'
-        : (['pending', 'cleared', 'flagged'] as const)[Math.floor(Math.random() * 3)],
-      manual_label: null,
+        : (['pending', 'flagged'] as const)[Math.floor(Math.random() * 2)],
+      relabelled: false,
+      initial_model_prediction: null,
+      reviewer_id: null,
+      reviewed_at: null,
       timestamp,
     })
   }
@@ -410,31 +412,6 @@ export function generateMockVolumeData(
     })
   }
   return data
-}
-
-export function generateMockClusters(): PostCluster[] {
-  const posts = getMockPosts()
-  const hateAndAbuse = posts.filter(p => p.label === 'Hate' || p.label === 'Abuse')
-  const shuffled = [...hateAndAbuse].sort(() => Math.random() - 0.5)
-
-  const clusters: PostCluster[] = []
-  const clusterCount = 4 + Math.floor(Math.random() * 4)
-  let idx = 0
-  const perCluster = Math.ceil(shuffled.length / clusterCount)
-
-  for (let c = 0; c < clusterCount; c++) {
-    const clusterPosts = shuffled.slice(idx, idx + perCluster)
-    idx += perCluster
-    if (clusterPosts.length === 0) continue
-    clusters.push({
-      cluster_id: c,
-      posts: clusterPosts,
-      representative_text: prefixMockMessage(clusterPosts[0].tweet),
-      size: clusterPosts.length,
-    })
-  }
-
-  return clusters
 }
 
 export function mockBatchClassify(texts: string[], _language: Language): BatchResult[] {

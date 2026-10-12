@@ -20,7 +20,7 @@ Reported test macro-F1: Igbo ≈ **0.86**, Yoruba ≈ **0.67**, joint model ≈ 
 | ----------------------------------------- | ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **`model_training/`** (`kc_train` bundle) | Python, PyTorch, HuggingFace Transformers | Self-contained modeling package: data loading, training, baselines, evaluation, robustness, explainability. Runs via notebooks or CLI sweeps (`run_all.sh`)         |
 | **`backend_api_server/`**                 | FastAPI, SQLAlchemy/SQLite                | Inference API (`/predict`, `/predict/batch`, `/explain`, `/metrics`) with per-language model routing, API keys + session-token auth, and per-user logging/analytics |
-| **`frontend_dashboard/`**                 | React + TypeScript + Vite                 | Analytics dashboard with 7 modules: Overview, Triage Queue, Explainability, Analysis, Testing Tools, Performance, Reports                                           |
+| **`frontend_dashboard/`**                 | React + TypeScript + Vite                 | Analytics dashboard with 6 modules: Overview, Review & Report, Classify Posts, Explainability, Analysis, Performance                                           |
 | **`hf_spaces/`**                          | Gradio                                    | Lightweight model tester UI (paste text → classify)                                                                                                                 |
 
 Also included: `model_training/publish_v2.sh` and `modeling/scripts/publish_to_hf` for shipping checkpoints + metrics to Hugging Face Hub.

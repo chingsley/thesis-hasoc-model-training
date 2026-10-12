@@ -72,7 +72,7 @@ export default function Login() {
             Safer platforms, in every language.
           </h1>
           <p className="text-lg text-white/90 leading-relaxed">
-            Classify, triage, and explain hate speech in Igbo and Yoruba, through one API.
+            Classify, review and report, and explain hate speech in Igbo and Yoruba, through one API.
             Every call you make is tracked to your account and language.
           </p>
         </div>

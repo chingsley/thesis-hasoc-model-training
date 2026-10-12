@@ -6,19 +6,19 @@
 
 ---
 
-## Post list — “Select a Post”
+## Post list (left card)
 
 **When it loads:** Opening the Explainability page (not a separate click).
 
-**Request:** `GET /predictions?language=igbo|yoruba&label=Hate,Abuse` — no body. Header: `Authorization: Bearer <token>` (`client.ts` → `fetchTriagePosts`).
+**Request:** `GET /predictions?language=igbo|yoruba&limit=500` and optional `model_label=Normal|Abuse|Hate` when a prediction pill is selected — no body. Header: `Authorization: Bearer <token>` (`client.ts` → `fetchPosts`, hook `useExplainabilityPosts`).
 
-**Backend:** `main.py` → `user_posts_service.list_user_posts` → SQLite `predictions` table with the label filter in SQL (`WHERE user_id = ? AND language = ? AND predicted_label IN ('Hate','Abuse')`, newest first, limit 500 matching rows). These are texts you classified earlier via Testing (`/predict`).
+**Backend:** `main.py` → `user_posts_service.list_user_posts` → SQLite `predictions` table (`WHERE user_id = ? AND language = ?`, newest first, limit 500). These are texts you classified earlier via Classify Posts (`/predict`).
 
-**Frontend processing:** None in live mode — the backend already filtered to Hate/Abuse. The list shows the first 30 (`Explainability.tsx`).
+**Frontend processing:** Prediction pills refetch from the API with `model_label` (server matches `initial_model_prediction` when relabelled, else `predicted_label`). Search, date range, and hate-probability range still filter client-side (`filterTriagePosts`). If the selected post falls outside the filtered set, selection clears.
 
 **Response used:** Array of posts with `id` (e.g. `pred_7` = 7th saved prediction for your account), `tweet`, `label`, `predicted_label`, probabilities, triage fields.
 
-**Render:** Scrollable buttons with tweet preview, id badge, and label badge.
+**Render:** Card header with All/Normal/Abuse/Hate pills; toolbar with search + filter popover; count line; scrollable list of all matching posts (up to 500 loaded).
 
 ---
 

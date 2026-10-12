@@ -7,12 +7,11 @@ End-to-end documentation for each HateGuard sidebar module: what the user clicks
 | Sidebar menu | File |
 |--------------|------|
 | Overview | [overview.md](./overview.md) |
-| Triage Queue | [triage-queue.md](./triage-queue.md) |
+| Review & Report | [triage-queue.md](./triage-queue.md) |
 | Explainability | [explainability.md](./explainability.md) |
 | Analysis | [analysis.md](./analysis.md) |
-| Testing Tools | [testing-tools.md](./testing-tools.md) |
+| Classify Posts | [testing-tools.md](./testing-tools.md) |
 | Performance | [performance.md](./performance.md) |
-| Reports | [reports.md](./reports.md) |
 
 ## Operations guides
 

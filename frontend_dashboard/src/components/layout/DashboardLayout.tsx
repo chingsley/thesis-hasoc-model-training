@@ -1,16 +1,15 @@
-import { useRef, useState } from 'react'
-import { Outlet } from 'react-router-dom'
-import { Sidebar } from './Sidebar'
-import { Header } from './Header'
-import { useAlerts } from '@/hooks/use-alerts'
-import { AlertToast } from '@/components/alerts/AlertToast'
-import { Toaster } from '@/components/ui/sonner'
-import { SessionUserSync } from '@/components/auth/SessionUserSync'
+import { useRef, useState } from 'react';
+import { Outlet } from 'react-router-dom';
+import { Sidebar } from './Sidebar';
+import { Header } from './Header';
+import { useAlerts } from '@/hooks/use-alerts';
+import { Toaster } from '@/components/ui/sonner';
+import { SessionUserSync } from '@/components/auth/SessionUserSync';
 
 export function DashboardLayout() {
-  const [sidebarOpen, setSidebarOpen] = useState(false)
-  const mainRef = useRef<HTMLElement>(null)
-  useAlerts()
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const mainRef = useRef<HTMLElement>(null);
+  useAlerts();
 
   return (
     <div className="flex h-screen overflow-hidden bg-[var(--hg-shell)]">
@@ -27,8 +26,7 @@ export function DashboardLayout() {
           </div>
         </main>
       </div>
-      <AlertToast />
       <Toaster />
     </div>
-  )
+  );
 }

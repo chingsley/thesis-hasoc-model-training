@@ -1,27 +1,122 @@
-import { useEffect, useId, useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { PredictionCell } from '@/components/dashboard/post-cells'
-import type { Label, Post } from '@/lib/types'
-import { cn } from '@/lib/utils'
-import { Check, CheckCircle, Flag, Loader2, X } from 'lucide-react'
+import { useEffect, useId, useState, type ReactNode } from 'react';
+import { Button } from '@/components/ui/button';
+import { HateProbCell, PredictionCell } from '@/components/dashboard/post-cells';
+import type { Label, Post } from '@/lib/types';
+import { modelPrediction, reviewerLabel } from '@/lib/post-labels';
+import { cn } from '@/lib/utils';
+import { Check, Flag, Loader2, X } from 'lucide-react';
 
-const LABELS: Label[] = ['Normal', 'Abuse', 'Hate']
+function formatLanguage(language: Post['language']) {
+  return language === 'igbo' ? 'Igbo' : 'Yoruba';
+}
 
-export type RelabelMode = 'create' | 'edit'
+function formatProb(value: number) {
+  return `${Math.round(value * 1000) / 10}%`;
+}
+
+function formatDateTime(timestamp?: string | null) {
+  if (!timestamp) return '—';
+  const d = new Date(timestamp);
+  if (Number.isNaN(d.getTime())) return timestamp;
+  return d.toLocaleString(undefined, {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
+
+function DetailRow({
+  label,
+  children,
+  className,
+}: {
+  label: string;
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <div className={cn('grid grid-cols-[7.5rem_1fr] gap-x-3 gap-y-0.5 text-sm', className)}>
+      <dt className="text-[11px] font-semibold tracking-wide text-[var(--hg-muted)] uppercase">
+        {label}
+      </dt>
+      <dd className="min-w-0 text-[var(--hg-ink)]">{children}</dd>
+    </div>
+  );
+}
+
+function SectionHeading({ children }: { children: ReactNode }) {
+  return (
+    <h3 className="text-[11px] font-semibold tracking-wide text-[var(--hg-muted)] uppercase">
+      {children}
+    </h3>
+  );
+}
+
+function PostDetailsMeta({ post }: { post: Post }) {
+  return (
+    <dl className="space-y-2.5 rounded-[4px] border border-[var(--hg-border)] bg-white p-4">
+      <DetailRow label="Post ID">
+        <span className="font-mono text-[11px] break-all">{post.id}</span>
+      </DetailRow>
+      <DetailRow label="Language">{formatLanguage(post.language)}</DetailRow>
+      <DetailRow label="Source">{post.split}</DetailRow>
+      <DetailRow label="Length">{post.length.toLocaleString()} chars</DetailRow>
+      <DetailRow label="Prediction">
+        <PredictionCell label={modelPrediction(post)} />
+      </DetailRow>
+      <DetailRow label="Reviewer label">
+        {reviewerLabel(post) ? (
+          <PredictionCell label={reviewerLabel(post)!} />
+        ) : (
+          <span className="text-[var(--hg-muted)]">—</span>
+        )}
+      </DetailRow>
+      <DetailRow label="Relabelled">{post.relabelled ? 'Yes' : 'No'}</DetailRow>
+      <DetailRow label="Review status">
+        {post.triage_status === 'flagged' ? 'Flagged' : 'Pending'}
+      </DetailRow>
+      <DetailRow label="Flagged">{post.flagged ? 'Yes' : 'No'}</DetailRow>
+      <DetailRow label="Hate %">
+        <HateProbCell value={post.probabilities.hate} />
+      </DetailRow>
+      <DetailRow label="Probabilities">
+        <span className="font-mono text-[11px] tabular-nums text-[var(--hg-muted)]">
+          N {formatProb(post.probabilities.normal)} · A {formatProb(post.probabilities.abuse)} · H{' '}
+          {formatProb(post.probabilities.hate)}
+        </span>
+      </DetailRow>
+      <DetailRow label="Reviewer">
+        {post.reviewer_id != null ? (
+          <span className="font-mono text-[11px]">user #{post.reviewer_id}</span>
+        ) : (
+          <span className="text-[var(--hg-muted)]">—</span>
+        )}
+      </DetailRow>
+      <DetailRow label="Reviewed at">{formatDateTime(post.reviewed_at)}</DetailRow>
+      <DetailRow label="Processed">{formatDateTime(post.timestamp)}</DetailRow>
+    </dl>
+  );
+}
+
+const LABELS: Label[] = ['Normal', 'Abuse', 'Hate'];
+
+export type RelabelMode = 'create' | 'edit';
 
 interface RelabelSheetProps {
   /** When set, the sheet is open. */
-  post: Post | null
-  /** create: from Pending (choose label + bucket) · edit: from Relabelled (label only) */
-  mode: RelabelMode
-  saving: boolean
-  onSave: (label: Label, bucket?: 'cleared' | 'flagged') => void | Promise<void>
-  onClose: () => void
+  post: Post | null;
+  /** create: relabel from queue · edit: from Relabelled */
+  mode: RelabelMode;
+  saving: boolean;
+  onSave: (label: Label, bucket?: 'flagged') => void | Promise<void>;
+  onClose: () => void;
 }
 
 const labelStyles: Record<
   Label,
-  { idle: string; selected: string; check: string }
+  { idle: string; selected: string; check: string; }
 > = {
   Normal: {
     idle: 'border-emerald-200 bg-emerald-50/40 text-[var(--hg-ink)] hover:border-emerald-300 hover:bg-emerald-50',
@@ -39,7 +134,7 @@ const labelStyles: Record<
     selected: 'border-[var(--hg-secondary)] bg-rose-50 text-rose-950 ring-2 ring-[var(--hg-secondary)]/20',
     check: 'bg-[var(--hg-secondary)] text-white',
   },
-}
+};
 
 function RelabelForm({
   post,
@@ -48,46 +143,49 @@ function RelabelForm({
   onSave,
   onCancel,
 }: {
-  post: Post
-  mode: RelabelMode
-  saving: boolean
-  onSave: (label: Label, bucket?: 'cleared' | 'flagged') => void | Promise<void>
-  onCancel: () => void
+  post: Post;
+  mode: RelabelMode;
+  saving: boolean;
+  onSave: (label: Label, bucket?: 'flagged') => void | Promise<void>;
+  onCancel: () => void;
 }) {
-  const [label, setLabel] = useState<Label>(post.manual_label ?? post.predicted_label)
-  const [bucket, setBucket] = useState<'cleared' | 'flagged' | null>(null)
+  const [label, setLabel] = useState<Label>(
+    reviewerLabel(post) ?? modelPrediction(post),
+  );
+  const [alsoFlag, setAlsoFlag] = useState(false);
 
   const handleSave = async () => {
     try {
       await Promise.resolve(
-        onSave(label, mode === 'create' ? bucket ?? undefined : undefined),
-      )
-      onCancel()
+        onSave(label, mode === 'create' && alsoFlag ? 'flagged' : undefined),
+      );
+      onCancel();
     } catch {
       // Keep the sheet open when the save request fails.
     }
-  }
+  };
 
   return (
     <>
-      <div className="flex-1 space-y-6 overflow-auto px-6 py-5">
-        <div className="rounded-[4px] border border-[var(--hg-border)] bg-[var(--hg-canvas)] p-4">
-          <p className="text-sm leading-relaxed text-[var(--hg-ink)]">{post.tweet}</p>
-          <div className="mt-3 flex flex-wrap items-center gap-2">
-            <span className="inline-flex rounded-[4px] border border-[var(--hg-border)] bg-white px-1.5 py-0.5 font-mono text-[11px] text-[var(--hg-muted)]">
-              {post.id}
-            </span>
-            <span className="text-[11px] text-[var(--hg-muted)]">Model label</span>
-            <PredictionCell label={post.predicted_label} />
-          </div>
-        </div>
+      <div className="flex-1 overflow-auto">
+        <section className="space-y-2 border-b border-[var(--hg-border)] px-6 py-5">
+          <SectionHeading>Post text</SectionHeading>
+          <p className="text-sm leading-relaxed whitespace-pre-wrap text-[var(--hg-ink)]">
+            {post.tweet}
+          </p>
+        </section>
 
-        <fieldset className="space-y-2.5 border-0 p-0">
-          <legend className="text-sm font-semibold text-[var(--hg-ink)]">Correct label</legend>
+        <section className="space-y-3 border-b border-[var(--hg-border)] px-6 py-5">
+          <SectionHeading>Post details</SectionHeading>
+          <PostDetailsMeta post={post} />
+        </section>
+
+        <section className="space-y-3 border-b border-[var(--hg-border)] px-6 py-5">
+          <SectionHeading>Correct label</SectionHeading>
           <div className="grid grid-cols-3 gap-2" role="radiogroup" aria-label="Correct label">
             {LABELS.map((l) => {
-              const selected = label === l
-              const styles = labelStyles[l]
+              const selected = label === l;
+              const styles = labelStyles[l];
               return (
                 <button
                   key={l}
@@ -114,50 +212,31 @@ function RelabelForm({
                   )}
                   {l}
                 </button>
-              )
+              );
             })}
           </div>
-        </fieldset>
+        </section>
 
         {mode === 'create' && (
-          <fieldset className="space-y-2.5 border-0 p-0">
-            <legend className="text-sm font-semibold text-[var(--hg-ink)]">Send to bucket</legend>
-            <p className="text-xs text-[var(--hg-muted)]">
-              Optional — leave unselected to keep the post in Pending after relabeling.
-            </p>
-            <div className="grid grid-cols-2 gap-2" role="radiogroup" aria-label="Send to bucket">
-              {(
-                [
-                  { id: 'flagged' as const, label: 'Flagged', icon: Flag },
-                  { id: 'cleared' as const, label: 'Cleared', icon: CheckCircle },
-                ] as const
-              ).map((option) => {
-                const selected = bucket === option.id
-                const Icon = option.icon
-                return (
-                  <button
-                    key={option.id}
-                    type="button"
-                    role="radio"
-                    aria-checked={selected}
-                    onClick={() =>
-                      setBucket((current) => (current === option.id ? null : option.id))
-                    }
-                    className={cn(
-                      'flex items-center justify-center gap-2 rounded-[4px] border px-3 py-3 text-sm font-medium transition-all',
-                      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--hg-brand)]/30',
-                      selected
-                        ? 'border-[var(--hg-brand)] bg-[var(--hg-soft)] text-[var(--hg-ink)] shadow-sm'
-                        : 'border-[var(--hg-border)] bg-white text-[var(--hg-muted)] hover:border-[var(--hg-muted)] hover:bg-[var(--hg-canvas)] hover:text-[var(--hg-ink)]',
-                    )}
-                  >
-                    <Icon className="size-3.5 shrink-0" />
-                    {option.label}
-                  </button>
-                )
-              })}
-            </div>
-          </fieldset>
+          <section className="border-b border-[var(--hg-border)] px-6 py-5">
+            <label className="flex cursor-pointer items-start gap-3">
+              <input
+                type="checkbox"
+                checked={alsoFlag}
+                onChange={(e) => setAlsoFlag(e.target.checked)}
+                className="mt-0.5 size-4 rounded border-[var(--hg-border)]"
+              />
+              <span className="min-w-0 space-y-0.5">
+                <span className="flex items-center gap-1.5 text-sm font-semibold text-[var(--hg-ink)]">
+                  <Flag className="size-3.5 text-[var(--hg-muted)]" aria-hidden />
+                  Also flag for incident report
+                </span>
+                <span className="block text-xs text-[var(--hg-muted)]">
+                  The post stays in the queue and appears in the Flagged tab.
+                </span>
+              </span>
+            </label>
+          </section>
         )}
       </div>
 
@@ -186,7 +265,7 @@ function RelabelForm({
         </Button>
       </div>
     </>
-  )
+  );
 }
 
 /**
@@ -196,36 +275,36 @@ function RelabelForm({
  * `key`, so its state always initializes from the current post.
  */
 export function RelabelSheet({ post, mode, saving, onSave, onClose }: RelabelSheetProps) {
-  const [visible, setVisible] = useState(false)
-  const titleId = useId()
-  const descriptionId = useId()
+  const [visible, setVisible] = useState(false);
+  const titleId = useId();
+  const descriptionId = useId();
 
   useEffect(() => {
-    if (!post) return
-    const raf = requestAnimationFrame(() => setVisible(true))
-    return () => cancelAnimationFrame(raf)
-  }, [post])
+    if (!post) return;
+    const raf = requestAnimationFrame(() => setVisible(true));
+    return () => cancelAnimationFrame(raf);
+  }, [post]);
 
   useEffect(() => {
-    if (!post) return
+    if (!post) return;
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape' && !saving) {
-        event.preventDefault()
-        setVisible(false)
-        window.setTimeout(onClose, 300)
+        event.preventDefault();
+        setVisible(false);
+        window.setTimeout(onClose, 300);
       }
-    }
-    window.addEventListener('keydown', onKeyDown)
-    return () => window.removeEventListener('keydown', onKeyDown)
-  }, [post, saving, onClose])
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [post, saving, onClose]);
 
-  if (!post) return null
+  if (!post) return null;
 
   const close = () => {
-    if (saving) return
-    setVisible(false)
-    window.setTimeout(onClose, 300)
-  }
+    if (saving) return;
+    setVisible(false);
+    window.setTimeout(onClose, 300);
+  };
 
   return (
     <div
@@ -253,12 +332,12 @@ export function RelabelSheet({ post, mode, saving, onSave, onClose }: RelabelShe
         <div className="flex items-start justify-between gap-4 border-b border-[var(--hg-border)] px-6 py-5">
           <div className="min-w-0 space-y-1">
             <h2 id={titleId} className="text-xl font-semibold tracking-tight text-[var(--hg-ink)]">
-              {mode === 'create' ? 'Relabel post' : 'Edit manual label'}
+              {mode === 'create' ? 'Relabel post' : 'Edit relabel'}
             </h2>
             <p id={descriptionId} className="text-sm leading-snug text-[var(--hg-muted)]">
               {mode === 'create'
-                ? 'Correct the model’s label. Optionally send the post to Flagged or Cleared, or leave it in Pending.'
-                : 'Update the manual label. Matching the model’s label removes the post from Relabelled.'}
+                ? 'Correct the model’s label. Optionally flag for an incident report — the post stays in the queue.'
+                : 'Change the reviewer label. Setting it back to the model prediction removes the post from Relabelled.'}
             </p>
           </div>
           <button
@@ -282,5 +361,5 @@ export function RelabelSheet({ post, mode, saving, onSave, onClose }: RelabelShe
         />
       </div>
     </div>
-  )
+  );
 }

@@ -11,10 +11,13 @@ export class ApiError extends Error {
   }
 }
 
+const API_TIMEOUT_MS = 25_000
+
 export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
   const token = useAuthStore.getState().token
   const response = await fetch(`${API_BASE_URL}${path}`, {
     ...init,
+    signal: init?.signal ?? AbortSignal.timeout(API_TIMEOUT_MS),
     headers: {
       'Content-Type': 'application/json',
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -42,6 +45,8 @@ export interface HealthResponse {
   models: Record<string, string>
   routing: string
   model_set?: string | null
+  use_openai_moderation?: boolean
+  openai_moderation_model?: string | null
 }
 
 export interface PredictResponse {
@@ -50,6 +55,7 @@ export interface PredictResponse {
   model_id: string
   language: string
   used_fallback: boolean
+  use_openai_moderation?: boolean
 }
 
 export interface BatchPredictResponse {

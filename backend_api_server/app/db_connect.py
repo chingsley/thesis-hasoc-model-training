@@ -172,6 +172,17 @@ def _init_postgres(conn: Any) -> None:
             "ALTER TABLE sessions ADD COLUMN IF NOT EXISTS active_organization_id INTEGER"
             " REFERENCES organizations(id)"
         )
+        from .db_migrate import migrate_legacy_triage_manual_labels, migrate_legacy_triage_statuses
+
+        migrate_legacy_triage_statuses(cur)
+        for stmt in (
+            "ALTER TABLE predictions ADD COLUMN IF NOT EXISTS initial_model_prediction TEXT",
+            "ALTER TABLE predictions ADD COLUMN IF NOT EXISTS relabelled INTEGER NOT NULL DEFAULT 0",
+            "ALTER TABLE predictions ADD COLUMN IF NOT EXISTS reviewer_user_id INTEGER REFERENCES users(id)",
+            "ALTER TABLE predictions ADD COLUMN IF NOT EXISTS reviewed_at TEXT",
+        ):
+            cur.execute(stmt)
+        migrate_legacy_triage_manual_labels(cur)
     conn.commit()
 
 
@@ -215,16 +226,17 @@ def wipe_all_tables() -> None:
     """Delete all application data (seed --reset-db for Postgres)."""
     if using_postgres():
         conn = get_conn()
+        # Child tables first (predictions.reviewer_user_id → users).
         tables = [
             "sessions",
             "api_keys",
             "invites",
+            "alerts",
+            "triage",
+            "explanations",
+            "predictions",
             "users",
             "organizations",
-            "predictions",
-            "triage",
-            "alerts",
-            "explanations",
         ]
         with _lock, conn:
             for table in tables:

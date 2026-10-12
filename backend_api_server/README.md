@@ -180,7 +180,7 @@ Full reference with curl examples and sample responses: **[project_documentation
 
 | Endpoint | Auth | Description |
 |----------|------|-------------|
-| `GET /health` | public | Loaded model ids per language + device |
+| `GET /health` | public | Loaded model ids per language + device; `use_openai_moderation` when `USE_OPEN_AI_MODERATION_API` is set |
 | `POST /auth/login` | public | Email + password → session token (invite-first login supported) |
 | `POST /auth/change-password` | session | Set new password (required after invite) |
 | `POST /auth/logout` / `GET /auth/me` | session | End session / current user info |
