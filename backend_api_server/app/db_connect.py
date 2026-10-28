@@ -79,6 +79,8 @@ class _ConnectionAdapter:
     def __init__(self, backend: str, raw: Any) -> None:
         self._backend = backend
         self._raw = raw
+        # Open psycopg transaction blocks, one per active `with conn:` (Postgres only).
+        self._pg_transactions: list[Any] = []
 
     def execute(self, query: str, params: Any = ()) -> _CursorAdapter:
         sql = _adapt_sql(query)
@@ -139,12 +141,20 @@ class _ConnectionAdapter:
         self._raw.executescript(script)
 
     def commit(self) -> None:
-        if self._backend == "postgres":
+        # Inside `with conn:` the block commits on exit (psycopg forbids an explicit
+        # commit there); outside one, Postgres runs in autocommit.
+        if self._backend == "postgres" and not self._pg_transactions:
             self._raw.commit()
 
     def __enter__(self) -> _ConnectionAdapter:
         if self._backend == "sqlite":
             self._raw.execute("BEGIN")
+        else:
+            # The Postgres connection is in autocommit mode (see get_conn), so open
+            # an explicit transaction to keep the block's statements atomic.
+            transaction = self._raw.transaction()
+            transaction.__enter__()
+            self._pg_transactions.append(transaction)
         return self
 
     def __exit__(self, exc_type, exc, tb) -> None:
@@ -153,10 +163,9 @@ class _ConnectionAdapter:
                 self._raw.commit()
             else:
                 self._raw.rollback()
-        elif exc_type is None:
-            self._raw.commit()
         else:
-            self._raw.rollback()
+            # Commits on success, rolls back on error; the exception still propagates.
+            self._pg_transactions.pop().__exit__(exc_type, exc, tb)
 
 
 def _init_postgres(conn: Any) -> None:
@@ -195,6 +204,11 @@ def get_conn() -> _ConnectionAdapter:
             _backend = "postgres"
             _pg_conn = psycopg.connect(database_url())
             _init_postgres(_pg_conn)
+            # Autocommit after the schema set-up: otherwise a plain read starts a
+            # transaction that stays open ("idle in transaction") and holds locks
+            # that block other processes, e.g. the seed script's schema step.
+            # Writes inside `with conn:` still run as one transaction.
+            _pg_conn.autocommit = True
         else:
             _backend = "sqlite"
             path = db_path()
