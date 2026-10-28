@@ -24,6 +24,10 @@ logger = logging.getLogger(__name__)
 
 ALL_METHODS = ("lime", "shap", "attention_rollout", "integrated_gradients")
 
+# Part of the /explain cache key. Bump whenever explanation output changes so
+# stale cached payloads are not served (v2: LIME explains the predicted class).
+EXPLAINER_VERSION = "2"
+
 # Tuning knobs (env-overridable). Defaults chosen for interactive dashboard use:
 # LIME runs twice (second run feeds the stability metric), so sample count
 # dominates wall time — 200 keeps fidelity within a few points of 500 while
@@ -89,14 +93,16 @@ class Explainer:
         except ImportError as exc:
             raise ImportError("lime is required for LIME explanations") from exc
         explainer = LimeTextExplainer(class_names=LABELS)
+        # top_labels=1 explains the class predicted for the unperturbed text, like
+        # SHAP and IG. Without it LIME defaults to labels=(1,), i.e. always "Abuse".
         explanation = explainer.explain_instance(
-            text, self.predict_proba, num_features=12, num_samples=num_samples
+            text, self.predict_proba, num_features=12, num_samples=num_samples, top_labels=1
         )
-        predicted = self.predict_proba([text])[0]
+        top_class = int(explanation.top_labels[0])
         return {
             "method": "lime",
-            "scores": explanation.as_list(),
-            "predicted_label": LABELS[int(np.argmax(predicted))],
+            "scores": explanation.as_list(label=top_class),
+            "predicted_label": LABELS[top_class],
             "fidelity_proxy": float(explanation.score),
         }
 

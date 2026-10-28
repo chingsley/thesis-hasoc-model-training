@@ -27,7 +27,7 @@ from .auth import (
     sha256_hex,
     verify_password,
 )
-from .explain_service import explain_text
+from .explain_service import EXPLAINER_VERSION, explain_text
 from .metrics_service import load_metrics
 from . import openai_moderation_service as oai_mod
 from .model_service import ModelRouter, effective_model_set
@@ -765,8 +765,11 @@ def explain(payload: ExplainRequest, user: dict = Depends(get_caller_user)) -> d
     # content-addressed so repeat requests (any user) return instantly. The
     # model id is part of the key because one language can be served by
     # different models across HF_MODEL_SET values, and this cache is on disk.
+    # EXPLAINER_VERSION invalidates entries computed by older explanation code.
     methods_key = ",".join(sorted(payload.methods)) if payload.methods else "all"
-    cache_key = sha256_hex(f"{service.model_id}|{payload.language}|{methods_key}|{text}")
+    cache_key = sha256_hex(
+        f"{EXPLAINER_VERSION}|{service.model_id}|{payload.language}|{methods_key}|{text}"
+    )
     cached = db.get_cached_explanation(cache_key)
     if cached is not None:
         # Skip cache entries that only captured dependency/runtime failures so a
