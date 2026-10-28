@@ -43,7 +43,16 @@ SEED_USERS: list[tuple[str, str, str, str]] = [
 PRIMARY_EMAIL = SEED_USERS[0][0]
 
 # Spread seeded test posts over this window (timestamps only; text is from the test set).
-HISTORY_DAYS = 90
+# Longer than the dashboard's 3m range (90 days), so "All" and "3m" differ.
+HISTORY_DAYS = 120
+# Each post's age is drawn independently, so every language spans the whole window.
+# A recency-weighted mix (exponential, mean RECENT_MEAN_DAYS) plus a uniform floor
+# keeps every range selector populated for both languages. Expected shares:
+# 24h ~5%, 7d ~28%, 1m ~68%, 3m ~92%, All 100%.
+RECENT_SHARE = 0.7
+RECENT_MEAN_DAYS = 15
+# Smallest age, so no seeded post falls in the future or the current minute.
+MIN_AGE_HOURS = 0.05
 
 rng = random.Random(42)
 
@@ -134,20 +143,29 @@ def load_test_set_posts() -> list[dict]:
     return combined
 
 
+def _sample_age_hours() -> float:
+    """Age of one seeded post, from the recency-weighted mix described above."""
+    max_hours = HISTORY_DAYS * 24
+    if rng.random() < RECENT_SHARE:
+        age = rng.expovariate(1 / (RECENT_MEAN_DAYS * 24))
+        while age >= max_hours:
+            age = rng.expovariate(1 / (RECENT_MEAN_DAYS * 24))
+    else:
+        age = rng.uniform(0, max_hours)
+    return max(age, MIN_AGE_HOURS)
+
+
 def seed_predictions_from_test_set(user_id: int, test_posts: list[dict]) -> dict[str, int]:
     user = db.get_user_by_id(user_id)
     organization_id = int(user["organization_id"])
     now = datetime.now(timezone.utc)
     rows: list[dict] = []
-    n = len(test_posts)
 
-    for i, post in enumerate(test_posts):
-        day_offset = (i * HISTORY_DAYS) // max(n, 1)
-        ts = now - timedelta(
-            days=day_offset,
-            hours=rng.uniform(0, 23.5),
-            minutes=rng.randint(0, 59),
-        )
+    dated_posts = [(now - timedelta(hours=_sample_age_hours()), post) for post in test_posts]
+    # Insert oldest first so row ids follow time, as they would in live use.
+    dated_posts.sort(key=lambda item: item[0])
+
+    for ts, post in dated_posts:
         probs = post["probabilities"]
         _append_row(
             rows,
