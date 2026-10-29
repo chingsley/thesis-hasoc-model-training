@@ -13,7 +13,7 @@ for lang in ('igbo', 'yoruba'):
 
 tmux new -s retrain
 
-MODELING_DATASET=merged VENV_DIR=~/thesis-hasoc-model-training/kc_train_venv ./run_all.sh
+MODELING_DATASET_SOURCE=merged VENV_DIR=~/thesis-hasoc-model-training/kc_train_venv ./run_all.sh
 
 
 After training is complete
