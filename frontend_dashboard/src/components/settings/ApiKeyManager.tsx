@@ -40,6 +40,16 @@ import {
   settingsFormStripClass,
   settingsSectionHeaderClass,
 } from '@/components/settings/settings-form-layout';
+import {
+  settingsRevealDialogAlertClass,
+  settingsRevealDialogBodyClass,
+  settingsRevealDialogButtonClass,
+  settingsRevealDialogContentClass,
+  settingsRevealDialogFooterClass,
+  settingsRevealDialogSecretPanelClass,
+  settingsRevealDialogSecretValueClass,
+  settingsRevealDialogOutlineButtonClass,
+} from '@/components/settings/settings-reveal-dialog';
 
 function formatCreated(iso: string): string {
   try {
@@ -357,32 +367,33 @@ export function ApiKeyManager() {
       )}
 
       <Dialog open={revealOpen} onOpenChange={(open) => !open && closeReveal()}>
-        <DialogContent
-          className="gap-0 overflow-hidden p-0 sm:max-w-md"
-          showCloseButton={false}
-        >
-          <div className="border-b border-amber-200/80 bg-amber-50 px-5 py-4 dark:border-amber-900/50 dark:bg-amber-950/40">
+        <DialogContent className={settingsRevealDialogContentClass} showCloseButton={false}>
+          <div className={settingsRevealDialogAlertClass}>
             <DialogHeader className="gap-2 text-left">
-              <div className="flex items-center gap-2 text-amber-800 dark:text-amber-200">
-                <AlertTriangle className="h-4 w-4 shrink-0" />
-                <DialogTitle className="text-base">Save your API key</DialogTitle>
+              <div className="flex items-center gap-2.5 text-amber-800 dark:text-amber-200">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-amber-300/60 bg-amber-100/80 dark:border-amber-800 dark:bg-amber-900/50">
+                  <AlertTriangle className="h-4 w-4" aria-hidden />
+                </span>
+                <DialogTitle className="text-base font-semibold">Save your API key</DialogTitle>
               </div>
-              <DialogDescription className="text-amber-900/80 dark:text-amber-100/80">
+              <DialogDescription className="pl-[2.625rem] text-sm leading-relaxed text-amber-900/80 dark:text-amber-100/80">
                 This is the only time the full secret is shown. Copy it now — you cannot view it
                 again.
               </DialogDescription>
             </DialogHeader>
           </div>
-          <div className="space-y-4 p-5">
-            <div className="rounded-lg border border-[var(--hg-border)] bg-[var(--hg-shell)] p-3">
-              <code className="block break-all font-mono text-xs leading-relaxed text-[var(--hg-ink)]">
-                {newKeyPlaintext}
-              </code>
+          <div className={settingsRevealDialogBodyClass}>
+            <div className={settingsRevealDialogSecretPanelClass}>
+              <div className={settingsRevealDialogSecretValueClass}>
+                <code className="block break-all font-mono text-xs leading-relaxed text-[var(--hg-ink)]">
+                  {newKeyPlaintext}
+                </code>
+              </div>
             </div>
             <Button
               type="button"
               variant="outline"
-              className="w-full cursor-pointer gap-2"
+              className={settingsRevealDialogOutlineButtonClass}
               onClick={handleCopyReveal}
             >
               {copied ? (
@@ -398,8 +409,8 @@ export function ApiKeyManager() {
               )}
             </Button>
           </div>
-          <DialogFooter className="border-t border-[var(--hg-border)] bg-[var(--hg-shell)]/50 px-5 py-4">
-            <Button type="button" className="w-full cursor-pointer sm:w-auto" onClick={closeReveal}>
+          <DialogFooter className={settingsRevealDialogFooterClass}>
+            <Button type="button" className={settingsRevealDialogButtonClass} onClick={closeReveal}>
               I&apos;ve saved this key
             </Button>
           </DialogFooter>

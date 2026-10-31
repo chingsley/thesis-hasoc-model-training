@@ -44,6 +44,17 @@ import {
   settingsFormStripClass,
   settingsSectionHeaderClass,
 } from '@/components/settings/settings-form-layout';
+import {
+  settingsRevealDialogAlertClass,
+  settingsRevealDialogBodyClass,
+  settingsRevealDialogButtonClass,
+  settingsRevealDialogContentClass,
+  settingsRevealDialogFooterClass,
+  settingsRevealDialogSecretDividerClass,
+  settingsRevealDialogSecretPanelClass,
+  settingsRevealDialogSecretValueClass,
+  settingsRevealDialogOutlineButtonClass,
+} from '@/components/settings/settings-reveal-dialog';
 
 function formatCreated(iso: string): string {
   try {
@@ -308,60 +319,64 @@ export function InviteUserManager() {
       )}
 
       <Dialog open={revealOpen} onOpenChange={(open) => !open && closeReveal()}>
-        <DialogContent
-          className="gap-0 overflow-hidden p-0 sm:max-w-md"
-          showCloseButton={false}
-        >
-          <div className="border-b border-amber-200/80 bg-amber-50 px-5 py-4 dark:border-amber-900/50 dark:bg-amber-950/40">
+        <DialogContent className={settingsRevealDialogContentClass} showCloseButton={false}>
+          <div className={settingsRevealDialogAlertClass}>
             <DialogHeader className="gap-2 text-left">
-              <div className="flex items-center gap-2 text-amber-800 dark:text-amber-200">
-                <AlertTriangle className="h-4 w-4 shrink-0" />
-                <DialogTitle className="text-base">Share login credentials</DialogTitle>
+              <div className="flex items-center gap-2.5 text-amber-800 dark:text-amber-200">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-amber-300/60 bg-amber-100/80 dark:border-amber-800 dark:bg-amber-900/50">
+                  <AlertTriangle className="h-4 w-4" aria-hidden />
+                </span>
+                <DialogTitle className="text-base font-semibold">Share login credentials</DialogTitle>
               </div>
-              <DialogDescription className="text-amber-900/80 dark:text-amber-100/80">
+              <DialogDescription className="pl-[2.625rem] text-sm leading-relaxed text-amber-900/80 dark:text-amber-100/80">
                 This temporary password is shown only once. Send it to the invitee along with your
                 dashboard login URL.
               </DialogDescription>
             </DialogHeader>
           </div>
-          <div className="space-y-4 p-5">
-            <div className="space-y-3 rounded-lg border border-[var(--hg-border)] bg-[var(--hg-shell)] p-3 text-sm">
-              <div>
+          <div className={settingsRevealDialogBodyClass}>
+            <div className={settingsRevealDialogSecretPanelClass}>
+              <div className="space-y-1">
                 <p className="text-xs font-medium uppercase tracking-wide text-[var(--hg-muted)]">
                   Email
                 </p>
-                <p className="mt-0.5 font-medium text-[var(--hg-ink)]">{revealEmail}</p>
+                <p className="font-medium text-[var(--hg-ink)]">{revealEmail}</p>
               </div>
-              <div>
+              <div className={settingsRevealDialogSecretDividerClass} aria-hidden />
+              <div className="space-y-1.5">
                 <p className="text-xs font-medium uppercase tracking-wide text-[var(--hg-muted)]">
                   Temporary password
                 </p>
-                <code className="mt-0.5 block break-all font-mono text-xs leading-relaxed text-[var(--hg-ink)]">
-                  {revealPassword}
-                </code>
+                <div className={settingsRevealDialogSecretValueClass}>
+                  <code className="block break-all font-mono text-xs leading-relaxed text-[var(--hg-ink)]">
+                    {revealPassword}
+                  </code>
+                </div>
               </div>
             </div>
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full cursor-pointer gap-2"
-              onClick={handleCopyCredentials}
-            >
-              {copied ? (
-                <>
-                  <Check className="h-4 w-4 text-emerald-600" />
-                  Copied
-                </>
-              ) : (
-                <>
-                  <Copy className="h-4 w-4" />
-                  Copy email and password
-                </>
-              )}
-            </Button>
+            <div className="flex justify-end">
+              <Button
+                type="button"
+                variant="outline"
+                className={settingsRevealDialogOutlineButtonClass}
+                onClick={handleCopyCredentials}
+              >
+                {copied ? (
+                  <>
+                    <Check className="h-4 w-4 text-emerald-600" />
+                    Copied
+                  </>
+                ) : (
+                  <>
+                    <Copy className="h-4 w-4" />
+                    Copy email and password
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
-          <DialogFooter className="border-t border-[var(--hg-border)] bg-[var(--hg-shell)]/50 px-5 py-4">
-            <Button type="button" className="w-full cursor-pointer sm:w-auto" onClick={closeReveal}>
+          <DialogFooter className={settingsRevealDialogFooterClass}>
+            <Button type="button" className={settingsRevealDialogButtonClass} onClick={closeReveal}>
               I&apos;ve shared these credentials
             </Button>
           </DialogFooter>
