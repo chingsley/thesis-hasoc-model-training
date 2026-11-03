@@ -443,7 +443,8 @@ cd /
 sudo -u hateguard -H /opt/hateguard/venv/bin/hf auth login
 ```
 
-- Paste a **read-only** token. Best: a fine-grained token that can read only the three `chingsley/afro-xlmr-*-hate` repositories. The input is hidden.
+- Paste a **read-only** token. Best: a fine-grained token that can read only the six model repositories: the three `chingsley/afro-xlmr-*-hate` repositories (original) and the three `chingsley/afro-xlmr-*-hate-v2-merged` repositories (merged, needed only for Settings → Model set). The input is hidden.
+- An existing fine-grained token can be extended instead of replaced: on huggingface.co, Settings → Access Tokens → the token's **Edit permissions** → add the merged repositories → Save. The VM picks this up at the next download; no new login is needed.
 - Answer `n` to "Add token as git credential?".
 - If `hf` is not found, run `sudo -u hateguard -H /opt/hateguard/venv/bin/huggingface-cli login` instead.
 
@@ -460,13 +461,19 @@ sudo -u hateguard -H /opt/hateguard/venv/bin/python - <<'EOF'
 from huggingface_hub import model_info
 for repo in ("chingsley/afro-xlmr-igbo-hate",
              "chingsley/afro-xlmr-yoruba-hate",
-             "chingsley/afro-xlmr-joint-igbo-yoruba-hate"):
-    info = model_info(repo)
-    print(repo, info.sha, "private" if info.private else "public")
+             "chingsley/afro-xlmr-joint-igbo-yoruba-hate",
+             "chingsley/afro-xlmr-igbo-hate-v2-merged",
+             "chingsley/afro-xlmr-yoruba-hate-v2-merged",
+             "chingsley/afro-xlmr-joint-igbo-yoruba-hate-v2-merged"):
+    try:
+        info = model_info(repo)
+        print(repo, info.sha, "private" if info.private else "public")
+    except Exception as exc:
+        print(repo, "NO ACCESS:", type(exc).__name__)
 EOF
 ```
 
-Expected: three lines, each with a revision SHA and `private`. Keep the SHAs for the record (B12). If this fails with 401 or `RepositoryNotFound`, the login did not work. Ask the researcher to repeat it.
+Expected: six lines, each with a revision SHA and `private`. Keep the SHAs for the record (B12). If the three original repositories show `NO ACCESS`, the login did not work; ask the researcher to repeat it. If only the three merged ones do, the API still works, but Settings → Model set cannot switch to merged until the researcher adds them to the token.
 
 ### B7. Deployment config (agent)
 
@@ -484,6 +491,10 @@ HF_MODEL_SET=original
 HF_MODEL_ID_IGBO=chingsley/afro-xlmr-igbo-hate
 HF_MODEL_ID_YORUBA=chingsley/afro-xlmr-yoruba-hate
 HF_MODEL_ID_JOINT=chingsley/afro-xlmr-joint-igbo-yoruba-hate
+# Merged-dataset models: loaded only when a platform admin switches in Settings → Model set.
+HF_MODEL_ID_IGBO_MERGED=chingsley/afro-xlmr-igbo-hate-v2-merged
+HF_MODEL_ID_YORUBA_MERGED=chingsley/afro-xlmr-yoruba-hate-v2-merged
+HF_MODEL_ID_JOINT_MERGED=chingsley/afro-xlmr-joint-igbo-yoruba-hate-v2-merged
 HF_HUB_CACHE=/opt/hateguard/hf-cache
 HF_HUB_DISABLE_TELEMETRY=1
 
@@ -507,6 +518,7 @@ sudo -u hateguard git -C /opt/hateguard/app status --short    # must print nothi
 ```
 
 - `HF_MODEL_SET=original` matches the researcher's current local set-up: the published models with test macro-F1 of Igbo ≈ 0.86 and Yoruba ≈ 0.67. Change it to `merged` only if the researcher says so.
+- `HF_MODEL_SET` is only the default. A platform admin can switch between original and merged in Settings → Model set without editing this file. That choice is saved in the database and wins over `HF_MODEL_SET` until it is changed again in Settings.
 - `INFERENCE_DEVICE=cpu`: the VM has no GPU.
 - The file must be `-rw-------` and owned by `hateguard`.
 
@@ -731,6 +743,7 @@ Do **not** add a Vercel rewrite, function or middleware that proxies the API. Do
 | Power state | Mac | `az vm show -d --subscription "$SUB" --resource-group "$RG" --name "$VM" --query powerState -o tsv` |
 | Change the nightly shutdown (A5 auto-shutdown) | Mac | `az vm auto-shutdown --subscription "$SUB" --resource-group "$RG" --name "$VM" --time <HHMM in UTC>` (`--off` removes it) |
 | Change the nightly shutdown (A7 timer) | VM | Edit `OnCalendar=` in `/etc/systemd/system/hateguard-deallocate.timer`, then `sudo systemctl daemon-reload`. Pause it for a late session with `sudo systemctl stop hateguard-deallocate.timer`; it comes back at the next boot. |
+| Switch original ⇄ merged models | Browser | Settings → Model set (platform admin only). No restart. The first switch to merged downloads about 3.3 GB into `/opt/hateguard/hf-cache` (several minutes); the current models keep serving until it finishes. Needs the `*_MERGED` lines in `.env` (B7) and token access to the merged repositories (B6). Keep it on original during the study. |
 
 After the VM starts, both services start by themselves, and the models load from the local cache in about a minute.
 

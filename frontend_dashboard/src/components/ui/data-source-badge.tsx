@@ -3,6 +3,7 @@ import { isValidElement, useLayoutEffect, useRef } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { USE_MOCK } from '@/lib/api/config'
 import { useActiveModel } from '@/hooks/use-active-model'
+import { useAuthStore } from '@/lib/store/auth'
 import { usePageTitleStore } from '@/lib/store/page-title'
 import { cn } from '@/lib/utils'
 
@@ -41,7 +42,8 @@ export function OpenAiModerationHeaderChip({ className }: { className?: string }
 
 export function ModelSetBadge({ className }: { className?: string }) {
   const { modelSet, isLive } = useActiveModel()
-  if (USE_MOCK || !isLive || !modelSet) return null
+  const isPlatformAdmin = useAuthStore((s) => s.user?.is_platform_admin ?? false)
+  if (USE_MOCK || !isLive || !modelSet || !isPlatformAdmin) return null
   const isMerged = modelSet === 'merged'
   return (
     <Badge

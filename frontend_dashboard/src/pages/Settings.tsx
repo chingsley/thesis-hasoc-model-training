@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { SectionTitle } from '@/components/ui/data-source-badge';
 import { ApiKeyManager } from '@/components/settings/ApiKeyManager';
 import { InviteUserManager } from '@/components/settings/InviteUserManager';
+import { ModelSetManager } from '@/components/settings/ModelSetManager';
 import { OrganizationManager } from '@/components/settings/OrganizationManager';
 import { COLOR_THEMES } from '@/lib/theme/catalog';
 import { useThemeStore } from '@/lib/store/theme';
@@ -49,6 +50,8 @@ export default function Settings() {
       )}
 
       {!USE_MOCK && isPlatformAdmin && <OrganizationManager />}
+
+      {!USE_MOCK && isPlatformAdmin && <ModelSetManager />}
 
       {!USE_MOCK && canInvite && <InviteUserManager />}
 

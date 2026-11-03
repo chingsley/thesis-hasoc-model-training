@@ -94,8 +94,21 @@ class ModelService:
         return outputs
 
 
-def effective_model_set() -> str | None:
-    """Which published model family the backend should load: original, merged, or unset."""
+# Chosen by a platform admin in Settings (see model_set_service); overrides
+# HF_MODEL_SET for this process.
+_runtime_model_set: str | None = None
+
+
+def normalize_model_set(raw: str) -> str:
+    """Map a model set name or alias (v1, v2-merged, ...) to original or merged."""
+    mapped = _MODEL_SET_ALIASES.get(raw.strip().lower())
+    if mapped is None:
+        raise ValueError("Unknown model set {0!r} (expected original or merged)".format(raw))
+    return mapped
+
+
+def env_model_set() -> str | None:
+    """The model family named by ``HF_MODEL_SET``: original, merged, or unset."""
     raw = os.getenv("HF_MODEL_SET", "").strip().lower()
     if not raw:
         return None
@@ -107,17 +120,31 @@ def effective_model_set() -> str | None:
     return mapped
 
 
+def set_runtime_model_set(model_set: str | None) -> None:
+    global _runtime_model_set
+    _runtime_model_set = model_set
+
+
+def effective_model_set() -> str | None:
+    """Which published model family the backend serves: the Settings choice, else ``HF_MODEL_SET``."""
+    return _runtime_model_set or env_model_set()
+
+
 def env_for_key(stem: str, prefix: str) -> str | None:
-    """Resolve ``STEM_PREFIX`` with optional ``HF_MODEL_SET`` suffix.
+    """Resolve ``STEM_PREFIX`` for the active model set (see ``env_for_key_in_set``)."""
+    return env_for_key_in_set(effective_model_set(), stem, prefix)
+
+
+def env_for_key_in_set(model_set: str | None, stem: str, prefix: str) -> str | None:
+    """Resolve ``STEM_PREFIX`` with an optional model set suffix.
 
     Examples: ``HF_MODEL_ID_IGBO_ORIGINAL``, ``MODEL_PATH_YORUBA_MERGED``.
 
-    When ``HF_MODEL_SET=merged``, unsuffixed vars are ignored so the original Hub
-    IDs cannot be loaded by accident. ``original`` (and unset) may fall back to
-    the unsuffixed var used by the current ``.env``.
+    For ``merged``, unsuffixed vars are ignored so the original Hub IDs cannot be
+    loaded by accident. ``original`` (and unset) may fall back to the unsuffixed
+    var used by the current ``.env``.
     """
     prefix = prefix.upper()
-    model_set = effective_model_set()
     if model_set:
         specific = os.getenv("{0}_{1}_{2}".format(stem, prefix, model_set.upper()), "").strip()
         if specific:
@@ -128,7 +155,7 @@ def env_for_key(stem: str, prefix: str) -> str | None:
 
 
 def resolve_hf_model_id_for_key(prefix: str) -> str | None:
-    """Hub repo ID for metrics/posts, following ``HF_MODEL_SET``."""
+    """Hub repo ID for metrics/posts, following the active model set."""
     specific = env_for_key("HF_MODEL_ID", prefix)
     if specific:
         return specific
@@ -157,8 +184,14 @@ def resolve_checkpoint_path(model_path: str) -> str:
 
 
 def resolve_model_source_for_key(prefix: str) -> tuple[str | None, str | None]:
-    hf_model_id = env_for_key("HF_MODEL_ID", prefix)
-    model_path = env_for_key("MODEL_PATH", prefix)
+    return resolve_model_source_in_set(effective_model_set(), prefix)
+
+
+def resolve_model_source_in_set(
+    model_set: str | None, prefix: str
+) -> tuple[str | None, str | None]:
+    hf_model_id = env_for_key_in_set(model_set, "HF_MODEL_ID", prefix)
+    model_path = env_for_key_in_set(model_set, "MODEL_PATH", prefix)
 
     if hf_model_id:
         return None, hf_model_id
@@ -191,16 +224,40 @@ def resolve_model_source() -> tuple[str | None, str | None]:
     return resolve_legacy_model_source()
 
 
+def model_sources(model_set: str | None) -> Dict[str, str]:
+    """Hub ID or checkpoint path per routing key that ``ModelRouter(model_set=...)`` loads.
+
+    Empty when nothing is configured for the set. Raises ``FileNotFoundError``
+    when a ``MODEL_PATH_*`` var points at something that is not a checkpoint.
+    """
+    sources: Dict[str, str] = {}
+    for language in ROUTED_LANGUAGES:
+        model_path, hf_model_id = resolve_model_source_in_set(model_set, language.upper())
+        if model_path or hf_model_id:
+            sources[language] = hf_model_id or model_path
+    if not sources and model_set != "merged":
+        legacy_path, legacy_hf = resolve_legacy_model_source()
+        if legacy_path or legacy_hf:
+            for language in ROUTED_LANGUAGES:
+                sources[language] = legacy_hf or legacy_path
+    joint_path, joint_hf = resolve_model_source_in_set(model_set, "JOINT")
+    if joint_path or joint_hf:
+        sources["joint"] = joint_hf or joint_path
+    return sources
+
+
 class ModelRouter:
     """Routes inference to per-language models with optional joint fallback."""
 
-    def __init__(self, device: str = "auto") -> None:
+    def __init__(self, device: str = "auto", model_set: str | None = None) -> None:
+        """``model_set`` defaults to the active family (see ``effective_model_set``)."""
         self.device = device
+        self.model_set = model_set or effective_model_set()
         self._models: Dict[str, ModelService] = {}
         self._fallback: ModelService | None = None
 
         for language in ROUTED_LANGUAGES:
-            model_path, hf_model_id = resolve_model_source_for_key(language.upper())
+            model_path, hf_model_id = resolve_model_source_in_set(self.model_set, language.upper())
             if model_path or hf_model_id:
                 self._models[language] = ModelService(
                     model_path=model_path,
@@ -208,7 +265,8 @@ class ModelRouter:
                     device=device,
                 )
 
-        if not self._models:
+        # Legacy unsuffixed vars name the original models, so merged never uses them.
+        if not self._models and self.model_set != "merged":
             legacy_path, legacy_hf = resolve_legacy_model_source()
             if legacy_path or legacy_hf:
                 shared = ModelService(
@@ -219,7 +277,7 @@ class ModelRouter:
                 for language in ROUTED_LANGUAGES:
                     self._models[language] = shared
 
-        joint_path, joint_hf = resolve_model_source_for_key("JOINT")
+        joint_path, joint_hf = resolve_model_source_in_set(self.model_set, "JOINT")
         if joint_path or joint_hf:
             self._fallback = ModelService(
                 model_path=joint_path,
@@ -228,8 +286,7 @@ class ModelRouter:
             )
 
         if not self._models and not self._fallback:
-            model_set = effective_model_set()
-            if model_set == "merged":
+            if self.model_set == "merged":
                 raise ValueError(
                     "HF_MODEL_SET=merged but no *_MERGED model sources are set. "
                     "Upload the retrained checkpoints to new Hub repos "
@@ -244,7 +301,7 @@ class ModelRouter:
 
         logger.info(
             "ModelRouter ready: model_set=%s languages=%s fallback=%s device=%s",
-            effective_model_set(),
+            self.model_set,
             {lang: svc.model_id for lang, svc in self._models.items()},
             self._fallback.model_id if self._fallback else None,
             self.inference_device,

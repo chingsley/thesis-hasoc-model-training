@@ -227,6 +227,28 @@ class SessionOrganizationRequest(BaseModel):
     organization_id: int = Field(ge=1)
 
 
+ModelSetName = Literal["original", "merged"]
+
+
+class ModelSetOption(BaseModel):
+    id: ModelSetName
+    configured: bool
+    models: dict[str, str]  # routing key (igbo, yoruba, joint) -> Hub ID or checkpoint path
+
+
+class ModelSetStatus(BaseModel):
+    active: ModelSetName | None  # None: HF_MODEL_SET unset and nothing chosen in Settings
+    env_default: ModelSetName | None
+    saved: str | None
+    loading: ModelSetName | None
+    error: str | None
+    options: list[ModelSetOption]
+
+
+class ModelSetSwitchRequest(BaseModel):
+    model_set: ModelSetName
+
+
 class InviteCreateRequest(BaseModel):
     email: str = Field(min_length=3, max_length=320)
     organization_id: int | None = Field(default=None, ge=1)

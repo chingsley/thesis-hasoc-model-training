@@ -86,6 +86,12 @@ CREATE TABLE IF NOT EXISTS explanations (
   payload TEXT NOT NULL,
   created_at TEXT NOT NULL
 );
+CREATE TABLE IF NOT EXISTS app_settings (
+  key TEXT PRIMARY KEY,
+  value TEXT NOT NULL,
+  updated_at TEXT NOT NULL,
+  updated_by INTEGER
+);
 """
 
 

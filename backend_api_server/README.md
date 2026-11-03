@@ -11,7 +11,7 @@ FastAPI inference service for the fine-tuned hate-speech classifiers.
 | **HF Inference Endpoints** | Managed GPU, no server ops | Pay-per-use hosted inference; you'd replace `ModelService` with HTTP calls to HF's endpoint. Overkill unless you need auto-scaling. |
 | **AWS SageMaker / GCP Vertex** | Production at scale | Heavy setup; not needed for a thesis dashboard. |
 
-**Per-language routing (v0.2):** The dashboard language selector (`igbo` / `yoruba`) picks the matching model. Configure `HF_MODEL_ID_IGBO`, `HF_MODEL_ID_YORUBA`, and optionally `HF_MODEL_ID_JOINT` (fallback only). After retraining, keep the original Hub IDs and add `HF_MODEL_ID_*_MERGED`; switch families with `HF_MODEL_SET=original|merged` and restart the API.
+**Per-language routing (v0.2):** The dashboard language selector (`igbo` / `yoruba`) picks the matching model. Configure `HF_MODEL_ID_IGBO`, `HF_MODEL_ID_YORUBA`, and optionally `HF_MODEL_ID_JOINT` (fallback only). After retraining, keep the original Hub IDs and add `HF_MODEL_ID_*_MERGED`. `HF_MODEL_SET=original|merged` sets the default family. Platform admins can switch families while the API runs in **Settings → Model set** (`GET`/`PUT /admin/model-set`): the new models load in the background, the current ones serve until then, and the choice is saved in the database (table `app_settings`), where it overrides `HF_MODEL_SET` across restarts. The switch lives in the API process, so run one uvicorn worker.
 
 | Repo | Role |
 |------|------|

@@ -892,3 +892,34 @@ def save_cached_explanation(cache_key: str, language: str, payload: dict[str, An
                 " VALUES (?, ?, ?, ?)",
                 (cache_key, language, json.dumps(payload), utc_now()),
             )
+
+
+# --- Server-wide settings (e.g. the model set chosen in Settings) ---
+
+
+def get_app_setting(key: str) -> str | None:
+    conn = get_conn()
+    with _lock:
+        row = conn.execute("SELECT value FROM app_settings WHERE key = ?", (key,)).fetchone()
+    return row["value"] if row is not None else None
+
+
+def set_app_setting(key: str, value: str, updated_by: int | None = None) -> None:
+    conn = get_conn()
+    with _lock, conn:
+        if using_postgres():
+            conn.execute(
+                "INSERT INTO app_settings (key, value, updated_at, updated_by)"
+                " VALUES (?, ?, ?, ?)"
+                " ON CONFLICT (key) DO UPDATE SET"
+                " value = EXCLUDED.value,"
+                " updated_at = EXCLUDED.updated_at,"
+                " updated_by = EXCLUDED.updated_by",
+                (key, value, utc_now(), updated_by),
+            )
+        else:
+            conn.execute(
+                "INSERT OR REPLACE INTO app_settings (key, value, updated_at, updated_by)"
+                " VALUES (?, ?, ?, ?)",
+                (key, value, utc_now(), updated_by),
+            )

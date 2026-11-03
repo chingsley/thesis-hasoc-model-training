@@ -104,6 +104,14 @@ POSTGRES_DDL: list[str] = [
     )
     """,
     """
+    CREATE TABLE IF NOT EXISTS app_settings (
+      key TEXT PRIMARY KEY,
+      value TEXT NOT NULL,
+      updated_at TEXT NOT NULL,
+      updated_by INTEGER
+    )
+    """,
+    """
     CREATE INDEX IF NOT EXISTS idx_predictions_user_lang ON predictions(user_id, language)
     """,
     """

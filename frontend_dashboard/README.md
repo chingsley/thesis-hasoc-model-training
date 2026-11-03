@@ -1,5 +1,15 @@
 # React + TypeScript + Vite
 
+HateGuard dashboard frontend (React, TypeScript, Vite).
+
+## Live deployment
+
+- **Production:** [https://hateguard.vercel.app](https://hateguard.vercel.app)
+
+For local dev with the API, see [`project_documentation/run-dashboard.md`](../project_documentation/run-dashboard.md).
+
+---
+
 This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
 
 Currently, two official plugins are available:

@@ -14,6 +14,8 @@ import type {
   ApiKeyCreatedResponse,
   InviteCreatedResponse,
   InviteInfo,
+  ModelSetName,
+  ModelSetStatus,
   OrganizationInfo,
   OverviewStats,
   XaiMethod,
@@ -278,6 +280,18 @@ export async function setActiveOrganization(organizationId: number): Promise<Use
   return apiFetch<User>('/auth/session/organization', {
     method: 'POST',
     body: JSON.stringify({ organization_id: organizationId }),
+  });
+}
+
+export async function fetchModelSetStatus(): Promise<ModelSetStatus> {
+  return apiFetch<ModelSetStatus>('/admin/model-set');
+}
+
+/** Starts the switch; poll fetchModelSetStatus until `loading` is null. */
+export async function switchModelSet(modelSet: ModelSetName): Promise<ModelSetStatus> {
+  return apiFetch<ModelSetStatus>('/admin/model-set', {
+    method: 'PUT',
+    body: JSON.stringify({ model_set: modelSet }),
   });
 }
 

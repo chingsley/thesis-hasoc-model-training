@@ -3,7 +3,6 @@ from __future__ import annotations
 import logging
 import os
 from contextlib import asynccontextmanager
-from functools import lru_cache
 from typing import Literal
 
 from dotenv import load_dotenv
@@ -31,6 +30,11 @@ from .explain_service import EXPLAINER_VERSION, explain_text
 from .metrics_service import load_metrics
 from . import openai_moderation_service as oai_mod
 from .model_service import ModelRouter, effective_model_set
+from .model_set_service import (
+    ModelSetSwitcher,
+    ModelSetSwitchInProgressError,
+    ModelSetUnavailableError,
+)
 from .predict_service import classify_texts
 from .schemas import (
     ApiKeyCreateRequest,
@@ -52,6 +56,8 @@ from .schemas import (
     LoginRequest,
     LoginResponse,
     ModelMetricsResponse,
+    ModelSetStatus,
+    ModelSetSwitchRequest,
     OverviewStatsResponse,
     PostResponse,
     PredictRequest,
@@ -72,21 +78,17 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-_router: ModelRouter | None = None
+model_sets = ModelSetSwitcher()
 
 
-@lru_cache(maxsize=1)
 def get_router() -> ModelRouter:
-    global _router
-    if _router is None:
-        _router = ModelRouter(device=os.getenv("INFERENCE_DEVICE", "auto"))
-    return _router
+    return model_sets.router()
 
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
     db.get_conn()
-    get_router()
+    model_sets.restore_saved_choice()
     yield
 
 
@@ -141,11 +143,11 @@ def _require_invite_admin(user: dict) -> None:
         )
 
 
-def _require_platform_admin(user: dict) -> None:
+def _require_platform_admin(user: dict, action: str = "manage organizations") -> None:
     if not is_platform_admin(user):
         raise HTTPException(
             status_code=403,
-            detail="Only platform administrators can manage organizations",
+            detail=f"Only platform administrators can {action}",
         )
 
 
@@ -355,6 +357,31 @@ def set_active_organization(
         payload.organization_id,
     )
     return _user_info(refreshed)
+
+
+# --- Model set: which published model family serves every organization ---
+
+
+@app.get("/admin/model-set", response_model=ModelSetStatus)
+def get_model_set(user: dict = Depends(get_session_user_active)) -> ModelSetStatus:
+    _require_platform_admin(user, "view the model set")
+    return ModelSetStatus(**model_sets.status())
+
+
+@app.put("/admin/model-set", response_model=ModelSetStatus, status_code=202)
+def switch_model_set(
+    payload: ModelSetSwitchRequest, user: dict = Depends(get_session_user_active)
+) -> ModelSetStatus:
+    """Start loading the chosen family; poll GET /admin/model-set until `loading` is null."""
+    _require_platform_admin(user, "switch the model set")
+    try:
+        model_sets.start_switch(payload.model_set, user["id"])
+    except ModelSetUnavailableError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    except ModelSetSwitchInProgressError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+    logger.info("model_set switch requested by_user_id=%s to=%s", user["id"], payload.model_set)
+    return ModelSetStatus(**model_sets.status())
 
 
 @app.get("/stats/overview", response_model=OverviewStatsResponse)

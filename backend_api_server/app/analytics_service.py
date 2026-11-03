@@ -252,8 +252,9 @@ TOXIC_TERMS_MAX_POSTS = int(os.getenv("TOXIC_TERMS_MAX_POSTS", "80"))
 _TOXIC_TERMS_MAX_WORDS_PER_POST = 25
 _TOXIC_TERMS_MIN_CONTRIBUTION = 0.005
 
-# fingerprint = (toxic post count, newest toxic post id) — new predictions invalidate
-_toxic_terms_cache: dict[tuple[int, str], tuple[tuple, list[dict[str, Any]]]] = {}
+# fingerprint = (toxic post count, newest toxic post id) — new predictions invalidate.
+# Keyed by model set too: a switch in Settings changes the model that scores the words.
+_toxic_terms_cache: dict[tuple[str, int, str], tuple[tuple, list[dict[str, Any]]]] = {}
 
 
 def user_toxic_terms(
@@ -280,7 +281,7 @@ def user_toxic_terms(
         return []
 
     fingerprint = (len(posts), posts[0]["id"])
-    cache_key = (organization_id, language)
+    cache_key = (effective_model_set() or "default", organization_id, language)
     cached = _toxic_terms_cache.get(cache_key)
     if cached and cached[0] == fingerprint:
         return cached[1]

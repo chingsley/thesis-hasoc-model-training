@@ -1,0 +1,118 @@
+================================================================================
+HOW HATEGUARD EXPLAINS ITS DECISIONS
+LIME, SHAP, Attention Rollout and Integrated Gradients
+================================================================================
+
+
+--------------------------------------------------------------------------------
+BEFORE YOU READ
+--------------------------------------------------------------------------------
+
+- The "predicted label" is the label the model chose for a post: Normal, Abuse or Hate.
+- The model does not read whole words. It splits text into "tokens", which are whole words or pieces of words. That is why "ndị" can appear as "nd" and "ị". LIME is the exception: it scores whole words.
+- <s> and </s> are markers the model adds at the start and end of every text.
+- Colours: red means a token pushed the model toward the predicted label, and blue means it pushed away. Darker means stronger, compared with the other tokens in the same panel.
+- The server computes all four explanations with the trained model for the post's language (Igbo or Yoruba). Each result is saved, so the same post loads instantly next time.
+
+
+================================================================================
+LIME (Local Interpretable Model-agnostic Explanations)
+================================================================================
+
+What it is
+----------
+LIME treats the model as a black box and asks: "If some words were missing, would the answer change?"
+
+How HateGuard computes it
+-------------------------
+1. It makes 199 copies of the post, each with random words deleted, plus the original: 200 in all.
+2. The model classifies all 200 copies.
+3. It fits a simple formula that estimates the probability of the predicted label from which words are present. Copies closer to the original count more.
+4. Each word's weight in that formula is its score. It shows up to 12 words, strongest first.
+
+Example
+-------
+"ofe +0.54" means that, according to the simple formula, having "ofe" raises the probability of the predicted label by about 0.54 (54 percentage points).
+
+The copies are random, so LIME runs twice. The overlap between the two runs' top-10 words is reported as its stability.
+
+Lay Summary
+-----------
+LIME is a "what-if" test: change the post in many small ways, see how the score moves, and infer which words mattered most for this decision.
+
+
+================================================================================
+SHAP (SHapley Additive exPlanations)
+================================================================================
+
+What it is
+----------
+SHAP comes from game theory, where a team's prize is shared fairly among the players according to what each one adds. Here the prize is the model's probability for the predicted label, and the players are the tokens.
+
+How HateGuard computes it
+-------------------------
+1. It hides tokens, replacing them with a blank "<mask>" token, in about 500 combinations. It starts with large groups of neighbouring tokens and splits them into smaller groups.
+2. The model gives its probabilities for each combination.
+3. From these answers, SHAP works out each token's share of the result.
+
+The shares add up: the probability with every token hidden, plus all token scores, equals the probability for the full post.
+
+Every token in the post is coloured. Red tokens raised the probability of the predicted label, and blue tokens lowered it.
+
+Lay Summary
+-----------
+SHAP is a "leave-one-out" fairness test: hide or blur parts of the post, see how much the score changes, and split the credit fairly among the words that pushed the score toward this label.
+
+
+================================================================================
+ATTENTION ROLLOUT
+================================================================================
+
+What it is
+----------
+The model reads text in 12 stages (layers). At each stage, every token draws information from all the tokens; "attention" is how much it draws from each. The decision is read from the start marker <s>. Attention Rollout traces how much of what reaches <s> came from each token.
+
+How HateGuard computes it
+-------------------------
+1. It runs the post through the model once and records the attention at all 12 stages, averaging each stage's 12 attention "heads".
+2. At each stage, it adds each token's link to itself, because tokens also keep their own information. It then rescales each token's links to add up to 1.
+3. It multiplies the 12 stages together.
+4. The row for <s> gives the scores, which add up to 1.
+
+Limit
+-----
+It shows where the model looked, not the direction, so all scores are positive (red).
+
+Lay Summary
+-----------
+Attention Rollout is a "where did the model look?" trace: it follows how strongly each word's signal flows through the model's internal focus layers toward the part of the text used to pick the label.
+
+
+================================================================================
+INTEGRATED GRADIENTS
+================================================================================
+
+What it is
+----------
+It compares the post with a "blank" version, and measures how the model's score for the predicted label builds up as tokens are filled in.
+
+How HateGuard computes it
+-------------------------
+1. Inside the model, each token is a list of numbers. The blank keeps <s> and </s>, and every other token becomes the neutral padding token.
+2. It creates 32 in-between versions, from blank to the real post.
+3. At each one, it measures how sensitive the score is to each token's numbers (the "gradient").
+4. It averages these and multiplies them by how far each token's numbers are from the blank's, giving each token's contribution. The contributions roughly add up to the score difference between post and blank.
+5. All scores are divided by one common number, so only relative sizes matter.
+
+Red pushed toward the predicted label; blue pushed away.
+
+Lay Summary
+-----------
+Integrated Gradients is a "from empty to full" path test: start from a neutral stand-in for the post, step toward the real words, and measure which words most changed the score along that path for this decision.
+
+
+--------------------------------------------------------------------------------
+WHY FOUR METHODS
+--------------------------------------------------------------------------------
+
+They work in different ways, so they can disagree. When several methods point to the same tokens, the explanation is more convincing.

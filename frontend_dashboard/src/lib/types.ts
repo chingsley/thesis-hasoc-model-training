@@ -186,6 +186,25 @@ export interface OrganizationInfo {
   created_at: string
 }
 
+export type ModelSetName = 'original' | 'merged'
+
+export interface ModelSetOption {
+  id: ModelSetName
+  configured: boolean
+  /** Routing key (igbo, yoruba, joint) → Hub ID or checkpoint path. */
+  models: Record<string, string>
+}
+
+export interface ModelSetStatus {
+  /** null when HF_MODEL_SET is unset and nothing has been chosen in Settings. */
+  active: ModelSetName | null
+  env_default: ModelSetName | null
+  saved: string | null
+  loading: ModelSetName | null
+  error: string | null
+  options: ModelSetOption[]
+}
+
 export interface InviteInfo {
   id: number
   email: string

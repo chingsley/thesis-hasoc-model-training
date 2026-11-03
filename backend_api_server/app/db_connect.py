@@ -248,6 +248,7 @@ def wipe_all_tables() -> None:
             "alerts",
             "triage",
             "explanations",
+            "app_settings",
             "predictions",
             "users",
             "organizations",
