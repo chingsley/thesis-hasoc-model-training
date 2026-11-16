@@ -1,6 +1,7 @@
 import type {
   Post,
   ExplanationPayload,
+  ExplainTarget,
   ModelMetrics,
   DriftDataPoint,
   VolumeDataPoint,
@@ -275,7 +276,7 @@ export function getMockPosts(): Post[] {
   return mockPostsCache
 }
 
-export function generateMockExplanation(post: Post): ExplanationPayload {
+export function generateMockExplanation(post: ExplainTarget): ExplanationPayload {
   const tokens = post.tweet.split(/\s+/)
   const base = post.language === 'igbo'
     ? (LIME_BASE_TOKENS_IGBO[post.label] || LIME_BASE_TOKENS_IGBO.Normal)

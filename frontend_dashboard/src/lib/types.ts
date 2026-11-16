@@ -65,6 +65,14 @@ export interface Post {
   timestamp: string
 }
 
+/**
+ * What an explanation request needs: a logged post, or text just typed on Classify Posts
+ * (adHoc), which has no saved post id yet.
+ */
+export type ExplainTarget = Pick<Post, 'id' | 'tweet' | 'language' | 'label' | 'predicted_label'> & {
+  adHoc?: boolean
+}
+
 export interface TokenScore {
   token: string
   score: number

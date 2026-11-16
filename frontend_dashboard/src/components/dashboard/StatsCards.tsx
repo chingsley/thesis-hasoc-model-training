@@ -1,3 +1,4 @@
+import { PLAIN_LABELS } from '@/lib/plain-language'
 import type { VolumeDataPoint } from '@/lib/types'
 import { sumVolume } from '@/lib/volume-csv'
 import { cn } from '@/lib/utils'
@@ -90,6 +91,7 @@ export function StatsCards({ volume, periodLabel }: StatsCardsProps) {
       subtitle: 'Posts',
       accent: false,
       chart: false,
+      dot: undefined,
     },
     {
       label: 'Normal Posts',
@@ -97,6 +99,7 @@ export function StatsCards({ volume, periodLabel }: StatsCardsProps) {
       subtitle: 'Classified',
       accent: false,
       chart: false,
+      dot: PLAIN_LABELS.Normal.color,
     },
     {
       label: 'Abusive Posts',
@@ -104,6 +107,7 @@ export function StatsCards({ volume, periodLabel }: StatsCardsProps) {
       subtitle: 'Detected',
       accent: false,
       chart: false,
+      dot: PLAIN_LABELS.Abuse.color,
     },
     {
       label: 'Hateful Posts',
@@ -111,6 +115,7 @@ export function StatsCards({ volume, periodLabel }: StatsCardsProps) {
       subtitle: 'Detected',
       accent: true,
       chart: true,
+      dot: PLAIN_LABELS.Hate.color,
     },
   ] as const
 
@@ -124,6 +129,15 @@ export function StatsCards({ volume, periodLabel }: StatsCardsProps) {
               value={item.value.toLocaleString()}
               subtitle={item.subtitle}
               accent={item.accent}
+              adornment={
+                item.dot ? (
+                  <span
+                    aria-hidden
+                    className="size-3 shrink-0 rounded-full"
+                    style={{ backgroundColor: item.dot }}
+                  />
+                ) : undefined
+              }
               trailing={
                 item.chart
                   ? (

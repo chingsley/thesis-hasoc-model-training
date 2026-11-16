@@ -9,6 +9,14 @@ import {
   SummaryStatTile,
 } from '@/components/ui/summary-stat-strip'
 import { Loader2 } from 'lucide-react'
+import { TechnicalName } from '@/components/ui/technical-name'
+import { ViewModeToggle } from '@/components/ui/view-mode-toggle'
+import {
+  AccuracyHeadline,
+  LabelScoreCards,
+  OutcomeBars,
+} from '@/components/plain/PlainPerformance'
+import { useViewMode } from '@/lib/store/view-mode'
 import type { ModelMetrics } from '@/lib/types'
 
 const OVERALL_METRICS = [
@@ -70,15 +78,29 @@ const OVERALL_METRICS = [
   },
 ] as const
 
+const DESCRIPTION = {
+  plain: 'How well HateGuard labels posts in the active language, measured on test posts.',
+  technical: 'Held-out test metrics for the active language model.',
+} as const
+
+function PageHeading() {
+  const viewMode = useViewMode()
+  return (
+    <div className="flex flex-wrap items-start justify-between gap-4">
+      <SectionTitle description={DESCRIPTION[viewMode]}>Performance</SectionTitle>
+      <ViewModeToggle className="mt-1.5" />
+    </div>
+  )
+}
+
 export default function Performance() {
   const { data: metrics, isLoading, isError } = useModelMetrics()
+  const viewMode = useViewMode()
 
   if (isLoading) {
     return (
       <div className="space-y-8">
-        <SectionTitle description="Held-out test metrics for the active language model.">
-          Performance
-        </SectionTitle>
+        <PageHeading />
         <div className="flex items-center justify-center py-24">
           <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
         </div>
@@ -89,9 +111,7 @@ export default function Performance() {
   if (isError || !metrics) {
     return (
       <div className="space-y-8">
-        <SectionTitle description="Held-out test metrics for the active language model.">
-          Performance
-        </SectionTitle>
+        <PageHeading />
         <p className="py-8 text-sm text-muted-foreground">
           Metrics unavailable. Copy <code className="text-xs">test_metrics.json</code> from the server
           into <code className="text-xs">runs/</code> and check <code className="text-xs">METRICS_PATH_*</code>{' '}
@@ -101,11 +121,59 @@ export default function Performance() {
     )
   }
 
+  if (viewMode === 'plain') {
+    return (
+      <div className="space-y-8">
+        <PageHeading />
+
+        <Card className="gap-0 py-0">
+          <CardHeader className="border-b border-[var(--hg-border)] py-5">
+            <SectionTitle size="md" description="All kinds of posts together.">
+              How often is HateGuard right?
+            </SectionTitle>
+            <TechnicalName>Overall Metrics (Accuracy)</TechnicalName>
+          </CardHeader>
+          <CardContent className="py-5">
+            <AccuracyHeadline metrics={metrics} />
+          </CardContent>
+        </Card>
+
+        <Card className="gap-0 py-0">
+          <CardHeader className="border-b border-[var(--hg-border)] py-5">
+            <SectionTitle
+              size="md"
+              description="Each bar is the test posts that truly carry one label, split by what HateGuard called them."
+            >
+              What happened to the test posts
+            </SectionTitle>
+            <TechnicalName>Confusion Matrix</TechnicalName>
+          </CardHeader>
+          <CardContent className="py-5">
+            <OutcomeBars metrics={metrics} />
+          </CardContent>
+        </Card>
+
+        <Card className="gap-0 py-0">
+          <CardHeader className="border-b border-[var(--hg-border)] py-5">
+            <SectionTitle
+              size="md"
+              description="Two questions for each kind of post. Each picture shows 100 posts."
+            >
+              How it does on each kind of post
+            </SectionTitle>
+            <TechnicalName>Per-Class Performance (Recall and Precision)</TechnicalName>
+          </CardHeader>
+          <CardContent className="py-5">
+            <LabelScoreCards metrics={metrics} />
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-8">
-      <SectionTitle description="Held-out test metrics for the active language model.">
-        Performance
-      </SectionTitle>
+      <PageHeading />
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <Card className="gap-0 py-0">

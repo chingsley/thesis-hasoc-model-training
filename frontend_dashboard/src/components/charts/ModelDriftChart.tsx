@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { LABEL_SERIES_COLOR } from '@/lib/label-series'
 import type { DriftDataPoint } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import {
@@ -12,9 +13,9 @@ import {
 } from 'recharts'
 
 const DRIFT_SERIES = {
-  normal_avg_confidence: { key: 'normal_avg_confidence', label: 'Normal', color: '#2f9e6b' },
-  abuse_avg_confidence: { key: 'abuse_avg_confidence', label: 'Abuse', color: '#d4a017' },
-  hate_avg_confidence: { key: 'hate_avg_confidence', label: 'Hate', color: '#c1002c' },
+  normal_avg_confidence: { key: 'normal_avg_confidence', label: 'Normal', color: LABEL_SERIES_COLOR.Normal },
+  abuse_avg_confidence: { key: 'abuse_avg_confidence', label: 'Abuse', color: LABEL_SERIES_COLOR.Abuse },
+  hate_avg_confidence: { key: 'hate_avg_confidence', label: 'Hate', color: LABEL_SERIES_COLOR.HateFallback },
 } as const
 
 type SeriesKey = keyof typeof DRIFT_SERIES

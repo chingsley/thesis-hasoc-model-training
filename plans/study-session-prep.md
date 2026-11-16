@@ -27,7 +27,7 @@ vm() { ssh -i ~/.ssh/hateguard_azure -o IdentitiesOnly=yes azureuser@hateguard-d
 
 1. **Create the participant accounts.** Sign in as platform admin, then go to Settings → Team invites. Set Organization to HateGuard Study Forum, enter the email and send the invite. Copy the temporary password; it is shown only once.
 2. **Set each account's password.** In a private window, sign in once with each new account and change its password to the one the participant will use. The dashboard forces this change at first sign-in, so doing it in advance keeps T1 a plain sign-in. Don't use `Password123@`.
-3. **Choose the T8 sentence and file.** Avoid content the model labels Hate with P ≥ 0.9: it creates a newer alert, which changes the T9 answer. Send the content to Claude to pre-compute its explanations; this is not done yet.
+3. **Choose the T8 sentence and file.** Avoid content the model labels Hate with P ≥ 0.9: it creates a newer alert, which changes the T9 answer. Send the content to Claude to pre-compute its explanations; this is not done yet. Since the plain-language views were added (branch `ft-lay-usability`), Classify Posts requests all four explanation methods for the T8 sentence, not SHAP only, so pre-compute all four.
 4. **Decision task.** Its posts must not include any of the 30 seed posts (seed content, section 7).
 5. **`user1@test.com`** is not used. Its password is random, so it cannot sign in. To use it anyway, run the password command below in your own terminal; it asks for the password twice and rejects `Password123@`.
 

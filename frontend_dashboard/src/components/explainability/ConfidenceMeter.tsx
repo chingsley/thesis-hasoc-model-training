@@ -3,6 +3,13 @@ import { Info } from 'lucide-react';
 import { Popover } from '@base-ui/react/popover';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
+import {
+  AGREEMENT_TARGET,
+  EXPLANATION_STATUS_LABEL,
+  FIDELITY_TARGET,
+  STABILITY_TARGET,
+  explanationStatus,
+} from '@/lib/explanation-status';
 
 interface ConfidenceMeterProps {
   /** Partial metrics are fine — missing values render as loading or unavailable. */
@@ -244,8 +251,8 @@ export function ConfidenceMeter({ metrics, loading = false }: ConfidenceMeterPro
       value: metrics.cross_method_agreement_mean,
       format: (v) => `${Math.round(v * 100)}%`,
       scaleMax: 1,
-      threshold: 0.5,
-      thresholdRatio: 0.5,
+      threshold: AGREEMENT_TARGET,
+      thresholdRatio: AGREEMENT_TARGET,
     },
     {
       label: 'LIME Fidelity (AOPC)',
@@ -253,8 +260,8 @@ export function ConfidenceMeter({ metrics, loading = false }: ConfidenceMeterPro
       value: metrics.lime_faithfulness_aopc_proxy,
       format: (v) => v.toFixed(3),
       scaleMax: 1,
-      threshold: 0.4,
-      thresholdRatio: 0.4,
+      threshold: FIDELITY_TARGET,
+      thresholdRatio: FIDELITY_TARGET,
     },
     {
       label: 'LIME Stability (Jaccard)',
@@ -262,15 +269,15 @@ export function ConfidenceMeter({ metrics, loading = false }: ConfidenceMeterPro
       value: metrics.lime_stability_jaccard,
       format: (v) => `${Math.round(v * 100)}%`,
       scaleMax: 1,
-      threshold: 0.7,
-      thresholdRatio: 0.7,
+      threshold: STABILITY_TARGET,
+      thresholdRatio: STABILITY_TARGET,
     },
   ];
 
-  const agreement = metrics.cross_method_agreement_mean;
-  const fidelity = metrics.lime_faithfulness_aopc_proxy;
-  const settled = agreement !== undefined && fidelity !== undefined;
-  const headerGood = settled && agreement >= 0.5 && fidelity >= 0.4;
+  // Same rule as the plain-language view (lib/explanation-status).
+  const status = explanationStatus(metrics);
+  const settled = status !== 'pending';
+  const headerGood = status === 'passing';
 
   return (
     <section className="space-y-3">
@@ -296,7 +303,7 @@ export function ConfidenceMeter({ metrics, loading = false }: ConfidenceMeterPro
                 headerGood ? 'bg-emerald-500' : 'bg-amber-500',
               )}
             />
-            {headerGood ? 'Passing' : 'Needs review'}
+            {EXPLANATION_STATUS_LABEL[headerGood ? 'passing' : 'needs_review']}
           </span>
         ) : loading ? (
           <span className="text-[11px] font-medium text-[var(--hg-subtle)]">Computing…</span>

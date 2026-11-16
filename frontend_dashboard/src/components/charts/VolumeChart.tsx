@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import type { VolumeDataPoint } from '@/lib/types';
 import type { ChartStyle, ResolvedVolumeRange } from '@/lib/volume-range';
+import { LABEL_SERIES_COLOR } from '@/lib/label-series';
 import { useThemeStore } from '@/lib/store/theme';
 import { readCssVar } from '@/lib/theme/cssVar';
 import { cn } from '@/lib/utils';
@@ -24,9 +25,9 @@ const VOLUME_CHART_MARGIN = { top: 8, right: 8, left: 2, bottom: 0 };
 /** Brand series — Normal vs Hate kept clearly distinct */
 export const VOLUME_SERIES = {
   total: { key: 'total', label: 'Total', color: '#625885' },
-  normal_count: { key: 'normal_count', label: 'Normal', color: '#2f9e6b' },
-  abuse_count: { key: 'abuse_count', label: 'Abuse', color: '#d4a017' },
-  hate_count: { key: 'hate_count', label: 'Hate', color: '#c1002c' },
+  normal_count: { key: 'normal_count', label: 'Normal', color: LABEL_SERIES_COLOR.Normal },
+  abuse_count: { key: 'abuse_count', label: 'Abuse', color: LABEL_SERIES_COLOR.Abuse },
+  hate_count: { key: 'hate_count', label: 'Hate', color: LABEL_SERIES_COLOR.HateFallback },
 } as const;
 
 type SeriesKey = keyof typeof VOLUME_SERIES;

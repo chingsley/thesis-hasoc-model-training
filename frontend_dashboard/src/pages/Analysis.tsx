@@ -7,6 +7,12 @@ import { Card, CardAction, CardContent, CardHeader } from '@/components/ui/card'
 import { SectionTitle } from '@/components/ui/data-source-badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Loader2 } from 'lucide-react'
+import { TechnicalName } from '@/components/ui/technical-name'
+import { ViewModeToggle } from '@/components/ui/view-mode-toggle'
+import { PlainDrift } from '@/components/plain/PlainDrift'
+import { PlainVolume } from '@/components/plain/PlainVolume'
+import { PlainWordList } from '@/components/plain/PlainWordList'
+import { useViewMode } from '@/lib/store/view-mode'
 
 const TABS = [
   {
@@ -14,18 +20,24 @@ const TABS = [
     label: 'Word Cloud',
     title: 'Toxic Word Cloud',
     description: 'Frequent and high-impact terms in Hate and Abuse predictions.',
+    plainTitle: 'Words in Hateful and Abusive Posts',
+    plainDescription: 'The words that appear most, and the words that matter most to HateGuard.',
   },
   {
     value: 'drift',
     label: 'Model Drift',
     title: 'Model Confidence Drift',
     description: 'How prediction confidence shifts over time.',
+    plainTitle: 'Is HateGuard Still Working as Expected?',
+    plainDescription: 'Whether HateGuard has become more or less sure of its labels over time.',
   },
   {
     value: 'volume',
     label: 'Post Volume',
     title: 'Post Volume',
     description: 'Classification volume trends for the active language.',
+    plainTitle: 'Posts Checked Over Time',
+    plainDescription: 'How many posts HateGuard checked, and what it found.',
   },
 ] as const
 
@@ -34,6 +46,8 @@ type AnalysisTab = (typeof TABS)[number]['value']
 export default function Analysis() {
   const [activeTab, setActiveTab] = useState<AnalysisTab>('wordcloud')
   const { data: driftData, isLoading: driftLoading } = useDriftData()
+  const viewMode = useViewMode()
+  const plain = viewMode === 'plain'
 
   const current = useMemo(
     () => TABS.find((tab) => tab.value === activeTab) ?? TABS[0],
@@ -42,9 +56,18 @@ export default function Analysis() {
 
   return (
     <div className="space-y-8">
-      <SectionTitle description="Explore toxic language patterns, confidence drift, and volume trends.">
-        Analysis
-      </SectionTitle>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <SectionTitle
+          description={
+            plain
+              ? 'Common words in harmful posts, how steady HateGuard is, and how many posts it checked.'
+              : 'Explore toxic language patterns, confidence drift, and volume trends.'
+          }
+        >
+          Analysis
+        </SectionTitle>
+        <ViewModeToggle className="mt-1.5" />
+      </div>
 
       <Card>
         <Tabs
@@ -53,9 +76,12 @@ export default function Analysis() {
           className="w-full gap-0"
         >
           <CardHeader className="gap-4 border-b border-[var(--hg-border)] pb-4">
-            <SectionTitle size="md" description={current.description}>
-              {current.title}
-            </SectionTitle>
+            <div className="min-w-0">
+              <SectionTitle size="md" description={plain ? current.plainDescription : current.description}>
+                {plain ? current.plainTitle : current.title}
+              </SectionTitle>
+              {plain ? <TechnicalName>{current.title}</TechnicalName> : null}
+            </div>
             <CardAction className="flex flex-col items-end gap-2 self-center">
               <TabsList className="h-auto w-fit max-w-full flex-wrap justify-end gap-0 rounded-[4px] border border-[var(--hg-border)] bg-[var(--hg-canvas)] p-0.5">
                 {TABS.map((tab) => (
@@ -77,24 +103,38 @@ export default function Analysis() {
                 <div className="space-y-3 rounded-[4px] border border-[var(--hg-border)] p-4 md:p-5">
                   <div>
                     <h3 className="text-sm font-semibold text-[var(--hg-ink)]">
-                      Frequent Terms in Toxic Posts
+                      {plain ? 'Words Used Most Often' : 'Frequent Terms in Toxic Posts'}
                     </h3>
                     <p className="mt-0.5 text-xs text-[var(--hg-muted)]">
-                      Most common words in your Hate and Abuse predictions.
+                      {plain
+                        ? 'The words that appear most often in posts labelled hateful or abusive (top 10).'
+                        : 'Most common words in your Hate and Abuse predictions.'}
                     </p>
+                    {plain ? <TechnicalName>Frequent Terms in Toxic Posts</TechnicalName> : null}
                   </div>
-                  <ToxicWordCloud source="frequent" />
+                  {plain ? <PlainWordList source="frequent" /> : <ToxicWordCloud source="frequent" />}
                 </div>
                 <div className="space-y-3 rounded-[4px] border border-[var(--hg-border)] p-4 md:p-5">
                   <div>
-                    <h3 className="text-sm font-semibold text-[var(--hg-ink)]">Most Toxic Terms</h3>
+                    <h3 className="text-sm font-semibold text-[var(--hg-ink)]">
+                      {plain ? 'Words That Raise the Alarm Most' : 'Most Toxic Terms'}
+                    </h3>
                     <p className="mt-0.5 text-xs text-[var(--hg-muted)]">
-                      Words that raise toxicity when present (leave-one-out).
+                      {plain
+                        ? 'The words that most push HateGuard towards a hateful or abusive label when they are in a post (top 10).'
+                        : 'Words that raise toxicity when present (leave-one-out).'}
                     </p>
+                    {plain ? <TechnicalName>Most Toxic Terms</TechnicalName> : null}
                   </div>
-                  <ToxicWordCloud source="toxic" />
+                  {plain ? <PlainWordList source="toxic" /> : <ToxicWordCloud source="toxic" />}
                 </div>
               </div>
+              {plain ? (
+                <p className="mt-4 text-xs leading-relaxed text-[var(--hg-muted)]">
+                  A word in these lists does not make a post hateful or abusive by itself. The
+                  meaning depends on how the word is used.
+                </p>
+              ) : null}
             </TabsContent>
 
             <TabsContent value="drift" className="mt-0">
@@ -103,12 +143,12 @@ export default function Analysis() {
                   <Loader2 className="h-8 w-8 animate-spin text-[var(--hg-subtle)]" />
                 </div>
               ) : (
-                <ModelDriftChart data={driftData ?? []} />
+                plain ? <PlainDrift data={driftData ?? []} /> : <ModelDriftChart data={driftData ?? []} />
               )}
             </TabsContent>
 
             <TabsContent value="volume" className="mt-0">
-              <VolumePanel embedded />
+              {plain ? <PlainVolume embedded /> : <VolumePanel embedded />}
             </TabsContent>
           </CardContent>
         </Tabs>

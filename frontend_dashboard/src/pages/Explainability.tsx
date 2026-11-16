@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useExplainabilityPosts } from '@/hooks/use-posts'
-import { useExplanationMethods, XAI_METHODS } from '@/hooks/use-explanations'
-import { ExplanationComparison } from '@/components/explainability/ExplanationComparison'
-import { ConfidenceMeter } from '@/components/explainability/ConfidenceMeter'
+import { usePostExplanation } from '@/hooks/use-explanations'
+import { ExplanationView } from '@/components/explainability/ExplanationView'
+import { ViewModeToggle } from '@/components/ui/view-mode-toggle'
+import { useViewMode } from '@/lib/store/view-mode'
 import {
   TriagePredictionLabelFilter,
   type TriageLabelFilter,
@@ -12,10 +13,9 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { PostIdCell, PredictionCell, truncateToWords } from '@/components/dashboard/post-cells'
 import { cn } from '@/lib/utils'
 import { SectionTitle } from '@/components/ui/data-source-badge'
-import { crossMethodAgreementMean } from '@/lib/explain-agreement'
 import { filterTriagePosts } from '@/lib/triage-buckets'
 import { modelPrediction } from '@/lib/post-labels'
-import type { ExplanationPayload, Post, XaiMethod } from '@/lib/types'
+import type { ExplainTarget, Post } from '@/lib/types'
 import { Loader2, ChevronRight } from 'lucide-react'
 
 function postPreviewText(text: string): { line: string; isPlaceholder: boolean } {
@@ -71,40 +71,21 @@ export default function Explainability() {
     }
   }, [filteredPosts, selectedPost])
 
-  const methodQueries = useExplanationMethods(selectedPost)
-
-  let explanation: ExplanationPayload | null = null
-  let loadingMethods: XaiMethod[] = []
-  if (selectedPost) {
-    const mergedMethods: ExplanationPayload['methods'] = {}
-    const metrics: ExplanationPayload['metrics'] = {}
-    methodQueries.forEach((query, i) => {
-      const method = XAI_METHODS[i]
-      if (query.data) {
-        Object.assign(mergedMethods, query.data.methods)
-        Object.assign(metrics, query.data.metrics)
-      } else if (query.isError) {
-        mergedMethods[method] = {
-          method,
-          error: query.error instanceof Error ? query.error.message : 'Explanation failed',
-        }
-      }
-    })
-    const agreement = crossMethodAgreementMean(mergedMethods)
-    if (agreement !== undefined) metrics.cross_method_agreement_mean = agreement
-    loadingMethods = XAI_METHODS.filter((_, i) => methodQueries[i].isPending)
-    explanation = {
-      id: selectedPost.id,
-      label: modelPrediction(selectedPost),
-      text: selectedPost.tweet,
-      methods: mergedMethods,
-      metrics,
-    }
-  }
-
-  const confidenceLoading = Boolean(
-    selectedPost && methodQueries.some((query) => query.isPending),
+  const explainTarget = useMemo<ExplainTarget | null>(
+    () =>
+      selectedPost
+        ? {
+            id: selectedPost.id,
+            tweet: selectedPost.tweet,
+            language: selectedPost.language,
+            label: selectedPost.label,
+            predicted_label: modelPrediction(selectedPost),
+          }
+        : null,
+    [selectedPost],
   )
+  const { explanation, loadingMethods, loading: explanationLoading } = usePostExplanation(explainTarget)
+  const viewMode = useViewMode()
 
   const totalLoaded = posts?.length ?? 0
   const showing = filteredPosts.length
@@ -122,11 +103,14 @@ export default function Explainability() {
         description={
           <>
             <span className="block">
-              Inspect model decisions token by token with LIME, SHAP, Attention Rollout, and Integrated
-              Gradients.
+              {viewMode === 'plain'
+                ? 'See why HateGuard gave a post its label.'
+                : 'Inspect model decisions token by token with LIME, SHAP, Attention Rollout, and Integrated Gradients.'}
             </span>
             <span className="mt-1 block">
-              Find a classified post, then open it for token-level explanations.
+              {viewMode === 'plain'
+                ? 'Find a classified post, then open it to see the words behind its label.'
+                : 'Find a classified post, then open it for token-level explanations.'}
             </span>
           </>
         }
@@ -304,16 +288,27 @@ export default function Explainability() {
           className="flex min-h-0 flex-col overflow-hidden xl:col-span-7 xl:h-[min(720px,calc(100dvh-11rem))]"
         >
           <CardHeader className="shrink-0 border-b border-[var(--hg-border)] pb-5">
-            <SectionTitle
-              size="md"
-              description={
-                selectedPost
-                  ? 'Side-by-side XAI methods for the selected post.'
-                  : 'Pick a post to compare explanation methods.'
-              }
-            >
-              {selectedPost ? `Explanation for ${selectedPost.id}` : 'Explanation Comparison'}
-            </SectionTitle>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <SectionTitle
+                size="md"
+                description={
+                  viewMode === 'plain'
+                    ? selectedPost
+                      ? 'Why HateGuard gave this post its label.'
+                      : 'Pick a post to see why HateGuard gave it its label.'
+                    : selectedPost
+                      ? 'Side-by-side XAI methods for the selected post.'
+                      : 'Pick a post to compare explanation methods.'
+                }
+              >
+                {selectedPost
+                  ? `Explanation for ${selectedPost.id}`
+                  : viewMode === 'plain'
+                    ? 'Explanation'
+                    : 'Explanation Comparison'}
+              </SectionTitle>
+              <ViewModeToggle />
+            </div>
             {selectedPost ? (
               <p className="mt-3 line-clamp-2 text-sm leading-relaxed text-[var(--hg-muted)]">
                 {selectedPost.tweet}
@@ -321,18 +316,24 @@ export default function Explainability() {
             ) : null}
           </CardHeader>
           <CardContent className="min-h-0 flex-1 overflow-y-auto overscroll-y-contain pt-5 pb-5">
-            {explanation ? (
-              <div className="space-y-8">
-                <ConfidenceMeter metrics={explanation.metrics} loading={confidenceLoading} />
-                <ExplanationComparison explanation={explanation} loadingMethods={loadingMethods} />
-              </div>
+            {explanation && selectedPost ? (
+              <ExplanationView
+                text={selectedPost.tweet}
+                label={explanation.label}
+                probabilities={selectedPost.probabilities}
+                explanation={explanation}
+                loadingMethods={loadingMethods}
+                loading={explanationLoading}
+              />
             ) : (
               <div className="flex flex-col items-center justify-center rounded-[4px] border border-dashed border-[var(--hg-border)] bg-[var(--hg-canvas)] px-6 py-16 text-center">
                 <p className="text-sm font-medium text-[var(--hg-ink)]">
                   Select a post to inspect explanations
                 </p>
                 <p className="mt-1.5 max-w-sm text-xs leading-relaxed text-[var(--hg-muted)]">
-                  Compare LIME, SHAP, Attention Rollout, and Integrated Gradients token by token.
+                  {viewMode === 'plain'
+                    ? 'You will see the label, how sure HateGuard is, and the words that led to it.'
+                    : 'Compare LIME, SHAP, Attention Rollout, and Integrated Gradients token by token.'}
                 </p>
               </div>
             )}

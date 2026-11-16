@@ -4,12 +4,19 @@ import { Loader2, Sparkles } from 'lucide-react'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { Badge, labelBadgeVariant } from '@/components/ui/badge'
-import { ToxicTextHighlighter } from '@/components/explainability/ToxicTextHighlighter'
+import { ConfidenceMeter } from '@/components/explainability/ConfidenceMeter'
+import { ExplanationComparison } from '@/components/explainability/ExplanationComparison'
+import { PlainExplanation } from '@/components/explainability/PlainExplanation'
+import { ViewModeToggle } from '@/components/ui/view-mode-toggle'
+import { usePostExplanation } from '@/hooks/use-explanations'
+import { useViewMode } from '@/lib/store/view-mode'
+import { certaintyPhrase, toLabel } from '@/lib/plain-language'
 import { useDashboardStore } from '@/lib/store/dashboard'
 import { singleClassify } from '@/lib/api/client'
 import { useActiveModel } from '@/hooks/use-active-model'
 import { validatePredictionText } from '@/lib/prediction-text-validation'
 import { cn } from '@/lib/utils'
+import type { ExplainTarget, Language } from '@/lib/types'
 
 const PROB_ROWS = [
   { key: 'normal' as const, label: 'Normal', color: 'bg-emerald-500' },
@@ -71,8 +78,13 @@ export function TextTester() {
   const [validationError, setValidationError] = useState<string | null>(null)
   const queryClient = useQueryClient()
 
+  const viewMode = useViewMode()
+
   const mutation = useMutation({
-    mutationFn: (input: string) => singleClassify(input, language),
+    // The language is part of the request, so a later switch in the header does not change
+    // which model the shown result (and its explanation) belongs to.
+    mutationFn: (input: { text: string; language: Language }) =>
+      singleClassify(input.text, input.language),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['overview-stats'] })
       queryClient.invalidateQueries({ queryKey: ['volume'] })
@@ -80,9 +92,26 @@ export function TextTester() {
   })
 
   const result = mutation.data
-  const shap = result?.explanation?.methods.shap
-  const hasShapTokens =
-    Boolean(shap) && 'tokens' in shap! && 'scores' in shap! && Array.isArray(shap!.tokens)
+  const submitted = mutation.variables
+  const predictedLabel = result ? toLabel(result.predicted_label) : null
+
+  // Explanations come from the local Afro-XLMR models, so there are none when the label came
+  // from OpenAI Moderation.
+  const explainTarget = useMemo<ExplainTarget | null>(() => {
+    if (!result || !submitted || !predictedLabel || result.use_openai_moderation) return null
+    return {
+      id: `adhoc:${submitted.language}:${submitted.text}`,
+      tweet: submitted.text,
+      language: submitted.language,
+      label: predictedLabel,
+      predicted_label: predictedLabel,
+      adHoc: true,
+    }
+  }, [result, submitted, predictedLabel])
+  const { explanation, loadingMethods, loading: explanationLoading } = usePostExplanation(explainTarget)
+  const unavailableReason = result?.use_openai_moderation
+    ? 'Explanations are not available in OpenAI Moderation mode, because the label comes from OpenAI and not from HateGuard’s own model.'
+    : undefined
 
   const topConfidence = useMemo(() => {
     if (!result) return null
@@ -100,7 +129,7 @@ export function TextTester() {
     if (!trimmed || mutation.isPending) return
     try {
       setValidationError(null)
-      mutation.mutate(validatePredictionText(trimmed))
+      mutation.mutate({ text: validatePredictionText(trimmed), language })
     } catch (e) {
       setValidationError(e instanceof Error ? e.message : 'Invalid text.')
     }
@@ -188,7 +217,9 @@ export function TextTester() {
           <Sparkles className="size-5 text-[var(--hg-subtle)]" aria-hidden />
           <p className="text-sm font-medium text-[var(--hg-ink)]">No result yet</p>
           <p className="max-w-sm text-xs text-[var(--hg-muted)]">
-            Run Analyze to see the predicted label, class probabilities, and token highlights.
+            {viewMode === 'plain'
+              ? 'Run Analyze to see the label, how sure HateGuard is, and the words behind the decision.'
+              : 'Run Analyze to see the predicted label, class probabilities, and the explanation methods.'}
           </p>
         </div>
       )}
@@ -216,7 +247,11 @@ export function TextTester() {
               <p className="text-sm font-semibold tabular-nums text-[var(--hg-ink)]">
                 {topConfidence}%
               </p>
-              <p className="text-[10px] text-[var(--hg-muted)]">Top-class probability</p>
+              <p className="text-[10px] text-[var(--hg-muted)]">
+                {viewMode === 'plain' && topConfidence !== null
+                  ? certaintyPhrase(topConfidence / 100)
+                  : 'Top-class probability'}
+              </p>
             </div>
             {result.model_id && (
               <div className="min-w-0 sm:ml-auto sm:text-right">
@@ -242,46 +277,60 @@ export function TextTester() {
             )}
           </div>
 
-          <div className="grid gap-4 lg:grid-cols-2">
-            <div className="space-y-3 rounded-[4px] border border-[var(--hg-border)] p-4">
+          <div className="space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h3 className="text-sm font-semibold text-[var(--hg-ink)]">Class probabilities</h3>
+                <h3 className="text-base font-semibold text-[var(--hg-ink)]">Explanation</h3>
                 <p className="mt-0.5 text-xs text-[var(--hg-muted)]">
-                  How the model distributed probability across labels.
+                  {viewMode === 'plain'
+                    ? 'Why HateGuard gave this text its label.'
+                    : 'Class probabilities and the four explanation methods for this text.'}
                 </p>
               </div>
-              <ProbabilityMeters
-                probabilities={result.probabilities}
-                predicted={result.predicted_label}
-              />
+              <ViewModeToggle />
             </div>
 
-            <div className="space-y-3 rounded-[4px] border border-[var(--hg-border)] p-4">
-              <div>
-                <h3 className="text-sm font-semibold text-[var(--hg-ink)]">Token highlights</h3>
-                <p className="mt-0.5 text-xs text-[var(--hg-muted)]">
-                  Words that pushed the prediction (SHAP). Red raises toxicity; blue lowers it.
-                </p>
+            {viewMode === 'plain' ? (
+              <PlainExplanation
+                text={submitted?.text ?? ''}
+                label={predictedLabel ?? 'Normal'}
+                probabilities={result.probabilities}
+                explanation={explanation}
+                loading={explanationLoading}
+                unavailableReason={unavailableReason}
+                decisionTechnicalName="Class probabilities"
+              />
+            ) : (
+              <div className="space-y-8">
+                <div className="space-y-3 rounded-[4px] border border-[var(--hg-border)] p-4">
+                  <div>
+                    <h3 className="text-sm font-semibold text-[var(--hg-ink)]">Class probabilities</h3>
+                    <p className="mt-0.5 text-xs text-[var(--hg-muted)]">
+                      How the model distributed probability across labels.
+                    </p>
+                  </div>
+                  <ProbabilityMeters
+                    probabilities={result.probabilities}
+                    predicted={result.predicted_label}
+                  />
+                </div>
+                {explanation ? (
+                  <>
+                    <ConfidenceMeter metrics={explanation.metrics} loading={explanationLoading} />
+                    <ExplanationComparison
+                      explanation={explanation}
+                      loadingMethods={loadingMethods}
+                    />
+                  </>
+                ) : (
+                  <div className="rounded-[4px] border border-dashed border-[var(--hg-border)] px-3 py-6 text-center">
+                    <p className="text-xs text-[var(--hg-muted)]">
+                      {unavailableReason ?? 'No explanation is available for this text.'}
+                    </p>
+                  </div>
+                )}
               </div>
-              {hasShapTokens ? (
-                <div className="rounded-[4px] bg-[var(--hg-canvas)]/60 px-3 py-3">
-                  <ToxicTextHighlighter tokens={shap!.tokens} scores={shap!.scores} />
-                </div>
-              ) : (
-                <div className="rounded-[4px] border border-dashed border-[var(--hg-border)] px-3 py-6 text-center">
-                  <p className="text-xs text-[var(--hg-muted)]">
-                    {result.use_openai_moderation
-                      ? 'Not available in OpenAI Moderation mode — labels come from OpenAI, not local SHAP on Afro-XLMR.'
-                      : (
-                        <>
-                          Token-level explainability needs a working{' '}
-                          <span className="font-mono">/explain</span> response.
-                        </>
-                      )}
-                  </p>
-                </div>
-              )}
-            </div>
+            )}
           </div>
         </div>
       )}

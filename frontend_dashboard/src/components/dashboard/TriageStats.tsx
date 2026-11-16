@@ -1,4 +1,5 @@
 import type { TriageLabelFilter } from '@/components/dashboard/TriageTable';
+import { PLAIN_LABELS } from '@/lib/plain-language';
 import type { TriageBucketCounts, TriageStatsData } from '@/lib/types';
 import {
   SummaryStatCell,
@@ -62,24 +63,28 @@ export function TriageStats({ labelFilter, stats, loading }: TriageStatsProps) {
       label: 'Total posts',
       value: loading || !counts ? placeholder : counts.total,
       details: undefined,
+      dot: undefined,
     },
     {
       key: 'normal' as const,
       label: 'Normal Posts',
       value: loading || !counts ? placeholder : counts.normal,
       details: counts || loading ? labelDetails(Boolean(loading), counts, 'normal') : undefined,
+      dot: PLAIN_LABELS.Normal.color,
     },
     {
       key: 'abuse' as const,
       label: 'Abusive Posts',
       value: loading || !counts ? placeholder : counts.abuse,
       details: counts || loading ? labelDetails(Boolean(loading), counts, 'abuse') : undefined,
+      dot: PLAIN_LABELS.Abuse.color,
     },
     {
       key: 'hate' as const,
       label: 'Hateful Posts',
       value: loading || !counts ? placeholder : counts.hate,
       details: counts || loading ? labelDetails(Boolean(loading), counts, 'hate') : undefined,
+      dot: PLAIN_LABELS.Hate.color,
     },
   ].map((item) => ({
     ...item,
@@ -98,6 +103,15 @@ export function TriageStats({ labelFilter, stats, loading }: TriageStatsProps) {
               }
               accent={item.accent}
               details={item.details}
+              adornment={
+                item.dot ? (
+                  <span
+                    aria-hidden
+                    className="size-3 shrink-0 rounded-full"
+                    style={{ backgroundColor: item.dot }}
+                  />
+                ) : undefined
+              }
             />
           </SummaryStatCell>
         ))}

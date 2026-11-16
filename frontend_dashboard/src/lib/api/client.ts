@@ -1,6 +1,7 @@
 import type {
   Post,
   ExplanationPayload,
+  ExplainTarget,
   ModelMetrics,
   DriftDataPoint,
   VolumeDataPoint,
@@ -159,7 +160,7 @@ export async function fetchAllTriagePostsMatching(
 }
 
 export async function fetchExplanationMethod(
-  post: Post,
+  post: ExplainTarget,
   method: XaiMethod
 ): Promise<ExplanationPayload> {
   if (USE_MOCK) {
@@ -173,7 +174,13 @@ export async function fetchExplanationMethod(
   // each panel as it lands; the backend caches each (language, methods, text).
   const payload = await apiFetch<ExplanationPayload>('/explain', {
     method: 'POST',
-    body: JSON.stringify({ text: post.tweet, language: post.language, methods: [method], post_id: post.id }),
+    body: JSON.stringify({
+      text: post.tweet,
+      language: post.language,
+      methods: [method],
+      // Text typed on Classify Posts has no saved post id; the backend then derives one.
+      ...(post.adHoc ? {} : { post_id: post.id }),
+    }),
   });
   const entry = payload.methods?.[method];
   // Treat per-method dependency/runtime failures as query errors so react-query
@@ -465,38 +472,21 @@ export async function fetchToxicTerms(language: Language): Promise<WordCloudTerm
 export interface SingleClassifyResult {
   predicted_label: string;
   probabilities: { normal: number; abuse: number; hate: number; };
-  explanation?: ExplanationPayload;
   model_id?: string;
   used_fallback?: boolean;
   use_openai_moderation?: boolean;
 }
 
+/**
+ * Classifies one text. Explanations are not fetched here: the page requests them per method
+ * (useExplanationMethods), so the label shows at once and each method fills in as it finishes.
+ */
 export async function singleClassify(
   text: string,
   language: Language
 ): Promise<SingleClassifyResult> {
   if (USE_MOCK) {
-    const result = mockBatchClassify([text], language)[0];
-    const tempPost: Post = {
-      id: 'mock_temp_test',
-      tweet: text,
-      label: result.predicted_label,
-      label_id: ['Normal', 'Abuse', 'Hate'].indexOf(result.predicted_label) as 0 | 1 | 2,
-      language,
-      split: 'test',
-      length: text.length,
-      predicted_label: result.predicted_label,
-      predicted_label_id: ['Normal', 'Abuse', 'Hate'].indexOf(result.predicted_label) as 0 | 1 | 2,
-      probabilities: result.probabilities,
-      flagged: false,
-      triage_status: 'pending',
-      relabelled: false,
-      initial_model_prediction: null,
-      reviewer_id: null,
-      reviewed_at: null,
-      timestamp: new Date().toISOString(),
-    };
-    return delay({ ...result, explanation: generateMockExplanation(tempPost) }, 400);
+    return delay(mockBatchClassify([text], language)[0], 400);
   }
 
   const data = await apiFetch<PredictResponse>('/predict', {
@@ -504,23 +494,9 @@ export async function singleClassify(
     body: JSON.stringify({ text, language }),
   });
 
-  // SHAP uses the local Afro-XLMR stack — skip when classification came from OpenAI.
-  let explanation: ExplanationPayload | undefined;
-  if (!data.use_openai_moderation) {
-    try {
-      explanation = await apiFetch<ExplanationPayload>('/explain', {
-        method: 'POST',
-        body: JSON.stringify({ text, language, methods: ['shap'] }),
-      });
-    } catch {
-      explanation = undefined;
-    }
-  }
-
   return {
     predicted_label: data.predicted_label,
     probabilities: data.probabilities,
-    explanation,
     model_id: data.model_id,
     used_fallback: data.used_fallback,
     use_openai_moderation: data.use_openai_moderation,
