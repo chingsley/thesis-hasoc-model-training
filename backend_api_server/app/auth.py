@@ -71,10 +71,12 @@ def apply_session_organization(
     """Overlay effective org on the user dict for platform admins with a session org context."""
     user = dict(user)
     user["home_organization_id"] = int(user["organization_id"])
-    if active_organization_id is None or not is_platform_admin(user):
+    if not is_platform_admin(user):
         return user
-    from . import db
-
+    if active_organization_id is None:
+        active_organization_id = db.default_tenant_organization_id()
+    if active_organization_id is None:
+        return user
     org = db.get_organization(int(active_organization_id))
     if org is None:
         return user

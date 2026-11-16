@@ -197,7 +197,8 @@ def _init_postgres(conn: Any) -> None:
 
 def get_conn() -> _ConnectionAdapter:
     global _backend, _sqlite_conn, _pg_conn
-    if _backend is None:
+    fresh_init = _backend is None
+    if fresh_init:
         if using_postgres():
             import psycopg
 
@@ -220,12 +221,19 @@ def get_conn() -> _ConnectionAdapter:
             with _lock, _sqlite_conn:
                 _sqlite_conn.executescript(SQLITE_SCHEMA)
                 run_sqlite_migrations(_sqlite_conn)
-    raw = _pg_conn if _backend == "postgres" else _sqlite_conn
-    return _ConnectionAdapter(_backend, raw)
+    adapter = _ConnectionAdapter(_backend, _pg_conn if _backend == "postgres" else _sqlite_conn)
+    if fresh_init:
+        from .db import migrate_platform_shell_organization
+
+        migrate_platform_shell_organization()
+    return adapter
 
 
 def reset_conn_for_testing() -> None:
     global _backend, _sqlite_conn, _pg_conn
+    from . import db as db_module
+
+    db_module._platform_shell_migrated = False  # noqa: SLF001
     with _lock:
         if _sqlite_conn is not None:
             _sqlite_conn.close()

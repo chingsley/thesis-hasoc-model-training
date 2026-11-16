@@ -13,7 +13,7 @@ can be downloaded.
 Creates:
   - user1@test.com (Lagos Community Media): all test-split posts for igbo + yoruba
   - user2@test.com (River State Digital Forum): one isolation sample post
-  - platform@test.com (HateGuard Platform): no prediction log rows
+  - platform@test.com (platform admin): home org = first tenant org by name; no prediction log rows
 """
 
 from __future__ import annotations
@@ -37,8 +37,9 @@ SEED_PASSWORD = "Password123@"
 SEED_USERS: list[tuple[str, str, str, str]] = [
     ("user1@test.com", "Ikadi Onafula", "Lagos Community Media", "dev"),
     ("user2@test.com", "James Ikawi", "River State Digital Forum", "dev"),
-    ("platform@test.com", "Platform Admin", "HateGuard Platform", "platform"),
 ]
+
+PLATFORM_ADMIN: tuple[str, str, str] = ("platform@test.com", "Platform Admin", "platform")
 
 PRIMARY_EMAIL = SEED_USERS[0][0]
 
@@ -58,7 +59,13 @@ rng = random.Random(42)
 
 
 def ensure_user(
-    email: str, password: str, full_name: str, org: str, key_name: str
+    email: str,
+    password: str,
+    full_name: str,
+    org: str,
+    key_name: str,
+    *,
+    organization_id: int | None = None,
 ) -> tuple[int, str | None]:
     existing = db.get_user_by_email(email)
     if existing is not None:
@@ -69,6 +76,7 @@ def ensure_user(
         auth.hash_password(password),
         org,
         full_name=full_name,
+        organization_id=organization_id,
     )
     user = db.get_user_by_id(user_id)
     org_id = int(user["organization_id"])
@@ -261,6 +269,23 @@ def main() -> int:
         user_id, _ = ensure_user(email, SEED_PASSWORD, full_name, org, key_name)
         user_ids.append(user_id)
 
+    default_tenant = db.default_tenant_organization_id()
+    if default_tenant is None:
+        raise RuntimeError("No tenant organizations exist after seeding users")
+    home_org = db.get_organization(default_tenant)
+    if home_org is None:
+        raise RuntimeError("Default tenant organization could not be loaded")
+    plat_email, plat_name, plat_key = PLATFORM_ADMIN
+    platform_id, _ = ensure_user(
+        plat_email,
+        SEED_PASSWORD,
+        plat_name,
+        home_org["name"],
+        plat_key,
+        organization_id=default_tenant,
+    )
+    user_ids.append(platform_id)
+
     primary_id = user_ids[0]
     secondary_id = user_ids[1] if len(user_ids) > 1 else None
 
@@ -313,6 +338,7 @@ def main() -> int:
     print(f"\nLogins (password for all: {SEED_PASSWORD}):")
     for email, full_name, org, _ in SEED_USERS:
         print(f"  {full_name} <{email}> — {org}")
+    print(f"  {PLATFORM_ADMIN[1]} <{PLATFORM_ADMIN[0]}> — {home_org['name']} (platform admin)")
     print("What to check: Overview stats+volume, Triage, Explainability, Analysis (test-set labels on /posts).")
     return 0
 

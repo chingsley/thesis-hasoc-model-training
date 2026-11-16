@@ -190,6 +190,13 @@ def login(payload: LoginRequest) -> LoginResponse:
     elif not user["is_active"] or not verify_password(payload.password, user["password_hash"]):
         raise HTTPException(status_code=401, detail="Invalid email or password")
     token = create_session_token(user["id"])
+    if is_platform_admin(user):
+        default_org = db.default_tenant_organization_id()
+        if default_org is not None:
+            db.set_session_active_organization(sha256_hex(token), default_org)
+            session_user = db.get_user_by_session(sha256_hex(token))
+            if session_user is not None:
+                user = session_user
     logger.info(
         "login user_id=%s org_id=%s email=%s must_change_password=%s",
         user["id"],
@@ -315,7 +322,7 @@ def revoke_invite_endpoint(
 @app.get("/auth/organizations", response_model=list[OrganizationInfo])
 def list_organizations(user: dict = Depends(get_session_user_active)) -> list[OrganizationInfo]:
     _require_platform_admin(user)
-    return [OrganizationInfo(**row) for row in db.list_organizations()]
+    return [OrganizationInfo(**row) for row in db.list_tenant_organizations()]
 
 
 @app.post("/auth/organizations", response_model=OrganizationInfo, status_code=201)
@@ -346,6 +353,8 @@ def set_active_organization(
     token = bearer_token(request)
     if token is None:
         raise HTTPException(status_code=401, detail="Missing session token")
+    if db.is_platform_shell_organization(payload.organization_id):
+        raise HTTPException(status_code=404, detail="Organization not found")
     if not db.set_session_active_organization(sha256_hex(token), payload.organization_id):
         raise HTTPException(status_code=404, detail="Organization not found")
     refreshed = db.get_user_by_session(sha256_hex(token))

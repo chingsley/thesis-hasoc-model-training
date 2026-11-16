@@ -6,8 +6,14 @@ PostgreSQL when `DATABASE_URL` (or `POSTGRES_URL`) is set — use with Neon, Ver
 
 from __future__ import annotations
 
+import os
 from datetime import datetime, timedelta, timezone
 from typing import Any
+
+# Legacy seed org for platform admins; not a tenant — excluded from switcher and removed on migrate.
+PLATFORM_SHELL_ORG_NAME = "HateGuard Platform"
+
+_platform_shell_migrated = False
 
 from .db_connect import (
     _lock,
@@ -262,6 +268,92 @@ def list_organizations() -> list[dict[str, Any]]:
     return [dict(r) for r in rows]
 
 
+def list_tenant_organizations() -> list[dict[str, Any]]:
+    """Organizations platform admins may switch into (excludes the legacy shell org)."""
+    conn = get_conn()
+    with _lock:
+        rows = conn.execute(
+            "SELECT id, name, created_at FROM organizations WHERE name != ? ORDER BY name",
+            (PLATFORM_SHELL_ORG_NAME,),
+        ).fetchall()
+    return [dict(r) for r in rows]
+
+
+def default_tenant_organization_id() -> int | None:
+    orgs = list_tenant_organizations()
+    if not orgs:
+        return None
+    return int(orgs[0]["id"])
+
+
+def is_platform_shell_organization(organization_id: int) -> bool:
+    org = get_organization(organization_id)
+    return org is not None and org["name"] == PLATFORM_SHELL_ORG_NAME
+
+
+def _platform_admin_emails() -> set[str]:
+    raw = os.getenv("PLATFORM_ADMIN_EMAILS", "platform@test.com").strip()
+    return {part.strip().lower() for part in raw.split(",") if part.strip()}
+
+
+def migrate_platform_shell_organization() -> None:
+    """Re-home platform admins off the legacy shell org and drop it when unused."""
+    global _platform_shell_migrated
+    if _platform_shell_migrated:
+        return
+    _platform_shell_migrated = True
+
+    conn = get_conn()
+    with _lock, conn:
+        shell = conn.execute(
+            "SELECT id FROM organizations WHERE name = ?", (PLATFORM_SHELL_ORG_NAME,)
+        ).fetchone()
+        if shell is None:
+            return
+        shell_id = int(shell["id"])
+        default_row = conn.execute(
+            "SELECT id, name FROM organizations WHERE name != ? ORDER BY name LIMIT 1",
+            (PLATFORM_SHELL_ORG_NAME,),
+        ).fetchone()
+        if default_row is None:
+            return
+        default_id = int(default_row["id"])
+        default_name = str(default_row["name"])
+        admin_emails = sorted(_platform_admin_emails())
+        if not admin_emails:
+            return
+        placeholders = ", ".join("?" * len(admin_emails))
+        users = conn.execute(
+            f"SELECT id FROM users WHERE organization_id = ? AND email IN ({placeholders})",
+            (shell_id, *admin_emails),
+        ).fetchall()
+        for row in users:
+            uid = int(row["id"])
+            conn.execute(
+                "UPDATE users SET organization_id = ?, org_name = ? WHERE id = ?",
+                (default_id, default_name, uid),
+            )
+            conn.execute(
+                "UPDATE api_keys SET organization_id = ? WHERE user_id = ?",
+                (default_id, uid),
+            )
+        conn.execute(
+            "UPDATE sessions SET active_organization_id = ?"
+            " WHERE active_organization_id = ?",
+            (default_id, shell_id),
+        )
+        conn.execute(
+            "UPDATE sessions SET active_organization_id = NULL"
+            " WHERE active_organization_id = ?",
+            (shell_id,),
+        )
+        remaining = conn.execute(
+            "SELECT COUNT(*) AS n FROM users WHERE organization_id = ?", (shell_id,)
+        ).fetchone()
+        if remaining is not None and int(remaining["n"]) == 0:
+            conn.execute("DELETE FROM organizations WHERE id = ?", (shell_id,))
+
+
 def get_organization(organization_id: int) -> dict[str, Any] | None:
     conn = get_conn()
     with _lock:
@@ -450,6 +542,8 @@ def get_user_by_session(token_hash: str) -> dict[str, Any] | None:
         return None
     active_org = row["active_organization_id"]
     active_id = int(active_org) if active_org is not None else None
+    if active_id is not None and is_platform_shell_organization(active_id):
+        active_id = default_tenant_organization_id()
     return apply_session_organization(user, active_id)
 
 
