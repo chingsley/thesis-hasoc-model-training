@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useExplainabilityPosts } from '@/hooks/use-posts'
 import { usePostExplanation } from '@/hooks/use-explanations'
 import { ExplanationView } from '@/components/explainability/ExplanationView'
-import { ViewModeToggle } from '@/components/ui/view-mode-toggle'
+import { PageHeader } from '@/components/layout/PageHeader'
 import { useViewMode } from '@/lib/store/view-mode'
 import {
   TriagePredictionLabelFilter,
@@ -99,7 +99,7 @@ export default function Explainability() {
 
   return (
     <div className="space-y-8">
-      <SectionTitle
+      <PageHeader
         description={
           <>
             <span className="block">
@@ -116,7 +116,7 @@ export default function Explainability() {
         }
       >
         Explainability
-      </SectionTitle>
+      </PageHeader>
 
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-12 xl:items-stretch">
         <Card
@@ -288,27 +288,25 @@ export default function Explainability() {
           className="flex min-h-0 flex-col overflow-hidden xl:col-span-7 xl:h-[min(720px,calc(100dvh-11rem))]"
         >
           <CardHeader className="shrink-0 border-b border-[var(--hg-border)] pb-5">
-            <div className="flex flex-wrap items-start justify-between gap-3">
-              <SectionTitle
-                size="md"
-                description={
-                  viewMode === 'plain'
-                    ? selectedPost
-                      ? 'Why HateGuard gave this post its label.'
-                      : 'Pick a post to see why HateGuard gave it its label.'
-                    : selectedPost
-                      ? 'Side-by-side XAI methods for the selected post.'
-                      : 'Pick a post to compare explanation methods.'
-                }
-              >
-                {selectedPost
-                  ? `Explanation for ${selectedPost.id}`
-                  : viewMode === 'plain'
-                    ? 'Explanation'
-                    : 'Explanation Comparison'}
-              </SectionTitle>
-              <ViewModeToggle />
-            </div>
+            <SectionTitle
+              size="md"
+              pageTitle={false}
+              description={
+                viewMode === 'plain'
+                  ? selectedPost
+                    ? 'Why HateGuard gave this post its label.'
+                    : 'Pick a post to see why HateGuard gave it its label.'
+                  : selectedPost
+                    ? 'Side-by-side XAI methods for the selected post.'
+                    : 'Pick a post to compare explanation methods.'
+              }
+            >
+              {selectedPost
+                ? `Explanation for ${selectedPost.id}`
+                : viewMode === 'plain'
+                  ? 'Explanation'
+                  : 'Explanation Comparison'}
+            </SectionTitle>
             {selectedPost ? (
               <p className="mt-3 line-clamp-2 text-sm leading-relaxed text-[var(--hg-muted)]">
                 {selectedPost.tweet}

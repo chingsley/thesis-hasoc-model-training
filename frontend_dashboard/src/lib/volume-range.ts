@@ -22,6 +22,9 @@ export const VOLUME_RANGE_OPTIONS: VolumeRangeOption[] = [
 export const DEFAULT_VOLUME_PRESET: VolumePresetId = '24h'
 export const MAX_CUSTOM_DAYS = 90
 
+/** Card heading for post volume charts (Overview, Analysis, plain + technical). */
+export const VOLUME_CHART_TITLE = 'Posts processed over time'
+
 /** @deprecated use VolumePresetId */
 export type VolumeRangeId = VolumePresetId
 

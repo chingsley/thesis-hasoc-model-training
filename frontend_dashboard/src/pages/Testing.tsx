@@ -4,6 +4,7 @@ import { BatchScanner } from '@/components/testing/BatchScanner'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Card, CardAction, CardContent, CardHeader } from '@/components/ui/card'
 import { SectionTitle } from '@/components/ui/data-source-badge'
+import { PageHeader } from '@/components/layout/PageHeader'
 
 const TABS = [
   {
@@ -31,9 +32,9 @@ export default function Testing() {
 
   return (
     <div className="space-y-8">
-      <SectionTitle description="Classify a single text or scan a batch. Results are logged to your account for the active language.">
+      <PageHeader description="Classify a single text or scan a batch. Results are logged to your account for the active language.">
         Classify Posts
-      </SectionTitle>
+      </PageHeader>
 
       <Card>
         <Tabs

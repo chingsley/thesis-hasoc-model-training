@@ -1,85 +1,85 @@
-import { useMemo, useState } from 'react'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { Download, FileText, Loader2, Upload } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { HateProbCell, PostIdCell, PredictionCell } from '@/components/dashboard/post-cells'
-import { useDashboardStore } from '@/lib/store/dashboard'
-import { batchClassify } from '@/lib/api/client'
-import { parseBatchUploadFile } from '@/lib/batch-csv'
-import type { BatchResult } from '@/lib/types'
-import { cn } from '@/lib/utils'
-import { toast } from 'sonner'
+import { useMemo, useState } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Download, FileText, Loader2, Upload } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { HateProbCell, PostIdCell, PredictionCell } from '@/components/dashboard/post-cells';
+import { useDashboardStore } from '@/lib/store/dashboard';
+import { batchClassify } from '@/lib/api/client';
+import { parseBatchUploadFile } from '@/lib/batch-csv';
+import type { BatchResult } from '@/lib/types';
+import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 export function BatchScanner() {
-  const language = useDashboardStore((s) => s.language)
-  const languageLabel = language === 'igbo' ? 'Igbo' : 'Yoruba'
-  const [results, setResults] = useState<BatchResult[] | null>(null)
-  const [file, setFile] = useState<File | null>(null)
-  const [dragging, setDragging] = useState(false)
-  const [parseErrors, setParseErrors] = useState<string[] | null>(null)
-  const queryClient = useQueryClient()
+  const language = useDashboardStore((s) => s.language);
+  const languageLabel = language === 'igbo' ? 'Igbo' : 'Yoruba';
+  const [results, setResults] = useState<BatchResult[] | null>(null);
+  const [file, setFile] = useState<File | null>(null);
+  const [dragging, setDragging] = useState(false);
+  const [parseErrors, setParseErrors] = useState<string[] | null>(null);
+  const queryClient = useQueryClient();
 
   const mutation = useMutation({
     mutationFn: (texts: string[]) => batchClassify(texts, language),
     onSuccess: (data) => {
-      setResults(data)
-      queryClient.invalidateQueries({ queryKey: ['overview-stats'] })
-      queryClient.invalidateQueries({ queryKey: ['volume'] })
+      setResults(data);
+      queryClient.invalidateQueries({ queryKey: ['overview-stats'] });
+      queryClient.invalidateQueries({ queryKey: ['volume'] });
     },
-  })
+  });
 
   const counts = useMemo(() => {
-    if (!results) return null
+    if (!results) return null;
     return {
       total: results.length,
       normal: results.filter((r) => r.predicted_label === 'Normal').length,
       abuse: results.filter((r) => r.predicted_label === 'Abuse').length,
       hate: results.filter((r) => r.predicted_label === 'Hate').length,
-    }
-  }, [results])
+    };
+  }, [results]);
 
   const parseAndRun = (f: File) => {
-    setFile(f)
-    setParseErrors(null)
-    setResults(null)
-    const reader = new FileReader()
+    setFile(f);
+    setParseErrors(null);
+    setResults(null);
+    const reader = new FileReader();
     reader.onload = (ev) => {
-      const csv = ev.target?.result as string
-      const parsed = parseBatchUploadFile(csv)
+      const csv = ev.target?.result as string;
+      const parsed = parseBatchUploadFile(csv);
       if (!parsed.ok) {
-        setParseErrors(parsed.errors)
+        setParseErrors(parsed.errors);
         toast.error('CSV validation failed', {
           description: parsed.errors[0],
-        })
-        return
+        });
+        return;
       }
-      mutation.mutate(parsed.texts)
-    }
-    reader.readAsText(f)
-  }
+      mutation.mutate(parsed.texts);
+    };
+    reader.readAsText(f);
+  };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const f = e.target.files?.[0]
-    if (f) parseAndRun(f)
-    e.target.value = ''
-  }
+    const f = e.target.files?.[0];
+    if (f) parseAndRun(f);
+    e.target.value = '';
+  };
 
   const handleDownload = () => {
-    if (!results) return
-    const header = 'id,tweet,predicted_label,normal_prob,abuse_prob,hate_prob'
+    if (!results) return;
+    const header = 'id,tweet,predicted_label,normal_prob,abuse_prob,hate_prob';
     const rows = results.map(
       (r) =>
         `${r.id},"${r.tweet.replace(/"/g, '""')}",${r.predicted_label},${r.probabilities.normal.toFixed(3)},${r.probabilities.abuse.toFixed(3)},${r.probabilities.hate.toFixed(3)}`,
-    )
-    const csv = [header, ...rows].join('\n')
-    const blob = new Blob([csv], { type: 'text/csv' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `batch_results_${language}_${new Date().toISOString().split('T')[0]}.csv`
-    a.click()
-    URL.revokeObjectURL(url)
-  }
+    );
+    const csv = [header, ...rows].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `batch_results_${language}_${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <div className="animate-in fade-in duration-300 space-y-5">
@@ -91,15 +91,15 @@ export function BatchScanner() {
             : 'border-[var(--hg-border)] bg-[var(--hg-canvas)]/40',
         )}
         onDragOver={(e) => {
-          e.preventDefault()
-          setDragging(true)
+          e.preventDefault();
+          setDragging(true);
         }}
         onDragLeave={() => setDragging(false)}
         onDrop={(e) => {
-          e.preventDefault()
-          setDragging(false)
-          const f = e.dataTransfer.files?.[0]
-          if (f) parseAndRun(f)
+          e.preventDefault();
+          setDragging(false);
+          const f = e.dataTransfer.files?.[0];
+          if (f) parseAndRun(f);
         }}
       >
         <div className="mx-auto flex max-w-md flex-col items-center gap-3">
@@ -225,5 +225,5 @@ export function BatchScanner() {
         </p>
       )}
     </div>
-  )
+  );
 }

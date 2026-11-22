@@ -9,8 +9,7 @@ import {
   SummaryStatTile,
 } from '@/components/ui/summary-stat-strip'
 import { Loader2 } from 'lucide-react'
-import { TechnicalName } from '@/components/ui/technical-name'
-import { ViewModeToggle } from '@/components/ui/view-mode-toggle'
+import { PageHeader } from '@/components/layout/PageHeader'
 import {
   AccuracyHeadline,
   LabelScoreCards,
@@ -85,12 +84,7 @@ const DESCRIPTION = {
 
 function PageHeading() {
   const viewMode = useViewMode()
-  return (
-    <div className="flex flex-wrap items-start justify-between gap-4">
-      <SectionTitle description={DESCRIPTION[viewMode]}>Performance</SectionTitle>
-      <ViewModeToggle className="mt-1.5" />
-    </div>
-  )
+  return <PageHeader description={DESCRIPTION[viewMode]}>Performance</PageHeader>
 }
 
 export default function Performance() {
@@ -128,10 +122,13 @@ export default function Performance() {
 
         <Card className="gap-0 py-0">
           <CardHeader className="border-b border-[var(--hg-border)] py-5">
-            <SectionTitle size="md" description="All kinds of posts together.">
+            <SectionTitle
+              size="md"
+              description="All kinds of posts together."
+              technicalName="Overall Metrics (Accuracy)"
+            >
               How often is HateGuard right?
             </SectionTitle>
-            <TechnicalName>Overall Metrics (Accuracy)</TechnicalName>
           </CardHeader>
           <CardContent className="py-5">
             <AccuracyHeadline metrics={metrics} />
@@ -143,10 +140,10 @@ export default function Performance() {
             <SectionTitle
               size="md"
               description="Each bar is the test posts that truly carry one label, split by what HateGuard called them."
+              technicalName="Confusion Matrix"
             >
               What happened to the test posts
             </SectionTitle>
-            <TechnicalName>Confusion Matrix</TechnicalName>
           </CardHeader>
           <CardContent className="py-5">
             <OutcomeBars metrics={metrics} />
@@ -158,10 +155,10 @@ export default function Performance() {
             <SectionTitle
               size="md"
               description="Two questions for each kind of post. Each picture shows 100 posts."
+              technicalName="Per-Class Performance (Recall and Precision)"
             >
               How it does on each kind of post
             </SectionTitle>
-            <TechnicalName>Per-Class Performance (Recall and Precision)</TechnicalName>
           </CardHeader>
           <CardContent className="py-5">
             <LabelScoreCards metrics={metrics} />

@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react'
-import { Popover } from '@base-ui/react/popover'
+import { useMemo, useState } from 'react';
+import { Popover } from '@base-ui/react/popover';
 import {
   addMonths,
   eachDayOfInterval,
@@ -15,35 +15,35 @@ import {
   startOfMonth,
   startOfWeek,
   subMonths,
-} from 'date-fns'
-import { CalendarDays, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react'
-import { cn } from '@/lib/utils'
+} from 'date-fns';
+import { CalendarDays, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 function toIso(d: Date): string {
-  return format(d, 'yyyy-MM-dd')
+  return format(d, 'yyyy-MM-dd');
 }
 
 function parseDay(iso: string | undefined): Date | null {
-  if (!iso) return null
+  if (!iso) return null;
   try {
-    return startOfDay(parseISO(iso))
+    return startOfDay(parseISO(iso));
   } catch {
-    return null
+    return null;
   }
 }
 
 interface DatePickerFieldProps {
-  label: string
-  value: string
-  min?: string
-  max?: string
+  label: string;
+  value: string;
+  min?: string;
+  max?: string;
   /** Other end of a range — used for in-range highlight */
-  rangeMate?: string
-  rangeRole?: 'start' | 'end'
-  onChange: (iso: string) => void
+  rangeMate?: string;
+  rangeRole?: 'start' | 'end';
+  onChange: (iso: string) => void;
   /** Allow Reset to clear the value (empty string) instead of falling back to today/min */
-  clearable?: boolean
-  className?: string
+  clearable?: boolean;
+  className?: string;
 }
 
 export function DatePickerField({
@@ -57,69 +57,69 @@ export function DatePickerField({
   clearable = false,
   className,
 }: DatePickerFieldProps) {
-  const [open, setOpen] = useState(false)
-  const selected = parseDay(value)
-  const mate = parseDay(rangeMate)
-  const minDay = parseDay(min)
-  const maxDay = parseDay(max)
+  const [open, setOpen] = useState(false);
+  const selected = parseDay(value);
+  const mate = parseDay(rangeMate);
+  const minDay = parseDay(min);
+  const maxDay = parseDay(max);
 
-  const [cursor, setCursor] = useState(() => selected ?? startOfDay(new Date()))
+  const [cursor, setCursor] = useState(() => selected ?? startOfDay(new Date()));
 
   const days = useMemo(() => {
-    const start = startOfWeek(startOfMonth(cursor), { weekStartsOn: 0 })
-    const end = endOfWeek(endOfMonth(cursor), { weekStartsOn: 0 })
-    return eachDayOfInterval({ start, end })
-  }, [cursor])
+    const start = startOfWeek(startOfMonth(cursor), { weekStartsOn: 0 });
+    const end = endOfWeek(endOfMonth(cursor), { weekStartsOn: 0 });
+    return eachDayOfInterval({ start, end });
+  }, [cursor]);
 
-  const display = selected ? format(selected, 'MMM d, yyyy') : 'Select date'
+  const display = selected ? format(selected, 'MMM d, yyyy') : 'Select date';
 
   const isDisabled = (day: Date) => {
-    if (minDay && isBefore(day, minDay)) return true
-    if (maxDay && isAfter(day, maxDay)) return true
-    return false
-  }
+    if (minDay && isBefore(day, minDay)) return true;
+    if (maxDay && isAfter(day, maxDay)) return true;
+    return false;
+  };
 
   const inRange = (day: Date) => {
-    if (!selected || !mate) return false
-    const a = isBefore(selected, mate) ? selected : mate
-    const b = isBefore(selected, mate) ? mate : selected
-    return (isAfter(day, a) || isSameDay(day, a)) && (isBefore(day, b) || isSameDay(day, b))
-  }
+    if (!selected || !mate) return false;
+    const a = isBefore(selected, mate) ? selected : mate;
+    const b = isBefore(selected, mate) ? mate : selected;
+    return (isAfter(day, a) || isSameDay(day, a)) && (isBefore(day, b) || isSameDay(day, b));
+  };
 
   const pick = (day: Date) => {
-    if (isDisabled(day)) return
-    onChange(toIso(day))
-    setOpen(false)
-  }
+    if (isDisabled(day)) return;
+    onChange(toIso(day));
+    setOpen(false);
+  };
 
   const goToday = () => {
-    const today = startOfDay(new Date())
-    if (isDisabled(today)) return
-    setCursor(today)
-    onChange(toIso(today))
-    setOpen(false)
-  }
+    const today = startOfDay(new Date());
+    if (isDisabled(today)) return;
+    setCursor(today);
+    onChange(toIso(today));
+    setOpen(false);
+  };
 
   const clear = () => {
     if (clearable) {
-      onChange('')
-      setOpen(false)
-      return
+      onChange('');
+      setOpen(false);
+      return;
     }
     // Keep a valid value for volume range — jump to min or today
-    const fallback = minDay ?? startOfDay(new Date())
+    const fallback = minDay ?? startOfDay(new Date());
     if (!isDisabled(fallback)) {
-      onChange(toIso(fallback))
+      onChange(toIso(fallback));
     }
-    setOpen(false)
-  }
+    setOpen(false);
+  };
 
   return (
     <Popover.Root
       open={open}
       onOpenChange={(next) => {
-        setOpen(next)
-        if (next && selected) setCursor(selected)
+        setOpen(next);
+        if (next && selected) setCursor(selected);
       }}
     >
       <div className={cn('flex items-center gap-2', className)}>
@@ -187,12 +187,12 @@ export function DatePickerField({
 
             <div className="grid grid-cols-7 gap-0.5">
               {days.map((day) => {
-                const outside = !isSameMonth(day, cursor)
-                const disabled = isDisabled(day)
-                const isSelected = selected ? isSameDay(day, selected) : false
-                const isMate = mate ? isSameDay(day, mate) : false
-                const ranged = inRange(day) && !isSelected && !isMate
-                const isToday = isSameDay(day, new Date())
+                const outside = !isSameMonth(day, cursor);
+                const disabled = isDisabled(day);
+                const isSelected = selected ? isSameDay(day, selected) : false;
+                const isMate = mate ? isSameDay(day, mate) : false;
+                const ranged = inRange(day) && !isSelected && !isMate;
+                const isToday = isSameDay(day, new Date());
 
                 return (
                   <button
@@ -208,14 +208,14 @@ export function DatePickerField({
                       ranged && 'bg-[var(--hg-soft)] text-black',
                       isMate && !isSelected && 'bg-[var(--hg-soft-selected)] font-medium text-black',
                       isSelected &&
-                        'bg-[var(--hg-brand)] font-semibold text-white hover:bg-[var(--hg-brand)]',
+                      'bg-[var(--hg-brand)] font-semibold text-white hover:bg-[var(--hg-brand)]',
                       isToday && !isSelected && 'ring-1 ring-[var(--hg-border)] ring-inset',
                       disabled && 'cursor-not-allowed opacity-30',
                     )}
                   >
                     {format(day, 'd')}
                   </button>
-                )
+                );
               })}
             </div>
 
@@ -239,5 +239,5 @@ export function DatePickerField({
         </Popover.Positioner>
       </Popover.Portal>
     </Popover.Root>
-  )
+  );
 }

@@ -1,6 +1,6 @@
 import { Check } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { SectionTitle } from '@/components/ui/data-source-badge';
+import { PageHeader } from '@/components/layout/PageHeader';
 import { ApiKeyManager } from '@/components/settings/ApiKeyManager';
 import { InviteUserManager } from '@/components/settings/InviteUserManager';
 import { ModelSetManager } from '@/components/settings/ModelSetManager';
@@ -26,9 +26,9 @@ export default function Settings() {
 
   return (
     <div className="space-y-8">
-      <SectionTitle description="Dashboard preferences, team access, and organization API keys.">
+      <PageHeader description="Dashboard preferences, team access, and organization API keys.">
         Settings
-      </SectionTitle>
+      </PageHeader>
 
       {!USE_MOCK && <OpenAiModerationNotice />}
 

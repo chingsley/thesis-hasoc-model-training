@@ -6,14 +6,13 @@ import { StatsCards } from '@/components/dashboard/StatsCards';
 import { VolumePanel } from '@/components/charts/VolumePanel';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { SectionTitle } from '@/components/ui/data-source-badge';
+import { PageHeader } from '@/components/layout/PageHeader';
 import {
   SummaryStatCell,
   SummaryStatGrid,
   SummaryStatTile,
 } from '@/components/ui/summary-stat-strip';
 import { buttonVariants } from '@/components/ui/button';
-import { TechnicalName } from '@/components/ui/technical-name';
-import { ViewModeToggle } from '@/components/ui/view-mode-toggle';
 import { PlainPerformanceSummary } from '@/components/plain/PlainPerformance';
 import { PlainStats } from '@/components/plain/PlainStats';
 import { PlainVolume } from '@/components/plain/PlainVolume';
@@ -78,18 +77,9 @@ export default function Overview() {
   }, []);
 
   const heading = (
-    <div className="flex flex-wrap items-start justify-between gap-4">
-      <SectionTitle
-        description={
-          viewMode === 'plain'
-            ? 'What HateGuard found in the posts it checked.'
-            : 'Totals and trends for the selected volume window.'
-        }
-      >
-        Post Overview
-      </SectionTitle>
-      <div className="mt-1.5 flex flex-wrap items-center gap-3">
-        <ViewModeToggle />
+    <PageHeader
+      description="Totals and trends for selected period."
+      actions={
         <Link
           to="/testing"
           className={cn(buttonVariants({ variant: 'default' }), 'h-9 rounded-[4px] px-3.5')}
@@ -97,8 +87,10 @@ export default function Overview() {
           <Sparkles aria-hidden />
           Classify a post
         </Link>
-      </div>
-    </div>
+      }
+    >
+      Post Overview
+    </PageHeader>
   );
 
   if (viewMode === 'plain') {
@@ -112,10 +104,13 @@ export default function Overview() {
 
         <Card className="pt-0">
           <CardHeader className="rounded-t-[4px] border-b-2 border-[var(--hg-soft-selected)] bg-[var(--hg-soft)] pt-(--card-spacing) pb-4">
-            <SectionTitle size="md" description="How far you can rely on its labels.">
+            <SectionTitle
+              size="md"
+              description="How far you can rely on its labels."
+              technicalName="Model Performance Summary (Accuracy)"
+            >
               How often is HateGuard right?
             </SectionTitle>
-            <TechnicalName className="bg-white">Model Performance Summary (Accuracy)</TechnicalName>
           </CardHeader>
           <CardContent className="pt-5">
             {metrics && <PlainPerformanceSummary metrics={metrics} />}

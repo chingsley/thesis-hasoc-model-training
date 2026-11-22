@@ -47,7 +47,7 @@ function BlockHeading({
 }) {
   return (
     <div>
-      <h3 className="flex items-center gap-2 text-sm font-semibold text-[var(--hg-ink)]">
+      <h3 className="flex flex-wrap items-center gap-2 text-sm font-semibold text-[var(--hg-ink)]">
         <span
           aria-hidden
           className="inline-flex size-5 shrink-0 items-center justify-center rounded-full bg-[var(--hg-soft)] text-[11px] font-semibold text-[var(--hg-ink)]"
@@ -55,8 +55,8 @@ function BlockHeading({
           {step}
         </span>
         {children}
+        {technical ? <TechnicalName>{technical}</TechnicalName> : null}
       </h3>
-      {technical ? <TechnicalName>{technical}</TechnicalName> : null}
     </div>
   )
 }

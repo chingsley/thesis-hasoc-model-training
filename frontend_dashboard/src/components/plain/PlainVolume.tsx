@@ -26,7 +26,8 @@ import { useThemeStore } from '@/lib/store/theme'
 import { useVolumeSelectionStore } from '@/lib/store/volume-selection'
 import { readCssVar } from '@/lib/theme/cssVar'
 import { cn } from '@/lib/utils'
-import { apportion, plainRangePhrase, plainVolumeUnit } from '@/lib/volume-plain'
+import { VOLUME_CHART_TITLE, volumePanelDescription } from '@/lib/volume-range'
+import { apportion, plainVolumeUnit } from '@/lib/volume-plain'
 import type { Label } from '@/lib/types'
 
 const COUNT_KEY = {
@@ -207,11 +208,8 @@ export function PlainVolume({ embedded = false }: { embedded?: boolean }) {
     busiestTotal: index === busiestIndex ? point.total : undefined,
   }))
   const hasData = total > 0
-  const phrase = plainRangePhrase(mode, range)
   const languageName = language.charAt(0).toUpperCase() + language.slice(1)
-  const description = `${languageName} posts HateGuard checked ${phrase}, one bar per ${unit} (${
-    unit === 'hour' ? 'times' : 'days'
-  } in UTC).`
+  const description = volumePanelDescription(mode, range)
 
   const body =
     isLoading && !data ? (
@@ -339,18 +337,20 @@ export function PlainVolume({ embedded = false }: { embedded?: boolean }) {
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="min-w-0">
           <SectionTitle size="md" description={description}>
-            <span className="inline-flex items-center">
-              Posts checked over time
+            <span className="inline-flex items-center gap-x-3 gap-y-1">
+              <span className="inline-flex items-center gap-1.5">
+                {VOLUME_CHART_TITLE}
+                <TechnicalName>{VOLUME_CHART_TITLE}</TechnicalName>
+              </span>
               <span
                 aria-hidden
-                className="mx-4 inline-block h-[0.85em] w-[3px] shrink-0 rounded-full bg-[var(--hg-border)]"
+                className="inline-block h-[0.85em] w-[3px] shrink-0 rounded-full bg-[var(--hg-border)]"
               />
-              <span className="text-base font-normal tracking-wide text-[var(--hg-brand)] uppercase">
+              <span className="text-base font-normal leading-none tracking-wide text-[var(--hg-brand)] uppercase">
                 {languageName}
               </span>
             </span>
           </SectionTitle>
-          <TechnicalName>Post volume over time</TechnicalName>
           </div>
           <PeriodButtons />
         </div>

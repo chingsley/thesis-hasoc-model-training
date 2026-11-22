@@ -1,18 +1,36 @@
+import { Info } from 'lucide-react'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 
 /**
- * Small tag on a plain-language card that names the Technical-view component showing the same
- * measure, so the two views can be matched.
+ * Info icon beside a plain-language heading; on hover, names the matching Technical-view label.
  */
 export function TechnicalName({ children, className }: { children: string; className?: string }) {
   return (
-    <p
-      className={cn(
-        'mt-1.5 w-fit rounded-[4px] bg-[var(--hg-canvas)] px-2 py-1 text-xs text-[var(--hg-muted)]',
-        className,
-      )}
-    >
-      In the Technical view: <span className="font-semibold text-[var(--hg-ink)]">{children}</span>
-    </p>
+    <span className="inline-flex shrink-0 items-center leading-none">
+      <Tooltip>
+        <TooltipTrigger
+          delay={200}
+          render={
+            <button
+              type="button"
+              className={cn(
+                'inline-flex aspect-square h-[1.15em] w-[1.15em] min-h-5 min-w-5 max-h-7 max-w-7',
+                'shrink-0 items-center justify-center rounded-[4px] text-[var(--hg-muted)] transition-colors',
+                'hover:bg-[var(--hg-canvas)] hover:text-[var(--hg-ink)]',
+                className,
+              )}
+              aria-label={`Technical view name: ${children}`}
+            />
+          }
+        >
+          <Info className="size-[0.85em]" aria-hidden />
+        </TooltipTrigger>
+        <TooltipContent side="top" className="max-w-xs text-left">
+          <span>In the Technical view: </span>
+          <span className="font-semibold">{children}</span>
+        </TooltipContent>
+      </Tooltip>
+    </span>
   )
 }

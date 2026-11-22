@@ -5,6 +5,7 @@ import { USE_MOCK } from '@/lib/api/config'
 import { useActiveModel } from '@/hooks/use-active-model'
 import { useAuthStore } from '@/lib/store/auth'
 import { usePageTitleStore } from '@/lib/store/page-title'
+import { TechnicalName } from '@/components/ui/technical-name'
 import { cn } from '@/lib/utils'
 
 export function DataSourceBadge({ className }: { className?: string }) {
@@ -82,6 +83,8 @@ export function SectionTitle({
   inverted = false,
   /** When true (default for size=lg), syncs this heading with the header title chip. */
   pageTitle,
+  /** Plain view: info icon next to the title shows this Technical-view name on hover. */
+  technicalName,
 }: {
   children: ReactNode
   className?: string
@@ -89,6 +92,7 @@ export function SectionTitle({
   size?: 'lg' | 'md'
   inverted?: boolean
   pageTitle?: boolean
+  technicalName?: string
 }) {
   const headingRef = useRef<HTMLHeadingElement>(null)
   const setPageTitle = usePageTitleStore((s) => s.setPageTitle)
@@ -111,12 +115,13 @@ export function SectionTitle({
           ref={headingRef}
           data-page-title={trackAsPageTitle ? '' : undefined}
           className={cn(
-            'leading-tight font-semibold tracking-tight',
-            size === 'lg' ? 'text-[32px]' : 'text-[24px]',
+            'inline-flex flex-wrap items-center gap-x-1.5 gap-y-1 font-semibold tracking-tight',
+            size === 'lg' ? 'text-[32px] leading-tight' : 'text-[24px] leading-tight',
             inverted ? 'text-white' : 'text-[var(--hg-ink)]',
           )}
         >
           {children}
+          {technicalName ? <TechnicalName>{technicalName}</TechnicalName> : null}
         </h2>
         <DataSourceBadge />
       </div>

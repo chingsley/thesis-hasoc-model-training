@@ -1,11 +1,17 @@
 import type { ExplanationPayload } from '@/lib/types'
 import { ExplanationPanel } from './ExplanationPanel'
 import type { XaiMethod } from '@/lib/types'
+import { cn } from '@/lib/utils'
 
 interface ExplanationComparisonProps {
   explanation: ExplanationPayload
   /** Methods whose requests are still in flight — rendered as skeletons. */
   loadingMethods?: XaiMethod[]
+  /**
+   * Keep the method panels in one column at every width. For narrow containers such as the
+   * Classify Posts result pane, where two columns would cut off the method names.
+   */
+  singleColumn?: boolean
 }
 
 const methods: XaiMethod[] = ['lime', 'shap', 'attention_rollout', 'integrated_gradients']
@@ -53,6 +59,7 @@ function ExplanationSkeleton({ method }: { method: XaiMethod }) {
 export function ExplanationComparison({
   explanation,
   loadingMethods = [],
+  singleColumn = false,
 }: ExplanationComparisonProps) {
   return (
     <section className="space-y-3">
@@ -62,7 +69,7 @@ export function ExplanationComparison({
         </h3>
         <AttributionLegend />
       </div>
-      <div className="grid grid-cols-1 gap-3 xl:grid-cols-2">
+      <div className={cn('grid grid-cols-1 gap-3', !singleColumn && 'xl:grid-cols-2')}>
         {methods.map((method) =>
           !explanation.methods[method] && loadingMethods.includes(method) ? (
             <ExplanationSkeleton key={method} method={method} />

@@ -10,7 +10,7 @@ import { fetchVolumeData } from '@/lib/api/client';
 import { useDashboardStore } from '@/lib/store/dashboard';
 import { useVolumeSelectionStore } from '@/lib/store/volume-selection';
 import { downloadVolumeCsv } from '@/lib/volume-csv';
-import { resolveVolumeRange, volumePanelDescription } from '@/lib/volume-range';
+import { resolveVolumeRange, VOLUME_CHART_TITLE, volumePanelDescription } from '@/lib/volume-range';
 import { cn } from '@/lib/utils';
 import type { VolumeDataPoint } from '@/lib/types';
 
@@ -171,7 +171,7 @@ export function VolumePanel({ onVolumeChange, embedded = false }: VolumePanelPro
       <CardHeader className="gap-4 border-b border-[var(--hg-border)] pb-2 [.border-b]:pb-2">
         <SectionTitle size="md" description={volumeDescription}>
           <span className="inline-flex items-center">
-            Post volume over time
+            {VOLUME_CHART_TITLE}
             <span
               aria-hidden
               className="mx-4 inline-block h-[0.85em] w-[3px] shrink-0 rounded-full bg-[var(--hg-border)]"

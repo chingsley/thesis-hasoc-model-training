@@ -13,6 +13,7 @@ import { TriageStats } from '@/components/dashboard/TriageStats'
 import { RelabelSheet, type RelabelMode } from '@/components/dashboard/RelabelSheet'
 import { Card, CardAction, CardContent, CardHeader } from '@/components/ui/card'
 import { SectionTitle } from '@/components/ui/data-source-badge'
+import { PageHeader } from '@/components/layout/PageHeader'
 import { Tabs, TabsContent } from '@/components/ui/tabs'
 import { TRIAGE_ALL_BUCKET_PAGE_SIZE, TRIAGE_PAGE_SIZE } from '@/lib/triage-buckets'
 import type { Label, Post, TriageBucket } from '@/lib/types'
@@ -112,9 +113,9 @@ export default function Triage() {
 
   return (
     <div className="space-y-8">
-      <SectionTitle description="Review Hate and Abuse predictions. Flag for incident reports or relabel for future retraining — flagged posts stay in the queue.">
+      <PageHeader description="Review Hate and Abuse predictions. Flag for incident reports or relabel for future retraining — flagged posts stay in the queue.">
         {REVIEW_AND_REPORT_TITLE}
-      </SectionTitle>
+      </PageHeader>
 
       <div className="flex flex-col gap-8">
         <TriageStats

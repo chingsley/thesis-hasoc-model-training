@@ -10,7 +10,7 @@ Tabs: Single Text Tester · Batch Scanner
 
 ## Single Text Tester tab
 
-**User action:** Paste text, click **Analyze** (`TextTester.tsx`).
+**User action:** Paste text into the centred editor, click **Analyze** or press ⌘/Ctrl + Enter (`TextTester.tsx`). The first Analyze slides the panel into two halves: the sent text (read-only) on the left, the result on the right. Narrow screens stack them. **New document** (header icon or button) clears both sides for the next text.
 
 **Requests (sequential):**
 
@@ -28,7 +28,7 @@ Tabs: Single Text Tester · Batch Scanner
 
 **Backend — `/explain`:** Runs SHAP only; results are cached per `(language, methods, text)` in the SQLite `explanations` table, so re-analyzing the same text is instant. Returns token scores for highlighting.
 
-**Frontend after success:** Shows label badge, Normal/Abuse/Hate percentages, model id (with “joint fallback” note when `used_fallback`). If SHAP tokens exist, `ToxicTextHighlighter` colors toxic words. Invalidates `overview-stats` and `volume` queries so Overview and Analysis charts update. On failure: “Classification failed. Is the backend running and reachable via the Vite proxy?”
+**Frontend after success:** The right pane shows the label badge, confidence, model id (with “Joint fallback” when `used_fallback`), then the explanation in the chosen view (plain language or technical). Invalidates `overview-stats` and `volume` queries so Overview and Analysis charts update. On failure the right pane shows “Classification failed” and the editor returns with the draft, so the user can retry.
 
 **Side effect:** This logged row becomes `pred_<id>` elsewhere (Explainability list, word cloud, drift).
 

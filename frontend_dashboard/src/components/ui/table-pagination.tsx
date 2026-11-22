@@ -1,13 +1,13 @@
-import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 function pageNumbers(current: number, total: number): number[] {
   if (total <= 7) {
-    return Array.from({ length: total }, (_, i) => i + 1)
+    return Array.from({ length: total }, (_, i) => i + 1);
   }
-  const pages = new Set<number>([1, total, current, current - 1, current + 1])
-  return [...pages].filter((p) => p >= 1 && p <= total).sort((a, b) => a - b)
+  const pages = new Set<number>([1, total, current, current - 1, current + 1]);
+  return [...pages].filter((p) => p >= 1 && p <= total).sort((a, b) => a - b);
 }
 
 export function TablePagination({
@@ -18,22 +18,22 @@ export function TablePagination({
   className,
 }: {
   /** Zero-based page index */
-  page: number
-  pageSize: number
-  total: number
-  onPageChange: (page: number) => void
-  className?: string
+  page: number;
+  pageSize: number;
+  total: number;
+  onPageChange: (page: number) => void;
+  className?: string;
 }) {
-  const pageCount = Math.max(1, Math.ceil(total / pageSize))
-  const current = page + 1
-  const from = total === 0 ? 0 : page * pageSize + 1
-  const to = Math.min(total, (page + 1) * pageSize)
+  const pageCount = Math.max(1, Math.ceil(total / pageSize));
+  const current = page + 1;
+  const from = total === 0 ? 0 : page * pageSize + 1;
+  const to = Math.min(total, (page + 1) * pageSize);
 
   if (total === 0) {
-    return null
+    return null;
   }
 
-  const numbers = pageNumbers(current, pageCount)
+  const numbers = pageNumbers(current, pageCount);
 
   return (
     <div
@@ -60,8 +60,8 @@ export function TablePagination({
         </Button>
         <div className="flex items-center gap-0.5 px-1">
           {numbers.map((n, i) => {
-            const prev = numbers[i - 1]
-            const gap = prev !== undefined && n - prev > 1
+            const prev = numbers[i - 1];
+            const gap = prev !== undefined && n - prev > 1;
             return (
               <span key={n} className="flex items-center gap-0.5">
                 {gap ? (
@@ -81,7 +81,7 @@ export function TablePagination({
                   {n}
                 </button>
               </span>
-            )
+            );
           })}
         </div>
         <Button
@@ -98,5 +98,5 @@ export function TablePagination({
         </Button>
       </div>
     </div>
-  )
+  );
 }
